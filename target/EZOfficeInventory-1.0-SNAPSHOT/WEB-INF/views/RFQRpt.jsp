@@ -321,7 +321,7 @@ jQuery(document).ready(function($){
 function openSearchBox(searchDataVal) {
 	 $.ajax({
 		 //url: '/EZOfficeInventory/getAllRFQItemForReport',
-		 url: 'https://EZOfficeInventory.azurewebsites.net/getAllRFQItemForReport',
+		 url: 'https://salepurchasecompany.co.in/getAllRFQItemForReport',
 		 type: 'Post',
 		 contentType: 'application/json',
 		   	 data: JSON.stringify(

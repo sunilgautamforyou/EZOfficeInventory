@@ -37,36 +37,36 @@
             <div class="sidenav-header d-flex align-items-center justify-content-center">
                 <!-- User Info-->
                 <div class="sidenav-header-inner text-center">
-                    <h2 class="h5"><a href="https://EZOfficeInventory.azurewebsites.net/dashBoard">ABC</a></h2>
+                    <h2 class="h5"><a href="https://salepurchasecompany.co.in/dashBoard">ABC</a></h2>
                 </div>
                 <!-- Small Brand information, appears on minimized sidebar-->
-                <div class="sidenav-header-logo"><a href="https://EZOfficeInventory.azurewebsites.net/dashBoard" class="brand-small text-center"> <strong>A</strong><strong>B</strong></a></div>
+                <div class="sidenav-header-logo"><a href="https://salepurchasecompany.co.in/dashBoard" class="brand-small text-center"> <strong>A</strong><strong>B</strong></a></div>
             </div>
             <!-- Sidebar Navigation Menus-->
             <div class="main-menu">
                 <ul id="side-main-menu" class="side-menu list-unstyled">
                     <li class="active"><a href="#dashboard" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Master</a>
                         <ul id="dashboard" class="collapse list-unstyled show">
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/category">Category Master</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/dashBoard">Customer Master</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/uomMaster">UOM Master</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/ItemMaster">Item Master</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/partyMaster">Party Master</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/category">Category Master</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/dashBoard">Customer Master</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/uomMaster">UOM Master</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/ItemMaster">Item Master</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/partyMaster">Party Master</a></li>
                        </ul>
                     </li>
                     <li class="active"><a href="#purchase" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-bar-chart"></i>Transaction</a>
                         <ul id="purchase" class="collapse list-unstyled show">
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/purchase">Purchase Order</a></li>
-                            <li class="active"><a href="https://EZOfficeInventory.azurewebsites.net/salesOrder">Sales Order</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/makePayment">Make Payment</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/receicePymnt">Received Payment</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/mrn">Material Receipt</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/rfq">Quotation</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/purchase">Purchase Order</a></li>
+                            <li class="active"><a href="https://salepurchasecompany.co.in/salesOrder">Sales Order</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/makePayment">Make Payment</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/receicePymnt">Received Payment</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/mrn">Material Receipt</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/rfq">Quotation</a></li>
                         </ul>
                     </li> 
                    <li class="active"><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Reports</a>
                   	<ul id="reports" class="collapse list-unstyled show">
-                  	<li><a href="https://EZOfficeInventory.azurewebsites.net/stockReport">Stock Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/stockReport">Stock Report</a></li>
                   	</ul>
                   </li>                                       
                  	</ul>
@@ -85,7 +85,7 @@
                            
                             <li class="login-user"><a href="#">Welcome <span>ABC</span></a></li>
                             <!-- Log out-->
-                            <li class="nav-item"><a href="https://ezofficeinventory.azurewebsites.net/" class="nav-link logout"> <span class="d-none d-sm-inline-block">Logout</span><i class="fa fa-sign-out"></i></a></li>
+                            <li class="nav-item"><a href="https://salepurchasecompany.co.in/" class="nav-link logout"> <span class="d-none d-sm-inline-block">Logout</span><i class="fa fa-sign-out"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -342,12 +342,14 @@
 	    		if ("${so.getTowerNo()}" != "") {
 	    			//$('#lstTowerNo').val("${so.getTowerNo()}");
 	    			$('#lstTowerNo').html('');
+	    			//$('#lstTowerNo').find('option[value="${so.getTowerId()}"]').remove();
 	    			$('#lstTowerNo').append('<option value='+"${so.getTowerId()}"+'>'+"${so.getTowerNo()}"+'<->'+"${so.getTowerDescription()}"+'</option>');
-	    			$('#lstTowerNo').attr('disabled', true);
+	    			//$('#lstTowerNo').attr('disabled', true);
+	    			
 	    		}	
 	    		if ("${so.getFlatNo()}" != "0") {
 	    			$('#txtFlatNumber').val("${so.getFlatNo()}");
-	    			$('#txtFlatNumber').attr('disabled', true);
+	    			//$('#txtFlatNumber').attr('disabled', true);
 	    		}	  
 	    		if ("${so.getRemarks()}" != "") {
 	    			$('#txtRemarks').val("${so.getRemarks()}");
@@ -384,7 +386,7 @@
 	    function fillSoDtlDataGrid(soId) {
 			$.ajax({
 				//url: '/EZOfficeInventory/Fill-SO-DTL-GRID-DATA',
-				url: 'https://EZOfficeInventory.azurewebsites.net/Fill-SO-DTL-GRID-DATA',
+				url: 'https://salepurchasecompany.co.in/Fill-SO-DTL-GRID-DATA',
 		     	type: 'POST',
 				contentType: 'application/json',	
 				   data: JSON.stringify(
@@ -408,8 +410,8 @@
   				            		'<td>'+ data[i].uomDesc +'</td>'+
   				            		'<td>'+ data[i].soDtlDate +'</td>'+
   				            		'<td>'+ data[i].gstPct +'</td>'+
-  				            		'<td><input type="text" class="form-control" id="txtQty" onkeypress="return isNumber(event)" placeholder="Qty" value="'+ data[i].soQty +'"></td>'+
-  				            		'<td><input type="text" class="form-control" id="txtRate" onkeypress="return isNumber(event)" placeholder="Rate" value="'+ data[i].soRate +'"></td>'+
+  				            		'<td><input type="text" class="form-control" id="txtQty" placeholder="Qty" value="'+ data[i].soQty +'"></td>'+
+  				            		'<td><input type="text" class="form-control" id="txtRate" placeholder="Rate" value="'+ data[i].soRate +'"></td>'+
   				            		'<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount" value="'+ data[i].soAmount +'"></td>'+
   				            		'<td>'+delBtn+'</td>'+
   				            		+'</tr>');
@@ -428,7 +430,7 @@
 	    function fillSoDtlDataGridFromRFQ(rfqId) {
 			$.ajax({
 				//url: '/EZOfficeInventory/bindQuotationDataGrid',
-				url: 'https://EZOfficeInventory.azurewebsites.net/bindQuotationDataGrid',
+				url: 'https://salepurchasecompany.co.in/bindQuotationDataGrid',
 		     	type: 'POST',
 				contentType: 'application/json',	
 				   data: JSON.stringify(
@@ -465,8 +467,8 @@
   	  				            		'<td>'+ data[i].uomDesc +'</td>'+
   	  				            		'<td>'+ data[i].rfqDtlDate +'</td>'+
   	  				            		'<td>'+ data[i].gstPct +'</td>'+
-  	  				            		'<td><input type="text" class="form-control" id="txtQty" onkeypress="return isNumber(event)" placeholder="Qty" value="'+ data[i].rfqQty +'"></td>'+
-  	  				            		'<td><input type="text" class="form-control" id="txtRate" onkeypress="return isNumber(event)" placeholder="Rate" value="'+ data[i].rfqRate +'"></td>'+
+  	  				            		'<td><input type="text" class="form-control" id="txtQty"  placeholder="Qty" value="'+ data[i].rfqQty +'"></td>'+
+  	  				            		'<td><input type="text" class="form-control" id="txtRate"  placeholder="Rate" value="'+ data[i].rfqRate +'"></td>'+
   	  				            		'<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount" value="'+ data[i].rfqAmount +'"></td>'+
   	  				            		'<td>'+delBtn+'</td>'+
   	  				            		+'</tr>');  				  				
@@ -486,7 +488,7 @@
 	    function fillTowerData(towerId) {
 	    	$.ajax({
 	    		//url: '/EZOfficeInventory/get-tower-list',
-	    		url: 'https://EZOfficeInventory.azurewebsites.net/get-tower-list',
+	    		url: 'https://salepurchasecompany.co.in/get-tower-list',
 	         	type: 'POST',
 	    		contentType: 'application/json',	
 	    		   data: JSON.stringify(
@@ -532,7 +534,7 @@
         	if ((flatNumber != "") && (towerNumber != "0")) {
             	$.ajax({
     	    		//url: '/EZOfficeInventory/search-customer-by-flatNo',
-    	    		url: 'https://EZOfficeInventory.azurewebsites.net/search-customer-by-flatNo',
+    	    		url: 'https://salepurchasecompany.co.in/search-customer-by-flatNo',
     	         	type: 'POST',
     	    		contentType: 'application/json',	
     	    		   data: JSON.stringify(
@@ -585,7 +587,7 @@
         	if ((flatNumber != "") && (towerNumber != "0")) {
             	$.ajax({
     	    		//url: '/EZOfficeInventory/findRFQInSalesOrder',
-    	    		url: 'https://EZOfficeInventory.azurewebsites.net/findRFQInSalesOrder',
+    	    		url: 'https://salepurchasecompany.co.in/findRFQInSalesOrder',
     	         	type: 'POST',
     	    		contentType: 'application/json',	
     	    		   data: JSON.stringify(
@@ -622,7 +624,7 @@
     		} else {
     			 $.ajax({
     				 //url: '/EZOfficeInventory/Search-ItemMaster-Data',
-    				 url: 'https://EZOfficeInventory.azurewebsites.net/Search-ItemMaster-Data',
+    				 url: 'https://salepurchasecompany.co.in/Search-ItemMaster-Data',
     				 type: 'Post',
     				 contentType: 'application/json',
   				   	 data: JSON.stringify(
@@ -724,11 +726,14 @@
   			     // comment out the following line for production version:
   			     //el.value="id:"+el.id+", name:"+el.name;
   			     if (el.id == "txtAmt") {
-  			    	 txtTotalAmount = txtTotalAmount + parseFloat(el.value); 
+  			    	 txtTotalAmount = roundToTwo(txtTotalAmount + parseFloat(el.value)); 
   			     }
   			  });    		
   			  //alert(txtTotalAmount);
   			  $("#lblTotal").html(txtTotalAmount);
+  	}
+  	function roundToTwo(num) {
+  	    return +(Math.round(num + "e+2")  + "e-2");
   	}
   	$("#sotable").on('keyup','#txtQty',function(){
 		var qty= $(this).closest('tr').find('#txtQty').val();
@@ -866,7 +871,7 @@
 			console.log(arrayObj);
 			var xhr = new XMLHttpRequest();
 			//xhr.open("POST", "/EZOfficeInventory/Save-SO-Data", true);
-			xhr.open("POST", "https://EZOfficeInventory.azurewebsites.net/Save-SO-Data", true);
+			xhr.open("POST", "https://salepurchasecompany.co.in/Save-SO-Data", true);
 			xhr.setRequestHeader("Content-Type", "application/json");
 			xhr.onreadystatechange = function () {
 			  if (xhr.readyState === 4 && xhr.status === 200) {
@@ -900,7 +905,7 @@
     function fillContractorData(contractorId) {
     	$.ajax({
     		//url: '/EZOfficeInventory/getContractorData',
-    		url: 'https://EZOfficeInventory.azurewebsites.net/getContractorData',
+    		url: 'https://salepurchasecompany.co.in/getContractorData',
          	type: 'POST',
     		contentType: 'application/json',	
     		   data: JSON.stringify(
@@ -928,21 +933,21 @@
     }	
 	function exitToHomePage() {
 		//location.href = "/EZOfficeInventory/salesOrder";
-		location.href = "https://EZOfficeInventory.azurewebsites.net/salesOrder";
+		location.href = "https://salepurchasecompany.co.in/salesOrder";
 	}
 	function refreshData() {
 		//location.href = "/EZOfficeInventory/AddNewSalesOrder";
-		location.href = "https://EZOfficeInventory.azurewebsites.net/AddNewSalesOrder";
+		location.href = "https://salepurchasecompany.co.in/AddNewSalesOrder";
 	}	
 	function vwReport() {
 		srchData = {
 				"salesOrderId" : salesOrderId
 			};
 			//window.location.href = "/EZOfficeInventory/PrintPO?"
-			 //window.location.href = "https://EZOfficeInventory.azurewebsites.net/OpenPurchaseOrder?"
+			 //window.location.href = "https://salepurchasecompany.co.in/OpenPurchaseOrder?"
 				//	+ $.param(srchData);
 			//var poLink = "/EZOfficeInventory/PrintSalesOrder?"+ $.param(srchData);
-			var poLink = "https://EZOfficeInventory.azurewebsites.net/PrintSalesOrder?"+ $.param(srchData);
+			var poLink = "https://salepurchasecompany.co.in/PrintSalesOrder?"+ $.param(srchData);
 			popitup(poLink);
 	}
 	function popitup(url) {

@@ -104,8 +104,7 @@
 			//  alert("login")
 			$.ajax({
 						//url : '/EZOfficeInventory/login',
-						//url : 'https://salepurchasecompany.co.in/login',
-						url : 'https://EZOfficeInventory.azurewebsites.net/login',
+						url : 'https://salepurchasecompany.co.in/login',
 						type : 'POST',
 						contentType : 'application/json',
 						data : JSON.stringify({
@@ -117,8 +116,7 @@
 							if ((data.loginUserName != null)) {
 
 								//location.href = "/EZOfficeInventory/dashBoard";
-								//location.href = "https://salepurchasecompany.co.in/dashBoard";
-								location.href = "https://EZOfficeInventory.azurewebsites.net/dashBoard";
+								location.href = "https://salepurchasecompany.co.in/dashBoard";
 							} else {
 								$("#msgId").addClass("alert alert-success");
 								$("#alertMsg").append(data.errorMesage)								

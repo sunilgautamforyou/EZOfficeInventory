@@ -38,36 +38,36 @@
             <div class="sidenav-header d-flex align-items-center justify-content-center">
                 <!-- User Info-->
                 <div class="sidenav-header-inner text-center">
-                    <h2 class="h5"><a href="https://EZOfficeInventory.azurewebsites.net/dashBoard">ABC</a></h2>
+                    <h2 class="h5"><a href="https://salepurchasecompany.co.in/dashBoard">ABC</a></h2>
                 </div>
                 <!-- Small Brand information, appears on minimized sidebar-->
-                <div class="sidenav-header-logo"><a href="https://EZOfficeInventory.azurewebsites.net/dashBoard" class="brand-small text-center"> <strong>A</strong><strong>B</strong></a></div>
+                <div class="sidenav-header-logo"><a href="https://salepurchasecompany.co.in/dashBoard" class="brand-small text-center"> <strong>A</strong><strong>B</strong></a></div>
             </div>
             <!-- Sidebar Navigation Menus-->
             <div class="main-menu">
                 <ul id="side-main-menu" class="side-menu list-unstyled">
                     <li class="active"><a href="#dashboard" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Master</a>
                         <ul id="dashboard" class="collapse list-unstyled show">
-                           <li><a href="https://EZOfficeInventory.azurewebsites.net/category">Category Master</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/dashBoard">Customer Master</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/uomMaster">UOM Master</a></li>
-                            <li class="active"><a href="https://EZOfficeInventory.azurewebsites.net/ItemMaster">Item Master</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/partyMaster">Party Master</a></li>
+                           <li><a href="https://salepurchasecompany.co.in/category">Category Master</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/dashBoard">Customer Master</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/uomMaster">UOM Master</a></li>
+                            <li class="active"><a href="https://salepurchasecompany.co.in/ItemMaster">Item Master</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/partyMaster">Party Master</a></li>
                        </ul>
                     </li>
                     <li class="active"><a href="#purchase" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-bar-chart"></i>Transaction</a>
                         <ul id="purchase" class="collapse list-unstyled show">
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/purchase">Purchase Order</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/salesOrder">Sales Order</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/makePayment">Make Payment</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/receicePymnt">Received Payment</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/mrn">Material Receipt</a></li>
-                            <li><a href="https://EZOfficeInventory.azurewebsites.net/rfq">Quotation</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/purchase">Purchase Order</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/salesOrder">Sales Order</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/makePayment">Make Payment</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/receicePymnt">Received Payment</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/mrn">Material Receipt</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/rfq">Quotation</a></li>
                         </ul>
                     </li> 
                    <li class="active"><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Reports</a>
                   	<ul id="reports" class="collapse list-unstyled show">
-                  	<li><a href="https://EZOfficeInventory.azurewebsites.net/stockReport">Stock Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/stockReport">Stock Report</a></li>
                   	</ul>
                   </li>                                       
                  	</ul>
@@ -86,7 +86,7 @@
                            
                             <li class="login-user"><a href="#">Welcome <span>ABC</span></a></li>
                             <!-- Log out-->
-                            <li class="nav-item"><a href="https://ezofficeinventory.azurewebsites.net/" class="nav-link logout"> <span class="d-none d-sm-inline-block">Logout</span><i class="fa fa-sign-out"></i></a></li>
+                            <li class="nav-item"><a href="https://salepurchasecompany.co.in/" class="nav-link logout"> <span class="d-none d-sm-inline-block">Logout</span><i class="fa fa-sign-out"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -257,8 +257,8 @@
 			$("#alertMsg").append("Please enter details then click on search button. ");
 		} else {
 			   $.ajax({
-				  // url: '/EZOfficeInventory/get-uom-search-list',
-				   url: 'https://EZOfficeInventory.azurewebsites.net/get-uom-search-list',
+				   //url: '/EZOfficeInventory/get-uom-search-list',
+				   url: 'https://salepurchasecompany.co.in/get-uom-search-list',
 				    type: 'Post',
 				    contentType: 'application/json',
 				   data: JSON.stringify(
@@ -370,7 +370,7 @@
     			console.log(data);
  				var xhr = new XMLHttpRequest();
  				//xhr.open("POST", "/EZOfficeInventory/Create-New-ItemMaster", true);
- 				xhr.open("POST", "https://EZOfficeInventory.azurewebsites.net/Create-New-ItemMaster", true);
+ 				xhr.open("POST", "https://salepurchasecompany.co.in/Create-New-ItemMaster", true);
  				xhr.setRequestHeader("Content-Type", "application/json");
  				xhr.onreadystatechange = function () {
  					if (xhr.readyState === 4 && xhr.status === 200) {
@@ -430,12 +430,12 @@
     });
 	function exitToHomePage() {
 		//location.href = "/EZOfficeInventory/ItemMaster";
-		location.href = "https://EZOfficeInventory.azurewebsites.net/ItemMaster";
+		location.href = "https://salepurchasecompany.co.in/ItemMaster";
 	}    
     function fillCategoryMaster() {
     	$.ajax({
     		//url: '/EZOfficeInventory/getAllCategoryMaster',
-    		url: 'https://EZOfficeInventory.azurewebsites.net/getAllCategoryMaster',
+    		url: 'https://salepurchasecompany.co.in/getAllCategoryMaster',
          	type: 'POST',
     		contentType: 'application/json',	
     		   data: JSON.stringify(
@@ -466,7 +466,7 @@
     function fillSubCategoryMaster(categId) {
     	$.ajax({
     		//url: '/EZOfficeInventory/getSubCategoryItem',
-    		url: 'https://EZOfficeInventory.azurewebsites.net/getSubCategoryItem',
+    		url: 'https://salepurchasecompany.co.in/getSubCategoryItem',
          	type: 'POST',
     		contentType: 'application/json',	
     		   data: JSON.stringify(

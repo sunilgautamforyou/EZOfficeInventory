@@ -323,7 +323,7 @@ jQuery(document).ready(function($){
 function openSearchBox(searchDataVal) {
 	 $.ajax({
 		 //url: '/EZOfficeInventory/getAllSalesOrderDtlReport',
-		 url: 'https://EZOfficeInventory.azurewebsites.net/getAllSalesOrderDtlReport',
+		 url: 'https://salepurchasecompany.co.in/getAllSalesOrderDtlReport',
 		 type: 'Post',
 		 contentType: 'application/json',
 		   	 data: JSON.stringify(
