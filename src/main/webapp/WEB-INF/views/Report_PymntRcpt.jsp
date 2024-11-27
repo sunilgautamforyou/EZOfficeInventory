@@ -192,7 +192,7 @@
 			                            <Button ID="btnShow" onclick="showReport();" class="common-btn">Show</Button>&nbsp;&nbsp;&nbsp;
 			                            <Button ID="btnRefresh"onclick="refreshData()" class="common-btn">Refresh</Button>&nbsp;&nbsp;&nbsp;
 			                            <Button ID="btnExport"onclick="exportToExcel()" class="common-btn">Export</Button>&nbsp;&nbsp;&nbsp;
-			                            <Button ID="btnPrint"onclick="printOut()" class="common-btn">Print</Button>
+			                            <Button ID="btnPrint"onclick="printCurrentReport()" class="common-btn">Print</Button>
 			                            </div>
 			                            
 			                         </div>							       				
@@ -319,6 +319,8 @@
    
     $('#lstTowerNo').on('change', function() {
 	   $('#txtFlatNumber').focus();
+		$('#pymntGridBody').html('');
+		$('#pymntGridBody').hide();	   
    });   
    
     function setCurrentDate() {
@@ -338,8 +340,8 @@
     function fillSoNumber() {
 	$('#lstSoNo').html('');
 	 $.ajax({
-   		url: '/EZOfficeInventory/fillSOInRecvdPymntPG',
-   		//url: 'https://salepurchasecompany.co.in/fillSOInRecvdPymntPG',
+   		//url: '/EZOfficeInventory/fillSOInRecvdPymntPG',
+   		url: 'https://salepurchasecompany.co.in/fillSOInRecvdPymntPG',
         	type: 'POST',
    		contentType: 'application/json',	
    		   data: JSON.stringify(
@@ -368,8 +370,8 @@
 	   $('#lstSoNo').html('');
 	   $('#lstSoNo').append('<option value=0>Choose Sales Order</option>');
 	   $.ajax({
-	   		url: '/EZOfficeInventory/get-tower-list',
-	   		//url: 'https://salepurchasecompany.co.in/get-tower-list',
+	   		//url: '/EZOfficeInventory/get-tower-list',
+	   		url: 'https://salepurchasecompany.co.in/get-tower-list',
 	        	type: 'POST',
 	   		contentType: 'application/json',	
 	   		   data: JSON.stringify(
@@ -428,8 +430,8 @@
 	   	$('#btnPrint').hide();
 	   	$('#pymntGridBody').html('');
 	   	$.ajax({
-	   		url: '/EZOfficeInventory/getCustomerSOAStmtData',
-	   		//url: 'https://salepurchasecompany.co.in/getCustomerSOAStmtData',
+	   		//url: '/EZOfficeInventory/getCustomerSOAStmtData',
+	   		url: 'https://salepurchasecompany.co.in/getCustomerSOAStmtData',
        	type: 'POST',
 	   		contentType: 'application/json',	
 	   		   data: JSON.stringify(
@@ -446,6 +448,7 @@
 	   		   		if (data.length > 0) {
 	   		   			$('#pymntGridTab').show();
 	   		   			$('#pymntGridBody').show();
+	   		   			$('#btnPrint').show();
 	   		   			for(var i=0;i<data.length;i++){
   		   				$('#pymntGridBody').append(
 		                        '<tr>'+
@@ -494,8 +497,8 @@
    	$('#btnPrint').hide();
    	$('#pymntGridBody').html('');
    	$.ajax({
-   		url: '/EZOfficeInventory/getSOPymntRecvdData',
-   		//url: 'https://salepurchasecompany.co.in/getSOPymntRecvdData',
+   		//url: '/EZOfficeInventory/getSOPymntRecvdData',
+   		url: 'https://salepurchasecompany.co.in/getSOPymntRecvdData',
         	type: 'POST',
    		contentType: 'application/json',	
    		   data: JSON.stringify(
@@ -569,8 +572,8 @@
    	if ((flatNumber != "") && (towerNumber != "0")) {
    		$('#lstCustomerNm').html('');
    		$.ajax({
-	    		url: '/EZOfficeInventory/search-customer-by-flatNo',
-	    		//url: 'https://salepurchasecompany.co.in/search-customer-by-flatNo',
+	    		//url: '/EZOfficeInventory/search-customer-by-flatNo',
+	    		url: 'https://salepurchasecompany.co.in/search-customer-by-flatNo',
 	         	type: 'POST',
 	    		contentType: 'application/json',	
 	    		   data: JSON.stringify(
@@ -661,6 +664,16 @@
 		element.click();
 		document.body.removeChild(element);
 	}	
+	
+	function printCurrentReport() {
+	   if ($('#chkRptDtl').is(':checked')) {
+		   printOut();
+	   }
+	   if ($('#chkRptSmry').is(':checked')) {
+		   printStmtRpt();
+	   }			
+	}
+	
  	function printOut() {
 		var towerNo = $('#lstTowerNo').val();
 		var txtFlatNumber =  $('#txtFlatNumber').val();
@@ -668,6 +681,8 @@
 		var customerMobileNo = $('#txtCustomerMobile').val();
 		var salesOrderId = $('#lstSoNo').val();
 		var customerName = $("#lstCustomerNm option:selected").text();
+		var txtFromDate = $('#txtFromDate').val();
+		var txtToDate = $('#txtToDate').val();
  		
  		srchData = {
 		   		"towerNo":towerNo,
@@ -675,28 +690,31 @@
 			    "customerId":customerId,
 			    "customerMobileNo":customerMobileNo,
 			    "salesOrderId":salesOrderId,
-			    "customerName":customerName
+			    "customerName":customerName,
+			    "dtFrom":txtFromDate,
+			    "dtTo":txtToDate
 			};
 			//var poLink = "/EZOfficeInventory/reportPymntSOA?"+ $.param(srchData);
 			var poLink = "https://salepurchasecompany.co.in/reportPymntSOA?"+ $.param(srchData);
 			popitup(poLink);		
 	} 
- 	function openDtlPymntRpt(customerId) {
-		var towerNo = $('#lstTowerNo').val();
+ 	function printStmtRpt() {
+		var towerNo = $("#lstTowerNo option:selected").text();
 		var flatNo = $('#txtFlatNumber').val();
+		var txtFromDate = $('#txtFromDate').val();
+		var txtToDate = $('#txtToDate').val();
 		var customerId = $('#lstCustomerNm').val();
-		var customerMobile = $('#txtCustomerMobile').val();
-		
+		var towerId = $('#lstTowerNo').val();
  		srchData = {
 		   		"towerNo":towerNo,
 		   		"flatNo":flatNo,
+			    "dtFrom":txtFromDate,
+			    "dtTo":txtToDate,
 			    "customerId":customerId,
-			    "customerMobileNo":customerMobile,
-			    "salesOrderId":"",
-			    "customerName":$("#lstCustomerNm option:selected").text()
+			    "towerId":towerId
 			}; 	
-		//var poLink = "/EZOfficeInventory/reportPymntSOA?"+ $.param(srchData);
-		var poLink = "https://salepurchasecompany.co.in/reportPymntSOA?"+ $.param(srchData);
+		//var poLink = "/EZOfficeInventory/reportPymntSOAStmt?"+ $.param(srchData);
+		var poLink = "https://salepurchasecompany.co.in/reportPymntSOAStmt?"+ $.param(srchData);
 		popitup(poLink);		
  	}
 	function popitup(url) {
@@ -743,10 +761,12 @@
 		if($(this).is(":checked")) {
 			$('#chkRptDtl').prop('checked', false);
 			$('#lstSoNo').attr('disabled', true);	
+			$('#btnPrint').hide();
 			switchGrid("Summary");
 		} else {
 			$('#chkRptDtl').prop('checked', true);
 			$('#lstSoNo').attr('disabled', false);	
+			$('#btnPrint').hide();
 			switchGrid("Dtl");
 		}
 	});	
@@ -762,8 +782,8 @@
 		   return false;
 	   }
 	   $.ajax({
-		 url: '/EZOfficeInventory/searchCustomerData',
-		 //url: 'https://salepurchasecompany.co.in/searchCustomerData',
+		 //url: '/EZOfficeInventory/searchCustomerData',
+		 url: 'https://salepurchasecompany.co.in/searchCustomerData',
 		   type: 'POST',
 		   contentType: 'application/json',
 		   data: JSON.stringify(

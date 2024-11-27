@@ -195,6 +195,8 @@ Supplier Mobile
         <td></td>
         </tr>       
 </table>
+ <input type="hidden" id="hdnFromDate" value="${vendSOA.getFromDate()}"/>
+ <input type="hidden" id="hdnToDate" value="${vendSOA.getToDate()}"/>
 </div>
 </div>
 <div class="table-repater table-responsive">
@@ -255,9 +257,10 @@ Supplier Mobile
   <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
   <script type="text/javascript">
   $(document).ready(function () { 
-	  getPOPaidData(${vendSOA.getPoId()},${vendSOA.getSupplierId()});
+	  getPOPaidData(${vendSOA.getPoId()},${vendSOA.getSupplierId()},
+			  $('#hdnFromDate').val(),$('#hdnToDate').val());
   });
-  function getPOPaidData(poId,partyId) {
+  function getPOPaidData(poId,partyId,fromDate,toDate) {
   	var tabRowLen = 1; 
   	var totalBill = 0;
   	var runningBalance = 0;
@@ -271,8 +274,10 @@ Supplier Mobile
   		contentType: 'application/json',	
   		   data: JSON.stringify(
   		   	{
-  		   		"searchVarData":poId,
-  		   		"customerName":partyId
+  		   		"poId":poId,
+  		   		"customerId":partyId,
+   		   		"fromDate":fromDate,
+  		   		 "toDate":toDate  		   		
 	   		   	}),
   		   	dataType: 'json',
   		   	success: function (data) {
@@ -343,4 +348,4 @@ Supplier Mobile
 	}
   </script>	 
 </body>
-</html>
+</html>z

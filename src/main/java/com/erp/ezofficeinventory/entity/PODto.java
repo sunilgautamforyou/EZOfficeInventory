@@ -28,6 +28,7 @@ public class PODto {
 	private double totalBillAmount;
 	private double totalPaidAmount;
 	private double advanceAmount;
+	private String strMessage;
 	
 	
 	public String getsMode() {
@@ -209,6 +210,15 @@ public class PODto {
 	}
 	public void setAdvanceAmount(double advanceAmount) {
 		this.advanceAmount = advanceAmount;
+	}
+	
+	
+	
+	public String getStrMessage() {
+		return strMessage;
+	}
+	public void setStrMessage(String strMessage) {
+		this.strMessage = strMessage;
 	}
 	@Override
 	public String toString() {

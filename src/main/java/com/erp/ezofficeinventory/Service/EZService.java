@@ -78,11 +78,13 @@ public interface EZService {
 	public SalesOrderDto getSaleOrderPymntDtls(String soId);
 	public List<SalesOrderDto> getSOPymntRecvdData(PrjSearch prjSrch);
 	public List<SalesOrderDto> getCustomerListFromSO();
-	public List<PODto> getPymntDataByPO(String customerId,String poId);
+	public List<PODto> getPymntDataByPO(PrjSearch prjSrch);
 	public PODto getTotalPaymentDetailsByPONo(String poId);
 	public List<PartyMasterDto> getVendorWhichPOExists();
 	public List<CustomerDto> searchCustomerData(PrjSearch searchTextData);
 	public List<SalesOrderDto> getCustomerSOAStmtData(PrjSearch prjSrch);
 	public List<CustomerDto> fillCustomerByFrmSO(String customerId);
 	public ResponseWrapper iUpdateReceivedPayment(ReceivedPymntDto receivedPaymentDto);
+	public List<PartyMasterDto> getVendorPoDtWisDtos(PrjSearch prjSrch);
+	public List<PODto> fillPOInPymntRpt(PrjSearch prjSrch);
 }

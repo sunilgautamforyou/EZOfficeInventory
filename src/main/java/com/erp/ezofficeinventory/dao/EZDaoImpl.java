@@ -414,14 +414,13 @@ public class EZDaoImpl implements EZDao {
 	}
 
 	@Override
-	public List<PODto> getPymntDataByPO(String customerId, String poId) {
+	public List<PODto> getPymntDataByPO(PrjSearch prjSrch) {
 		List<PODto> lstPoDto = new ArrayList<>();
 		try {
-			if (poId.equalsIgnoreCase("0")) {
-				poId = null;
+			if (prjSrch.getPoId().equalsIgnoreCase("0")) {
+				prjSrch.setPoId(null);
 			}
-			
-			lstPoDto = sqlMapperDaoObj.getPymntDataByPO(customerId, poId);
+			lstPoDto = sqlMapperDaoObj.getPymntDataByPO(prjSrch);
 		} catch (Exception ex) {
 			System.out.println(Utility.getStackTrace(ex));
 		}
@@ -461,6 +460,16 @@ public class EZDaoImpl implements EZDao {
 	@Override
 	public int iUpdateReceivedPayment(ReceivedPymntDto receivedPaymentDto) {
 		return sqlMapperDaoObj.iUpdateReceivedPayment(receivedPaymentDto);
+	}
+
+	@Override
+	public List<PartyMasterDto> getVendorPoDtWisDtos(PrjSearch prjSrch) {
+		return sqlMapperDaoObj.getVendorPoDtWise(prjSrch);
+	}
+
+	@Override
+	public List<PODto> fillPOInPymntRpt(PrjSearch prjSrch) {
+		return sqlMapperDaoObj.fillPOInPymntRpt(prjSrch);
 	}
 
 }

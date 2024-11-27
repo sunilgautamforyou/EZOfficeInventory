@@ -14,6 +14,7 @@ public class PartyMasterDto {
 	private String createdDt;
 	private String createdByName;
 	private String partyType;
+	private String strMessage;
 	
 	public int getPartyId() {
 		return partyId;
@@ -86,6 +87,12 @@ public class PartyMasterDto {
 	}
 	public void setPartyType(String partyType) {
 		this.partyType = partyType;
+	}
+	public String getStrMessage() {
+		return strMessage;
+	}
+	public void setStrMessage(String strMessage) {
+		this.strMessage = strMessage;
 	}
 	
 	

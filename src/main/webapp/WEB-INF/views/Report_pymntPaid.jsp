@@ -125,24 +125,34 @@
 		<div class="container-fluid">
 			<div class="card">
 				<div class="card-body">
-					<div class="container">
-						<div class="form-group row">
-							<label class="col-sm-4 col-md-2 col-form-label">Party Name</label>
-	                             <div class="col-sm-6 col-md-8 pl0">
-	                                 <select class="custom-select" id="lstPartyNo">
-	                                     <option value="0">Choose Any Party...</option>
-	                                   </select>   
-	                             </div>							
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-4 col-md-2 col-form-label">PO No</label>
-	                             <div class="col-sm-6 col-md-8 pl0">
-	                                 <select class="custom-select" id="lstPoNo">
-	                                     <option value="0">Choose PO No...</option>
-	                                   </select>   
-	                             </div>							
-						</div>		
-					</div>
+				<div class="container">
+                 <div class="form-group row">
+                 <label class="col-sm-4 col-md-1 col-form-label">From Date:</label>
+                     <div class="col-sm-6 col-md-3 pl0 cal-position">
+                       <input type="text" id="txtFromDate" class="form-control input-group date" placeholder="From Date">
+                          <i class="fa fa-calendar"></i>                                     
+                       </div>
+                       <label class="col-sm-4 col-md-1 col-form-label pl15">To Date:</label>
+                         <div class="col-sm-6 col-md-3 pl0 cal-position">
+                        <input type="text" id="txtToDate" class="form-control input-group date" placeholder="To Date">
+                          <i class="fa fa-calendar"></i>                                     
+                        </div>
+                  </div> 
+				<div class="form-group row">
+				<label class="col-sm-4 col-md-1 col-form-label">Party Name</label>
+                   <div class="col-sm-6 col-md-3 pl0">
+                       <select class="custom-select" id="lstPartyNo">
+                           <option value="0">Choose Any Party...</option>
+                         </select>   
+                   </div>	
+                  <label class="col-sm-4 col-md-1 col-form-label pl15">PO No</label>	
+                      <div class="col-sm-6 col-md-3 pl0">
+                        <select class="custom-select" id="lstPoNo">
+                            <option value="0">Choose PO No...</option>
+                       </select>   
+                  </div>					
+				</div>                  				
+				</div>
                    	<div id="msgId">
           			<h5 id="alertMsg"></h5>
           			</div> 
@@ -197,17 +207,62 @@
 	$('#btnPrint').hide(); 
 	$('#btnExport').hide();  
    $(document).ready(function () {
-   		loadPartyData();
+   	   $('.input-group.date').datepicker({
+   	       format: "dd-M-yy",
+   	       todayHighlight: true,
+   	       autoclose: true,
+   	       showMeridian: true,
+   	       startDate: "-365d",
+   	       endDate: "+30d",
+   	   }).on('changeDate', function (ev) {
+   	       $(this).datepicker('hide');
+   	    	loadPartyData();
+   	    	return validate();
+   	       //alert("DateChanged:"+$('#txtFromDate').val());
+   	   });       		
+	   	$('#txtFromDate').attr('readonly', true);
+		$('#txtFromDate').addClass('input-disabled');	
+		$('#txtToDate').attr('readonly', true);
+		$('#txtToDate').addClass('input-disabled');	  
+		setCurrentDate();
+		loadPartyData();
 	   });   
+   function validate() {
+		var fromDate = $('#txtFromDate').val();
+		var todate = $('#txtToDate').val();
+	   	if (Date.parse(fromDate) > Date.parse(todate)) {
+	   		alert("From Date Cannot Greator then ToDate");
+	   		setCurrentDate();
+	   		return false;
+	   	}
+		 return true;
+	}   
+   function setCurrentDate() {
+   	var today = new Date();
+   	var dd = String(today.getDate()).padStart(2, '0');
+   	//var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+   	var month = today.toLocaleString('default', { month: 'short' });
+
+   	var yyyy = today.getFullYear().toString().substr(-2);
+
+   	today = dd + '-' + month + '-' + yyyy;
+   		
+   	$("#txtFromDate").val('01' + '-' + month + '-' + yyyy);
+   	$("#txtToDate").val(today);
+   }         
     function loadPartyData() {
+    	$('#lstPartyNo').html('');
+    	$('#lstPartyNo').append('<option value=0>Choose Any Party...</option>');
     	$.ajax({
-    		url: '/EZOfficeInventory/get-all-HomePG-Party-data',
-    		//url: 'https://salepurchasecompany.co.in/get-all-HomePG-Party-data',
+    		//url: '/EZOfficeInventory/get-all-HomePG-Party-data',
+    		url: 'https://salepurchasecompany.co.in/get-all-HomePG-Party-data',
          	type: 'POST',
     		contentType: 'application/json',	
     		   data: JSON.stringify(
     		   	{
-    		   		"searchVarData":"poParty"
+    		   		"searchVarData":"poRptParty",
+    		   		"fromDate":$("#txtFromDate").val(),
+    		   		"toDate":$("#txtToDate").val()
 	   		   	}),
     		   	dataType: 'json',
     		   	success: function (data) {
@@ -222,7 +277,7 @@
      		        		supplierDataArray.push(supplierData);
     		        	}    		   			
     		   		} else {
-    		   			alert("No Party Dat")
+    		   			alert("No PO Created In Given Dates");
     		   		}
 
     		   	},
@@ -232,14 +287,18 @@
     	});    	
     }   	
     function fillPoNumber() {
+    	$('#lstPoNo').html('');
+    	$('#lstPoNo').append('<option value=0>Choose PO No...</option>');
     	$.ajax({
-    		url: '/EZOfficeInventory/fillPOInMakePymntPG',
-    		//url: 'https://salepurchasecompany.co.in/fillPOInMakePymntPG',
+    		//url: '/EZOfficeInventory/fillPOInPymntRpt',
+    		url: 'https://salepurchasecompany.co.in/fillPOInPymntRpt',
          	type: 'POST',
     		contentType: 'application/json',	
     		   data: JSON.stringify(
     		   	{
-    		   		"searchVarData":$('#lstPartyNo').val()
+    		   		"searchVarData":$('#lstPartyNo').val(),
+    		   		"fromDate":$("#txtFromDate").val(),
+    		   		"toDate":$("#txtToDate").val()
 	   		   	}),
     		   	dataType: 'json',
     		   	success: function (data) {
@@ -279,14 +338,16 @@
     	var runningBalance = 0;
     	$('#pymntGridBody').html('');
     	$.ajax({
-    		url: '/EZOfficeInventory/getAllPymentPaidHistoryData',
-    		//url: 'https://salepurchasecompany.co.in/getAllPymentPaidHistoryData',
+    		//url: '/EZOfficeInventory/getAllPymentPaidHistoryData',
+    		url: 'https://salepurchasecompany.co.in/getAllPymentPaidHistoryData',
          	type: 'POST',
     		contentType: 'application/json',	
     		   data: JSON.stringify(
     		   	{
-    		   		"searchVarData":poId,
-    		   		"customerName":partyId
+    		   		"poId":poId,
+    		   		"customerId":partyId,
+    		   		"fromDate":$("#txtFromDate").val(),
+    		   		"toDate":$("#txtToDate").val()
 	   		   	}),
     		   	dataType: 'json',
     		   	success: function (data) {
@@ -364,7 +425,9 @@
 			   		"supplierId":$('#lstPartyNo').val(),
 			   		"supplierName":stringify[0]["supplierNM"],
 				    "supplierMobileNo":stringify[0]["supplierPh"],
-				    "poId":$('#lstPoNo').val()
+				    "poId":$('#lstPoNo').val(),
+    		   		"fromDate":$("#txtFromDate").val(),
+    		   		"toDate":$("#txtToDate").val()
 				};
 				//var poLink = "/EZOfficeInventory/reportSupplierSOA?"+ $.param(srchData);
 				var poLink = "https://salepurchasecompany.co.in/reportSupplierSOA?"+ $.param(srchData);

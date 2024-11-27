@@ -13,6 +13,7 @@ public class PrjSearch {
 	private String towerName;
 	private String customerId;
 	private String salesOrderId;
+	private String towerId;
 	
 	private String supplierId;
 	private String supplierMobileNo;
@@ -154,6 +155,14 @@ public class PrjSearch {
 
 	public void setPoId(String poId) {
 		this.poId = poId;
+	}
+
+	public String getTowerId() {
+		return towerId;
+	}
+
+	public void setTowerId(String towerId) {
+		this.towerId = towerId;
 	}
 	
 	

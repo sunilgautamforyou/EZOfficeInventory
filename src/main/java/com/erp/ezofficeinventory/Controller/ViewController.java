@@ -218,7 +218,10 @@ public class ViewController {
 	public ModelAndView openPymntRcdSOA(@RequestParam("towerNo") String towerNo,
 			@RequestParam("flatNo") String flatNo,@RequestParam("customerId") String customerId,
 			@RequestParam("customerMobileNo") String customerMobileNo,@RequestParam("salesOrderId") String salesOrderId,
-			@RequestParam("customerName") String customerName) {
+			@RequestParam("customerName") String customerName,			
+			@RequestParam("dtFrom") String fromDate,
+			@RequestParam("dtTo") String toDate) 
+	{
 		PrjSearch projSrchData = new PrjSearch();
 		projSrchData.setTowerNo(towerNo +"/" + flatNo);
 		projSrchData.setFlatNo(flatNo==""?"0":flatNo);
@@ -227,22 +230,54 @@ public class ViewController {
 		projSrchData.setSalesOrderId(salesOrderId==""?"0":salesOrderId);
 		projSrchData.setCustomerName(customerName==""?"":customerName);
 		projSrchData.setTowerName(towerNo==""?"0":towerNo);
+		projSrchData.setFromDate(fromDate);
+		projSrchData.setToDate(toDate);
+		
 		
 		ModelAndView view = new ModelAndView();
 		view.setViewName("Print_customer_SOA");
 		view.addObject("rcvdSOA", projSrchData);
 		return view;
-	}		
+	}	
+	
+	@GetMapping("/reportPymntSOAStmt")
+	public ModelAndView openPymntRcvdSOAStmt(@RequestParam("towerNo") String towerNo,
+			@RequestParam("flatNo") String flatNo,
+			@RequestParam("dtFrom") String fromDate,
+			@RequestParam("dtTo") String toDate,
+			@RequestParam("customerId") String customerId,
+			@RequestParam("towerId") String towerId) {
+		PrjSearch projSrchData = new PrjSearch();
+		if (towerNo.trim().contains("Choose Tower Number..")) {
+			towerNo = "";
+		}
+		projSrchData.setTowerNo(towerNo);
+		projSrchData.setFlatNo(flatNo==""?"0":flatNo);
+		projSrchData.setPoId(flatNo==""?"":flatNo);
+		projSrchData.setFromDate(fromDate);
+		projSrchData.setToDate(toDate);
+		projSrchData.setCustomerId(customerId);
+		projSrchData.setTowerId(towerId);
+		ModelAndView view = new ModelAndView();
+		view.setViewName("ReceivedPymntSOA");
+		view.addObject("rcvdSOA", projSrchData);		
+		return view;
+	}
 	
 	@GetMapping("/reportSupplierSOA")
 	public ModelAndView openSupplierPymntSOA(@RequestParam("supplierId") String supplierId,
 			@RequestParam("supplierName") String supplierName,@RequestParam("supplierMobileNo") String supplierMobileNo,
-			@RequestParam("poId") String poId) {
+			@RequestParam("poId") String poId,
+			@RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate
+			) {
 		PrjSearch prjSrchData = new PrjSearch();
 		prjSrchData.setSupplierId(supplierId);
 		prjSrchData.setSupplierName(supplierName);
 		prjSrchData.setSupplierMobileNo(supplierMobileNo);
 		prjSrchData.setPoId(poId);
+		prjSrchData.setFromDate(fromDate);
+		prjSrchData.setToDate(toDate);
 		
 		ModelAndView view = new ModelAndView();
 		view.setViewName("PrintVendor_SOA");

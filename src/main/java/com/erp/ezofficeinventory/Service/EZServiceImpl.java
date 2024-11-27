@@ -679,8 +679,10 @@ public class EZServiceImpl implements EZService {
 	public List<SalesOrderDto> getSOPymntRecvdData(PrjSearch prjSrch) {
 		List<SalesOrderDto> arrSalesOrderDtoObj = new ArrayList<>();
 		try {
-			prjSrch.setFromDate(new SimpleDateFormat("yyyy-MM-dd").parse(prjSrch.getFromDate()).toString());
-			prjSrch.setToDate(new SimpleDateFormat("yyyy-MM-dd").parse(prjSrch.getToDate()).toString());
+			Date dtFrom = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getFromDate());
+			Date dtToDate = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getToDate());
+			prjSrch.setFromDate(new SimpleDateFormat("yyyy-MM-dd").format(dtFrom));
+			prjSrch.setToDate(new SimpleDateFormat("yyyy-MM-dd").format(dtToDate));
 			arrSalesOrderDtoObj = ezDaoObj.getSOPymntRecvdData(prjSrch);
 		} catch (Exception ex) {
 			arrSalesOrderDtoObj.get(0).setBlnTranStatus(false);
@@ -699,8 +701,18 @@ public class EZServiceImpl implements EZService {
 
 
 	@Override
-	public List<PODto> getPymntDataByPO(String customerId, String poId) {
-		return ezDaoObj.getPymntDataByPO(customerId, poId);
+	public List<PODto> getPymntDataByPO(PrjSearch prjSrch) {
+		List<PODto> dtpPoObj = new ArrayList<>();
+		try {
+			Date dtFrom = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getFromDate());
+			Date dtToDate = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getToDate());
+			prjSrch.setFromDate(new SimpleDateFormat("yyyy-MM-dd").format(dtFrom));
+			prjSrch.setToDate(new SimpleDateFormat("yyyy-MM-dd").format(dtToDate));
+			dtpPoObj = ezDaoObj.getPymntDataByPO(prjSrch);
+		} catch (Exception ex) {
+			dtpPoObj.get(0).setStrMessage(Utility.getStackTrace(ex));
+		}
+		return dtpPoObj;
 	}
 
 
@@ -737,9 +749,14 @@ public class EZServiceImpl implements EZService {
 	public List<SalesOrderDto> getCustomerSOAStmtData(PrjSearch prjSrch) {
 		List<SalesOrderDto> lstSalesOrderDto = new ArrayList<>();
 		try {
+			Date dtFrom = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getFromDate());
+			Date dtToDate = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getToDate());
+			prjSrch.setFromDate(new SimpleDateFormat("yyyy-MM-dd").format(dtFrom));
+			prjSrch.setToDate(new SimpleDateFormat("yyyy-MM-dd").format(dtToDate));
 			lstSalesOrderDto = ezDaoObj.getCustomerSOAStmtData(prjSrch);
 		} catch (Exception ex) {
 			System.out.println(Utility.getStackTrace(ex));
+			lstSalesOrderDto.get(0).setStrMessage(Utility.getStackTrace(ex));
 		}
 		return lstSalesOrderDto;
 	}
@@ -766,6 +783,40 @@ public class EZServiceImpl implements EZService {
 			wrapperObj.setStrMessage(Utility.getStackTrace(ex));
 		}
 		return wrapperObj;
+	}
+
+
+
+	@Override
+	public List<PartyMasterDto> getVendorPoDtWisDtos(PrjSearch prjSrch) {
+		List<PartyMasterDto> partyMasterDto = new ArrayList<>();
+		try {
+			Date dtFrom = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getFromDate());
+			Date dtToDate = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getToDate());
+			prjSrch.setFromDate(new SimpleDateFormat("yyyy-MM-dd").format(dtFrom));
+			prjSrch.setToDate(new SimpleDateFormat("yyyy-MM-dd").format(dtToDate));
+			partyMasterDto = ezDaoObj.getVendorPoDtWisDtos(prjSrch);
+		} catch (Exception ex) {
+			partyMasterDto.get(0).setStrMessage(Utility.getStackTrace(ex));
+		}
+		return partyMasterDto;
+	}
+
+
+
+	@Override
+	public List<PODto> fillPOInPymntRpt(PrjSearch prjSrch) {
+		List<PODto> poDto = new ArrayList<>();
+		try {
+			Date dtFrom = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getFromDate());
+			Date dtToDate = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getToDate());
+			prjSrch.setFromDate(new SimpleDateFormat("yyyy-MM-dd").format(dtFrom));
+			prjSrch.setToDate(new SimpleDateFormat("yyyy-MM-dd").format(dtToDate));
+			poDto = ezDaoObj.fillPOInPymntRpt(prjSrch);
+		} catch (Exception ex) {
+			poDto.get(0).setStrMessage(Utility.getStackTrace(ex));
+		}
+		return poDto;
 	}
 
 

@@ -99,11 +99,13 @@ public interface EZDao {
 	public SalesOrderDto getSaleOrderPymntDtls(String soId);
 	public List<SalesOrderDto> getSOPymntRecvdData(PrjSearch prjSrch);
 	public List<SalesOrderDto> getCustomerListFromSO();
-	public List<PODto> getPymntDataByPO(String customerId,String poId);
+	public List<PODto> getPymntDataByPO(PrjSearch prjSrch);
 	public PODto getTotalPaymentDetailsByPONo(String poId);
 	public List<PartyMasterDto> getVendorWhichPOExists();
 	public List<CustomerDto> searchCustomerData(String searchTextData);
 	public List<SalesOrderDto> getCustomerSOAStmtData(PrjSearch prjSrch);
 	public List<CustomerDto> fillCustomerByFrmSO(String customerId);
 	public int iUpdateReceivedPayment(ReceivedPymntDto receivedPaymentDto);
+	public List<PartyMasterDto> getVendorPoDtWisDtos(PrjSearch prjSrch);
+	public List<PODto> fillPOInPymntRpt(PrjSearch prjSrch);
 }

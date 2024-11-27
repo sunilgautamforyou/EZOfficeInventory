@@ -168,7 +168,7 @@ min-width: 100px;
 <h1>
 Chaudhary Buildwell
 </h1>
-<h3>CUSTOMER RECEIVABLE (SOA)</h3>
+<h3>CUSTOMER PAYMENT (DETAILS)</h3>
 <div class="purchase-section-dtls">
 <div class="purchase-section-dtls-left">
 <table class="text-section" style="line-height: 23px; padding-left: 10px;">
@@ -236,6 +236,8 @@ Customer Mobile
             <td>
                <!-- <b><label id="netAmount"></label> </b> -->
                <input type="hidden" id="hdnSoNo" value=""/>
+ <input type="hidden" id="hdnToDate" value="${rcvdSOA.getToDate()}"/>
+ <input type="hidden" id="hdnFromDate" value="${rcvdSOA.getFromDate()}"/>               
             </td>
         </tr>
        
@@ -278,10 +280,10 @@ Customer Mobile
     		flatNumber = null;
     	}    	
     	
-    	getSOPymntRecvdData(salesOrderId,customerId,towerId,flatNumber);
+    	getSOPymntRecvdData(salesOrderId,customerId,towerId,flatNumber,$('#hdnFromDate').val(),$('#hdnToDate').val());
     	//$('#hdnTxtCustomerNM').val(${rcvdSOA.getCustomerName()});
     });
-    function getSOPymntRecvdData(soId,customerId,towerNumber,flatNumber) {
+    function getSOPymntRecvdData(soId,customerId,towerNumber,flatNumber,fromDate,toDate) {
        	var tabRowLen = 1; 
        	var totalBill = 0;
        	var runningBalance = 0;
@@ -312,7 +314,9 @@ Customer Mobile
        		   		"salesOrderId":soId,
        		   		"customerId":customerId,
        		   		"towerNo":towerNumber,
-       		   		"flatNo":flatNumber
+       		   		"flatNo":flatNumber,
+       		   		"fromDate":fromDate,
+      		   		 "toDate":toDate
     	   		   	}),
        		   	dataType: 'json',
        		   	success: function (data) {

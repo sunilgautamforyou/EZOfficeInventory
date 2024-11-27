@@ -99,7 +99,10 @@ public class ActionController {
 		List<PartyMasterDto> partyMasterDto = new ArrayList<>();
 		if (prjSrch.getSearchVarData().equalsIgnoreCase("poParty")) {
 			partyMasterDto = ezServiceObj.getVendorWhichPOExists();
-		} else  {
+		} else if (prjSrch.getSearchVarData().equalsIgnoreCase("poRptParty")) {
+			partyMasterDto = ezServiceObj.getVendorPoDtWisDtos(prjSrch);
+		}
+		else  {
 			partyMasterDto = ezServiceObj.getPartyMasterDataHomePG();
 		}
 		return partyMasterDto;
@@ -244,6 +247,12 @@ public class ActionController {
 		System.err.println("-----Open getAllCategoryMaster Master ---");
 		return ezServiceObj.fillPOInMKPymntPG(prjSrch.getSearchVarData());
 	}	
+	
+	@PostMapping("/fillPOInPymntRpt")
+	public List<PODto> fillPOInPymntRpt(@RequestBody PrjSearch prjSrch) {
+		System.err.println("-----Open fillPOInPymntRpt Master ---");
+		return ezServiceObj.fillPOInPymntRpt(prjSrch);
+	}		
 	
 	@PostMapping("/InsertMakePaymentData")
 	public ResponseWrapper iInsertMakePaymentData(@RequestBody MakePymntDto makePaymentDto) {
@@ -492,7 +501,7 @@ public class ActionController {
 	
 	@PostMapping("/getAllPymentPaidHistoryData")
 	public List<PODto> getAllPymentPaidHistoryData(@RequestBody PrjSearch prjSrch) {
-		return ezServiceObj.getPymntDataByPO(prjSrch.getCustomerName(),prjSrch.getSearchVarData());
+		return ezServiceObj.getPymntDataByPO(prjSrch);
 	}
 	
 	@PostMapping("/searchCustomerData")

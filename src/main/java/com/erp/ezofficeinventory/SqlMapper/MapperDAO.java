@@ -118,6 +118,25 @@ public interface MapperDAO {
 	})
 	public List<PartyMasterDto> getVendorWhichPOExists();	
 	
+	@Select("SELECT DISTINCT PARTYID,PARTYNAME,ADDRESS,PHONENO,A.PANNO,GSTNO,REMARKS,\r\n"
+			+ "DATE_FORMAT(CREATED_DATE, '%d-%b-%y')CREATED_DATE,B.LOGIN_NAME,A.REMARKS,A.PARTYTYPE\r\n"
+			+ "FROM PARTYMASTER A,LOGINMASTER B WHERE A.CREATED_BY = B.LOGIN_ID\r\n"
+			+ "and exists (Select 1 from POMASTER where SUPPLIERID = A.PARTYID "
+			+ "AND date_format(PODATE,'%Y-%m-%d') between #{prjSrch.fromDate} AND #{prjSrch.toDate}) Order by PARTYNAME")
+	@Results({
+		@Result(property = "partyId",column = "PartyId"),
+		@Result(property = "partyName",column = "PartyName"),
+		@Result(property = "address",column = "Address"),
+		@Result(property = "phoneNo",column = "PhoneNo"),
+		@Result(property = "gstNo",column = "GSTNO"),
+		@Result(property = "panNo",column = "PANNo"),
+		@Result(property = "remarks",column = "Remarks"),
+		@Result(property = "createdDt",column = "Created_Date"),
+		@Result(property = "createdByName",column = "Login_Name"),
+		@Result(property = "partyType",column = "PartyType")
+	})
+	public List<PartyMasterDto> getVendorPoDtWise(@Param("prjSrch") PrjSearch prjSrch);	
+	
 	@Update("UPDATE PARTYMASTER SET ADDRESS=#{partyMasterDtp.address},PHONENO=#{partyMasterDtp.phoneNo},"
 			+ "PANNO=#{partyMasterDtp.panNo},GSTNO=#{partyMasterDtp.gstNo},REMARKS=#{partyMasterDtp.remarks}"
 			+ ",MODIFIED_DATE=NOW(),Created_By=#{partyMasterDtp.createdBy},PARTYTYPE=#{partyMasterDtp.partyType} Where PARTYID=#{partyMasterDtp.partyId}")
@@ -357,6 +376,16 @@ public interface MapperDAO {
 		@Result(property = "poDate",column = "PODate")
 	})
 	public List<PODto> fillPOInMKPymntPG(@Param("partyId") String partyId);
+	
+	@Select("SELECT POID,PONO,DATE_FORMAT(PODATE, '%d-%b-%y')PODATE "
+			+ "From POMASTER WHERE SUPPLIERID = #{prjSrch.searchVarData} "
+			+ "AND date_format(PODATE,'%Y-%m-%d') between #{prjSrch.fromDate} AND #{prjSrch.toDate}")
+	@Results({
+		@Result(property = "ipoId",column = "POID"),
+		@Result(property = "poNo",column = "PONO"),
+		@Result(property = "poDate",column = "PODate")
+	})
+	public List<PODto> fillPOInPymntRpt(@Param("prjSrch") PrjSearch prjSrch);	
 	
 	@Insert("INSERT INTO PYMNTMASTER(PARTYID,POID,PYMNTDATE,PYMNTAMOUNT,CREATEDBY,CREATEDDATE,PYMNTREMARKS)\r\n"
 			+ "  VALUES(#{mkPaymentDto.partyID},#{mkPaymentDto.poID},STR_TO_DATE(#{mkPaymentDto.pymntDate}, '%d-%b-%y')"
@@ -940,15 +969,17 @@ public interface MapperDAO {
 				+ "select 1 as SEQ,0 as PYMNTID,po.POID,po.PONO,DATE_FORMAT(po.PODATE, '%d-%b-%y')PODATE,pm.PARTYNAME,ROUND(SUM(pd.AMOUNT),2) BillAMOUNT,'' as PaidAmount\r\n"
 				+ " from POMASTER po inner join PODETAILS pd on po.POID = pd.POID\r\n"
 				+ "Inner Join PARTYMASTER pm on pm.PARTYID = po.SUPPLIERID\r\n"
-				+ "Where 1=1 and po.SUPPLIERID = coalesce(#{customerId},po.SUPPLIERID)\r\n"
-				+ "and po.POID = coalesce(#{poId},po.POID)\r\n"
+				+ "Where 1=1 and po.SUPPLIERID = coalesce(#{prjSrch.customerId},po.SUPPLIERID)\r\n"
+				+ "and po.POID = coalesce(#{prjSrch.poId},po.POID) "
+				+ "AND date_format(po.PODATE,'%Y-%m-%d') between #{prjSrch.fromDate} AND #{prjSrch.toDate}\r\n"
 				+ "group by po.POID\r\n"
 				+ "union all\r\n"
 				+ "select 2 as SEQ,pm.PYMNTID,pm.POID,po.PONO,DATE_FORMAT(pm.PYMNTDATE, '%d-%b-%y')PYMNTDATE,party.PARTYNAME, '' as BillAMOUNT,round(pm.PYMNTAMOUNT,2) as PaidAmount\r\n"
 				+ " from PYMNTMASTER pm inner join POMASTER po on pm.POID = po.POID\r\n"
 				+ "inner join PARTYMASTER party on party.PARTYID = po.SUPPLIERID\r\n"
-				+ "where 1=1 and po.SUPPLIERID = coalesce(#{customerId},po.SUPPLIERID)\r\n"
-				+ "and po.POID = coalesce(#{poId},po.POID))A order by A.POID,A.SEQ,A.PYMNTID")
+				+ "where 1=1 and po.SUPPLIERID = coalesce(#{prjSrch.customerId},po.SUPPLIERID)\r\n"
+				+ "and po.POID = coalesce(#{prjSrch.poId},po.POID) "
+				+ "AND date_format(po.PODATE,'%Y-%m-%d') between #{prjSrch.fromDate} AND #{prjSrch.toDate})A order by A.POID,A.SEQ,A.PYMNTID")
 		@Results({
 			@Result(property = "poNo",column = "PONO"),
 			@Result(property = "ipoId",column = "POID"),
@@ -957,7 +988,7 @@ public interface MapperDAO {
 			@Result(property = "totalBillAmount",column = "BillAMOUNT"),
 			@Result(property = "totalPaidAmount",column = "PaidAmount")
 		})
-		public List<PODto> getPymntDataByPO(@Param("customerId") String customerId,@Param("poId") String poId);
+		public List<PODto> getPymntDataByPO(@Param("prjSrch") PrjSearch prjSrch);
 		
 		
 		@Select("Select ROUND(X.TotalBillAmount,2)TotalBillAmount,\r\n"
@@ -1018,7 +1049,7 @@ public interface MapperDAO {
 				+ "               AND CM.CUSTOMERID = COALESCE(#{prjSrchDat.customerId},CM.CUSTOMERID)\r\n"
 				+ "               AND TM.TOWERID = COALESCE(#{prjSrchDat.towerName},TM.TOWERID)\r\n"
 				+ "               AND SH.FLATNO = COALESCE(#{prjSrchDat.flatNo},SH.FLATNO) "
-				+ "and date_format(SH.SALEDATE,'%d-%b-%y') between #{prjSrchDat.fromDate} AND #{prjSrchDat.toDate}\r\n"
+				+ "and date_format(SH.SALEDATE,'%Y-%m-%d') between #{prjSrchDat.fromDate} AND #{prjSrchDat.toDate}\r\n"
 				+ "        GROUP  BY SD.SALEID\r\n"
 				+ "        UNION ALL\r\n"
 				+ "        SELECT 2 AS SEQ,\r\n"
@@ -1041,7 +1072,7 @@ public interface MapperDAO {
 				+ "        AND COALESCE(CM.CUSTOMERID) = COALESCE(#{prjSrchDat.customerId},CM.CUSTOMERID)\r\n"
 				+ "        AND TM.TOWERID = COALESCE(#{prjSrchDat.towerName},TM.TOWERID)\r\n"
 				+ "        AND SH.FLATNO = COALESCE(#{prjSrchDat.flatNo},SH.FLATNO "
-				+ "and date_format(SH.SALEDATE,'%d-%b-%y') between #{prjSrchDat.fromDate} AND #{prjSrchDat.toDate})) A\r\n"
+				+ "and date_format(SH.SALEDATE,'%Y-%m-%d') between #{prjSrchDat.fromDate} AND #{prjSrchDat.toDate})) A\r\n"
 				+ "       INNER JOIN CUSTOMERMASTER CM ON A.CUSTOMERID = CM.CUSTOMERID\r\n"
 				+ "GROUP  BY A.FLATNO,\r\n"
 				+ "          A.TOWERDESC,\r\n"
