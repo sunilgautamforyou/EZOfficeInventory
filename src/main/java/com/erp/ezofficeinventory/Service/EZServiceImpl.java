@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.erp.ezofficeinventory.Constrant.AppConstant;
-import com.erp.ezofficeinventory.Constrant.AppConstant.sysMessage;
 import com.erp.ezofficeinventory.Utility.Utility;
 import com.erp.ezofficeinventory.dao.EZDao;
 import com.erp.ezofficeinventory.entity.CategoryMasterDto;
@@ -52,7 +51,7 @@ public class EZServiceImpl implements EZService {
 		try {
 			loginDto = ezDaoObj.loginValidate(loginDetails.getLoginUserName(), loginDetails.getPassword());
 		} catch (Exception ex) {
-			loginDto.setErrorMesage(utility.getStackTrace(ex));
+			loginDto.setErrorMesage(Utility.getStackTrace(ex));
 		}
 		return loginDto;
 	}
@@ -270,8 +269,8 @@ public class EZServiceImpl implements EZService {
 
 
 	@Override
-	public SalesOrderDto getCustomerDataByFlatNo(PrjSearch prjSrch) {
-		SalesOrderDto salesOrderObj = new SalesOrderDto();
+	public List<SalesOrderDto> getCustomerDataByFlatNo(PrjSearch prjSrch) {
+		List<SalesOrderDto> salesOrderObj = new ArrayList<>();
 		try {
 			salesOrderObj = ezDaoObj.getCustomerDataByFlatNo(prjSrch);
 		} catch (Exception ex) {
@@ -348,7 +347,7 @@ public class EZServiceImpl implements EZService {
 	@Override
 	public List<MakePymntDto> getAllPaymentDataDto(int partyId) {
 		 List<MakePymntDto> lstMkPymntDto = ezDaoObj.getAllPaymentDataDto(partyId);
-		 List<String> arrpoNo = new ArrayList<>();
+//		 List<String> arrpoNo = new ArrayList<>();
 //		 double totalPoAmount = 0,totalPymntAmount = 0,totalBalance = 0;
 //		 for (MakePymntDto mkPymntDataObj : lstMkPymntDto) {
 //			 if (!arrpoNo.contains(mkPymntDataObj.getPoNo())) {
@@ -482,8 +481,8 @@ public class EZServiceImpl implements EZService {
 
 
 	@Override
-	public List<SalesOrderDto> findRFQInSalesOrder(int TowerId, int FlatNo) {
-		return ezDaoObj.findRFQInSalesOrder(TowerId, FlatNo);
+	public List<SalesOrderDto> findRFQInSalesOrder(int TowerId, int FlatNo,int customerId) {
+		return ezDaoObj.findRFQInSalesOrder(TowerId, FlatNo,customerId);
 	}
 
 
@@ -638,6 +637,135 @@ public class EZServiceImpl implements EZService {
 	@Override
 	public List<ReceivedPymntDto> getPymntRecvdAgSO(String soId) {
 		return ezDaoObj.getPymntRecvdAgSO(soId);
+	}
+
+
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public List<SalesOrderDto> getSalesOrderStkRpt(PrjSearch prjSrch) {
+		List<SalesOrderDto> arrSalesOrder = new ArrayList<>();
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			prjSrch.setFromDate(sdf.format(new Date(prjSrch.getFromDate())));
+			prjSrch.setToDate(sdf.format(new Date(prjSrch.getToDate())));
+			if (prjSrch.getCustomerId() == null || prjSrch.getCustomerId() == "" || prjSrch.getCustomerId() == "0") {
+				prjSrch.setCustomerId("");
+			}			
+			arrSalesOrder = ezDaoObj.getSalesOrderStkRpt(prjSrch.getTowerNo(), prjSrch.getFlatNo(), prjSrch.getFromDate(), prjSrch.getToDate(),prjSrch.getCustomerId());
+		} catch (Exception ex) {
+			System.out.println("Exception:"+ex.toString());
+		}
+		return arrSalesOrder;
+	}
+
+
+
+	@Override
+	public SalesOrderDto getSaleOrderPymntDtls(String soId) {
+		SalesOrderDto saleOrderDto = new SalesOrderDto();
+		try {
+			saleOrderDto = ezDaoObj.getSaleOrderPymntDtls(soId);
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		return saleOrderDto;
+	}
+
+
+
+	@Override
+	public List<SalesOrderDto> getSOPymntRecvdData(PrjSearch prjSrch) {
+		List<SalesOrderDto> arrSalesOrderDtoObj = new ArrayList<>();
+		try {
+			prjSrch.setFromDate(new SimpleDateFormat("yyyy-MM-dd").parse(prjSrch.getFromDate()).toString());
+			prjSrch.setToDate(new SimpleDateFormat("yyyy-MM-dd").parse(prjSrch.getToDate()).toString());
+			arrSalesOrderDtoObj = ezDaoObj.getSOPymntRecvdData(prjSrch);
+		} catch (Exception ex) {
+			arrSalesOrderDtoObj.get(0).setBlnTranStatus(false);
+			arrSalesOrderDtoObj.get(0).setStrMessage(Utility.getStackTrace(ex));
+		}
+		return arrSalesOrderDtoObj;
+	}
+
+
+
+	@Override
+	public List<SalesOrderDto> getCustomerListFromSO() {
+		return ezDaoObj.getCustomerListFromSO();
+	}
+
+
+
+	@Override
+	public List<PODto> getPymntDataByPO(String customerId, String poId) {
+		return ezDaoObj.getPymntDataByPO(customerId, poId);
+	}
+
+
+
+	@Override
+	public PODto getTotalPaymentDetailsByPONo(String poId) {
+		return ezDaoObj.getTotalPaymentDetailsByPONo(poId);
+	}
+
+
+
+	@Override
+	public List<PartyMasterDto> getVendorWhichPOExists() {
+		return ezDaoObj.getVendorWhichPOExists();
+	}
+
+
+
+	@Override
+	public List<CustomerDto> searchCustomerData(PrjSearch searchTextData) {
+		List<CustomerDto> lstCustomerDto = new ArrayList<>();
+		try {
+			lstCustomerDto = ezDaoObj.searchCustomerData(searchTextData.getSearchVarData());
+		} catch (Exception ex) {
+			//lstCustomerDto.get(0).setErrorMessage(ex.getMessage());
+			System.out.println(Utility.getStackTrace(ex));
+		}
+		return lstCustomerDto;
+	}
+
+
+
+	@Override
+	public List<SalesOrderDto> getCustomerSOAStmtData(PrjSearch prjSrch) {
+		List<SalesOrderDto> lstSalesOrderDto = new ArrayList<>();
+		try {
+			lstSalesOrderDto = ezDaoObj.getCustomerSOAStmtData(prjSrch);
+		} catch (Exception ex) {
+			System.out.println(Utility.getStackTrace(ex));
+		}
+		return lstSalesOrderDto;
+	}
+
+
+
+	@Override
+	public List<CustomerDto> fillCustomerByFrmSO(String customerId) {
+		return ezDaoObj.fillCustomerByFrmSO(customerId);
+	}
+
+
+
+	@Override
+	public ResponseWrapper iUpdateReceivedPayment(ReceivedPymntDto receivedPaymentDto) {
+		ResponseWrapper wrapperObj = new ResponseWrapper();
+		try {
+			ezDaoObj.iUpdateReceivedPayment(receivedPaymentDto);
+			wrapperObj.setErrorFlag(false);
+			wrapperObj.setStrMessage(AppConstant.sysMessage.SUCCESS_MESSAGE);
+			
+		} catch (Exception ex) {
+			wrapperObj.setErrorFlag(true);
+			wrapperObj.setStrMessage(Utility.getStackTrace(ex));
+		}
+		return wrapperObj;
 	}
 
 

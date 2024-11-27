@@ -88,6 +88,8 @@
                    <li class="active"><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Reports</a>
                   	<ul id="reports" class="collapse list-unstyled show">
                   	<li class="active"><a href="https://salepurchasecompany.co.in/stockReport">Stock Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/SaleOrderStkRpt">Sales Order Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntPaidRpt">Supplier Payment SOA</a></li>
                   	</ul>
                   </li>	
                  	</ul>

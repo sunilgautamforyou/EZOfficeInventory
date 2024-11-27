@@ -33,6 +33,15 @@ public class SalesOrderDto {
 	private double withOutTaxAmount;
 	private int contId;
 	
+	private double totalBillAmount;
+	private double recvdBillAmount;
+	private double advanceBillAmount;
+	
+	private String pymntId;
+	
+	private String strMessage;
+	private boolean blnTranStatus;
+	
 	public String getsMode() {
 		return sMode;
 	}
@@ -212,6 +221,42 @@ public class SalesOrderDto {
 	}
 	public void setContId(int contId) {
 		this.contId = contId;
+	}
+	public double getTotalBillAmount() {
+		return totalBillAmount;
+	}
+	public void setTotalBillAmount(double totalBillAmount) {
+		this.totalBillAmount = totalBillAmount;
+	}
+	public double getRecvdBillAmount() {
+		return recvdBillAmount;
+	}
+	public void setRecvdBillAmount(double recvdBillAmount) {
+		this.recvdBillAmount = recvdBillAmount;
+	}
+	public double getAdvanceBillAmount() {
+		return advanceBillAmount;
+	}
+	public void setAdvanceBillAmount(double advanceBillAmount) {
+		this.advanceBillAmount = advanceBillAmount;
+	}
+	public String getPymntId() {
+		return pymntId;
+	}
+	public void setPymntId(String pymntId) {
+		this.pymntId = pymntId;
+	}
+	public String getStrMessage() {
+		return strMessage;
+	}
+	public void setStrMessage(String strMessage) {
+		this.strMessage = strMessage;
+	}
+	public boolean isBlnTranStatus() {
+		return blnTranStatus;
+	}
+	public void setBlnTranStatus(boolean blnTranStatus) {
+		this.blnTranStatus = blnTranStatus;
 	}
 	
 	

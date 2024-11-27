@@ -167,7 +167,7 @@ min-width: 100px;
 <div class="canvas_div_pdf">
 <div class="purchase-section">
 <h1>
-Chaudhary Buildwell PVT. LTD.
+Chaudhary Buildwell
 </h1>
 <h3>SALES ORDER REPORT</h3>
 
@@ -236,7 +236,7 @@ Phone No.
         </tr>
         <tr>
             <td class="textclr1">
-            Sales Order Date
+            Quotation Date
             </td>
             <td>:</td>
             <td>${soRpt.getRfQDate()}</td>
@@ -292,6 +292,7 @@ Phone No.
             </td>
             <td style="color: #333; background-color: #ccc;">
                <b><label id="netAmount"></label> </b>
+               <input type="hidden" id="hdnSoNo" value="${soRpt.getSalesOrderNumber()}"/>
             </td>
         </tr>
        
@@ -322,8 +323,8 @@ jQuery(document).ready(function($){
 });
 function openSearchBox(searchDataVal) {
 	 $.ajax({
-		 //url: '/EZOfficeInventory/getAllSalesOrderDtlReport',
-		 url: 'https://salepurchasecompany.co.in/getAllSalesOrderDtlReport',
+		//url: '/EZOfficeInventory/getAllSalesOrderDtlReport',
+		url: 'https://salepurchasecompany.co.in/getAllSalesOrderDtlReport',
 		 type: 'Post',
 		 contentType: 'application/json',
 		   	 data: JSON.stringify(
@@ -346,12 +347,12 @@ function openSearchBox(searchDataVal) {
 							 '<span>'+ data[i].itemDesc +'</span>'+
 							 '</td>' +
 							'<td><span>'+data[i].uomDesc+'</span></td>'+
-							'<td><span>'+data[i].soQty+'</span></td>'+
-							'<td><span>'+data[i].soRate+'</span></td>'+
-							'<td><span>'+data[i].withOutTaxAmount+'</span></td>'+
-							'<td><span>'+data[i].gstPct+'</span></td>'+
-							'<td><span>'+data[i].taxAmount+'</span></td>'+
-							'<td><span>'+data[i].soAmount+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].soQty)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].soRate)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].withOutTaxAmount)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].gstPct)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].taxAmount)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].soAmount)+'</span></td>'+
 							'</tr>'
 						);
 						srlNoCount++;
@@ -359,9 +360,9 @@ function openSearchBox(searchDataVal) {
 						totalWithOutTaxAmount = totalWithOutTaxAmount + data[i].withOutTaxAmount;
 						netAmount = netAmount + parseFloat(data[i].soAmount);
 						}
-					$('#lblSubTotal').html(roundToTwo(totalWithOutTaxAmount));
-					$('#lblTaxAmount').html(roundToTwo(totaltaxAmount));
-					$('#netAmount').html(Math.ceil(netAmount));
+					$('#lblSubTotal').html(formatNumber(totalWithOutTaxAmount));
+					$('#lblTaxAmount').html(formatNumber(totaltaxAmount));
+					$('#netAmount').html(formatNumber(netAmount));
 					$('#toWords').html("Total Amount in Words: " + inWords(Math.ceil(netAmount)).toUpperCase());
 /* 					if (confirm('Sure you want to save Report?')) {
 						getPDF();
@@ -395,7 +396,7 @@ function inWords (num) {
 
 function getPDF(){
 
-	var HTML_Width = $(".canvas_div_pdf").width();
+/* 	var HTML_Width = $(".canvas_div_pdf").width();
 	var HTML_Height = $(".canvas_div_pdf").height();
 	var top_left_margin = 15;
 	var PDF_Width = HTML_Width+(top_left_margin*2);
@@ -422,10 +423,23 @@ function getPDF(){
 			pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
 		}
 		//window.open(pdf.output('bloburl'))
-	    pdf.save("SalesOrder.pdf");
+	    pdf.save("SalesOrder_"+replaceCharData($('#hdnSoNo').val())+".pdf");
 		//window.close();
-    });
+    }); */
+	window.print();
 };
+
+function replaceCharData (inputValue) {
+	return inputValue.replace("/","-");
+}
+function formatNumber(n) {
+	if (n > 0) {
+		return parseFloat(n).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");	
+	} else {
+		return n;
+	}
+	
+ }   
 </script>
 
 </body>

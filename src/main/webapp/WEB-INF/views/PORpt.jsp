@@ -167,7 +167,7 @@ min-width: 100px;
 <div class="canvas_div_pdf">
 <div class="purchase-section">
 <h1>
-Chaudhary Buildwell PVT. LTD.
+Chaudhary Buildwell
 </h1>
 <h3>PURCHASE ORDER</h3>
 
@@ -344,12 +344,12 @@ function openSearchBox(searchDataVal) {
 							 '<span>'+ data[i].itemDesc +'</span>'+
 							 '</td>' +
 							'<td><span>'+data[i].uomDesc+'</span></td>'+
-							'<td><span>'+data[i].poQty+'</span></td>'+
-							'<td><span>'+data[i].poRate+'</span></td>'+
-							'<td><span>'+data[i].withoutTaxAmount+'</span></td>'+
-							'<td><span>'+data[i].gstPct+'</span></td>'+
-							'<td><span>'+data[i].taxAmount+'</span></td>'+
-							'<td><span>'+data[i].poAmount+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].poQty)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].poRate)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].withoutTaxAmount)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].gstPct)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].taxAmount)+'</span></td>'+
+							'<td><span>'+formatNumber(data[i].poAmount)+'</span></td>'+
 							'</tr>'
 						);
 						srlNoCount++;
@@ -357,9 +357,9 @@ function openSearchBox(searchDataVal) {
 						totalWithOutTaxAmount = totalWithOutTaxAmount + data[i].withoutTaxAmount;
 						netAmount = netAmount + parseFloat(data[i].poAmount);
 						}
-					$('#lblSubTotal').html(roundToTwo(totalWithOutTaxAmount));
-					$('#lblTaxAmount').html(roundToTwo(totaltaxAmount));
-					$('#netAmount').html(netAmount);
+					$('#lblSubTotal').html(formatNumber(totalWithOutTaxAmount));
+					$('#lblTaxAmount').html(formatNumber(totaltaxAmount));
+					$('#netAmount').html(formatNumber(netAmount));
 					$('#toWords').html("Total Amount in Words: " + inWords(Math.ceil(netAmount)).toUpperCase());
 /* 					if (confirm('Sure you want to save Report?')) {
 						getPDF();
@@ -376,6 +376,14 @@ function openSearchBox(searchDataVal) {
 function roundToTwo(num) {
     return +(Math.round(num + "e+2")  + "e-2");
 }	
+function formatNumber(n) {
+	if (n > 0) {
+		return parseFloat(n).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");	
+	} else {
+		return n;
+	}
+	
+ }      
 	
 var a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
 var b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
@@ -394,7 +402,7 @@ function inWords (num) {
 
 function getPDF(){
 
-	var HTML_Width = $(".canvas_div_pdf").width();
+/* 	var HTML_Width = $(".canvas_div_pdf").width();
 	var HTML_Height = $(".canvas_div_pdf").height();
 	var top_left_margin = 15;
 	var PDF_Width = HTML_Width+(top_left_margin*2);
@@ -423,7 +431,8 @@ function getPDF(){
 		//window.open(pdf.output('bloburl'))
 	    pdf.save("PurchaseOrder.pdf");
 		//window.close();
-    });
+    }); */
+	window.print();
 };
 </script>
 

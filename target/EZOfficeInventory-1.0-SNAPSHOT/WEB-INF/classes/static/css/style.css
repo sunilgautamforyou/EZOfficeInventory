@@ -6799,10 +6799,10 @@ padding-top: 5px;
         margin-bottom: 0px;
     }
     .table .thead-dark tr th:first-child, .table .thead-dark tr td:first-child{
-        width:60px;
+        width:20px;
     }
     .table .thead-dark tr th:nth-child(2), .table .thead-dark tr td:nth-child(2){
-        min-width:400px;
+        min-width:100px;
     }
     .table tr, .table td {
         border-collapse: collapse;

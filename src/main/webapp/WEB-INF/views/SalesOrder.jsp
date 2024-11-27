@@ -66,7 +66,9 @@
                     </li> 
                    <li class="active"><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Reports</a>
                   	<ul id="reports" class="collapse list-unstyled show">
-                  	<li><a href="https://salepurchasecompany.co.in/stockReport">Stock Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntRcvdRpt">Customer Payment SOA</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/SaleOrderStkRpt">Sales Order Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntPaidRpt">Supplier Payment SOA</a></li>
                   	</ul>
                   </li>                                       
                  	</ul>
@@ -132,7 +134,10 @@
 							<div class="form-group row">
 							<label class="col-sm-4 col-md-1 col-form-label">Customer</label>
 							<div class="col-sm-6 col-md-3 pl0">
-								<input type="text" id="txtCustomerNm" class="form-control" placeholder="Customer Name">
+								<!-- <input type="text" id="txtCustomerNm" class="form-control" placeholder="Customer Name"> -->
+								<select class="custom-select" id="lstCustomerNm">
+									<option selected="selected" value="0">Choose Customer</option>
+								</select>								
 							</div>
 							<label class="col-sm-4 col-md-1 col-form-label pl15">Mobile</label>	
 							 <div class="col-sm-6 col-md-3 pl0 cal-position">
@@ -286,12 +291,13 @@
     var delBtn;	
     var customerId = 0;
     var salesOrderId = 0;
+    customerDataArray=[];    
 	    $('.input-group.date').datepicker({
 	        format: "dd-M-yy",
 	        todayHighlight: true,
 	        autoclose: true,
 	        showMeridian: true,
-	        startDate: "-90d",
+	        startDate: "-365d",
 	        endDate: "+30d",
 	    }).on('changeDate', function (ev) {
 	        $(this).datepicker('hide');
@@ -329,15 +335,6 @@
 	    		$("#txtSoNumber").val("${so.getSalesOrderNumber()}");
 	    		salesOrderId = "${so.getSaleId()}";
 	    		$('#btnPrint').show();
-	    		if ("${so.getCustomerName()}" != "") {
-	    			$('#txtCustomerNm').val("${so.getCustomerName()}");
-	    			$('#txtCustomerNm').attr('disabled', true);
-	    			customerId = "${so.getCustomerId()}";
-	    		}
-	    		if ("${so.getCutomerMobileNo()}" != "") {
-	    			$('#txtCustomerMobile').val("${so.getCutomerMobileNo()}");
-	    			$('#txtCustomerMobile').attr('disabled', true);
-	    		}	 
 	    		$('#txtSoDate').val("${so.getSalesDate()}");
 	    		if ("${so.getTowerNo()}" != "") {
 	    			//$('#lstTowerNo').val("${so.getTowerNo()}");
@@ -351,6 +348,21 @@
 	    			$('#txtFlatNumber').val("${so.getFlatNo()}");
 	    			//$('#txtFlatNumber').attr('disabled', true);
 	    		}	  
+	    		if ("${so.getCustomerName()}" != "") {
+	    			//$('#txtCustomerNm').val("${so.getCustomerName()}");
+	    			$('#lstCustomerNm').html('');
+	    			$('#lstCustomerNm').append('<option value='+"${so.getCustomerId()}"+'>'+"${so.getCustomerName()}"+'</option>');
+	    			$('#lstCustomerNm').attr('disabled', true);
+	    		} else {
+	    			$('#lstCustomerNm').attr('disabled', false);
+	    			if ("${sMode}" == "edit") {
+	    				findCustomerData();
+	    			}
+	    		}
+	    		if ("${so.getCutomerMobileNo()}" != "") {
+	    			$('#txtCustomerMobile').val("${so.getCutomerMobileNo()}");
+	    			$('#txtCustomerMobile').attr('disabled', true);
+	    		}	 	    		
 	    		if ("${so.getRemarks()}" != "") {
 	    			$('#txtRemarks').val("${so.getRemarks()}");
 	    		}	
@@ -359,7 +371,6 @@
 	    			$('#lstQuotNo').append('<option value='+"${so.getRfQId()}"+'>'+"${so.getRfQNumber()}"+'</option>');
 	    			$('#lstQuotNo').attr('disabled', true);
 	    		}	    		
-	    		$("#txtSoDate").attr('disabled', true);
 	    		if ("${sMode}" == "view") {
 	    			$('#txtCustomerNm').attr('disabled', true);
 	    			$('#txtCustomerMobile').attr('disabled', true);
@@ -370,6 +381,7 @@
 				    $('#btnSave').attr('disabled', true); 
 				    $('#btnRefresh').attr('disabled', true); 	
 				    $('#lstContractor').attr('disabled', true); 
+				    $("#txtSoDate").attr('disabled', true);
 	    		}
 	    		fillSoDtlDataGrid("${so.getSaleId()}");
 	    	}
@@ -511,6 +523,9 @@
 	    }
 	    $('#lstTowerNo').on('change', function() {
 	    	$('#txtFlatNumber').focus();
+	    	//$("#sotable > tbody").empty();
+	    	clearAllDataRowsFromGrid();
+
 	    });
 	    $('#lstQuotNo').on('change', function() {
 	    	if ($('#lstQuotNo').val() != "0") {
@@ -522,6 +537,18 @@
 	    		$("#reportDtltdata").html('');
 	    	}
  		 });	    
+	    
+	    $('#lstCustomerNm').on('change', function() {
+    		let filter = 
+    			customerDataArray.filter(d => 
+   			    d.customerId == $('#lstCustomerNm').val());
+    		if (filter.length > 0) {
+    			var data = JSON.stringify(filter);
+    			var stringify = JSON.parse(data);
+    			$('#txtCustomerMobile').val(stringify[0]["mobileNo"]);
+    			findRFQData();
+    		}
+	    });	    
 	
 /*         $("#txtFlatNumber").blur(function() {
         	alert('working');
@@ -531,6 +558,12 @@
         	var towerNumber = $('#lstTowerNo').val();
         	var flatNumber = $('#txtFlatNumber').val();
         	
+        	$('#lstCustomerNm').html('');
+        	$('#txtCustomerMobile').val('');
+        	$('#lstQuotNo').html('');
+        	if ("${sMode}" == "new") {
+        		clearAllDataRowsFromGrid();
+        	}
         	if ((flatNumber != "") && (towerNumber != "0")) {
             	$.ajax({
     	    		//url: '/EZOfficeInventory/search-customer-by-flatNo',
@@ -547,11 +580,35 @@
     	    		   	success: function (data) {
     	    		   		console.log(data);
     	    		   		if(data.length!=0) {
-        	    		   		$('#txtCustomerNm').val(data.customerName);
-        	    		   		$('#txtCustomerMobile').val(data.cutomerMobileNo);
-        	    		   		customerId = data.customerId;
-        	    		   		findRFQData();
-    	    		   			
+        	    		   		if (data.length > 1) {
+        	    		   			$('#lstCustomerNm').append('<option value=0>Choose Customer</option>');
+        	    		   			for(var i=0;i<data.length;i++){
+        	    		   				$('#lstCustomerNm').append('<option value='+data[i].customerId+'>'+data[i].customerName+'</option>');
+        	    		   				var customerData={};
+        	    		   				customerData["customerId"] = data[i].customerId;
+        	    		   				customerData["mobileNo"] = data[i].cutomerMobileNo;
+        	    		   				customerDataArray.push(customerData);
+        	    		   			}
+        	    		   			alert("Please choose the customer");
+        	    		   			$('#lstCustomerNm').focus();
+        	    		   		} else {
+        	    		   			$('#lstCustomerNm').html('');
+        	    		   			if ("${sMode}" == "edit") {
+        	    		   				$('#lstCustomerNm').append('<option value=0>Choose Customer</option>');
+        	    		   				var customerData={};
+        	    		   				customerData["customerId"] = data[0].customerId;
+        	    		   				customerData["mobileNo"] = data[0].cutomerMobileNo;
+        	    		   				customerDataArray.push(customerData);        	    		   				
+        	    		   			}
+        	    		   			$('#lstCustomerNm').append('<option value='+data[0].customerId+'>'+data[0].customerName+'</option>');
+        	    		   			if ("${sMode}" == "new") {
+        	    		   				$('#txtCustomerMobile').val(data[0].cutomerMobileNo);
+        	    		   			}
+        	    		   			if ("${sMode}" == "new") {
+        	    		   				findRFQData();
+        	    		   			}
+        	    		   		}
+        	    		   		//customerId = data.customerId;
     	    		   		} else {
         	    		   		$('#txtCustomerNm').val('');
         	    		   		$('#txtCustomerMobile').val('');
@@ -583,7 +640,10 @@
         	
         	var towerNumber = $('#lstTowerNo').val();
         	var flatNumber = $('#txtFlatNumber').val();
-        	
+        	$('#lstQuotNo').html('');
+        	$('#lstQuotNo').append('<option value=0>Quotation No...</option>');
+        	$('#lstQuotNo').attr('disabled', true);
+        	clearAllDataRowsFromGrid();
         	if ((flatNumber != "") && (towerNumber != "0")) {
             	$.ajax({
     	    		//url: '/EZOfficeInventory/findRFQInSalesOrder',
@@ -593,7 +653,8 @@
     	    		   data: JSON.stringify(
     	    		   	{
     	    		   		"towerNo":$('#lstTowerNo').val(),
-    	    		   		"flatNo":$('#txtFlatNumber').val()
+    	    		   		"flatNo":$('#txtFlatNumber').val(),
+    	    		   		"customerName":$('#lstCustomerNm').val()
     	    		   		
     	    		   	}),
     	    		   	dataType: 'json',
@@ -777,6 +838,21 @@
  		}
  		return itemAmount; 
  	}  	
+ 	
+ 	function clearAllDataRowsFromGrid() {
+ 		if ("${sMode}" == "new") {
+ 	 		var rowCount = 1;
+ 	 		$("#reportDtltdata tr").each(function(){
+ 	 			if (rowCount > 0) {
+ 	 				$(this).closest('tr').remove();
+ 	 			}
+ 	 			rowCount++;
+ 	 		});
+ 	 		$('#lblTotal').html('');
+ 	 		tabRowLen = 0;
+ 		}
+ 	}
+ 	
 	function validate() {
 		var isVldFail = true;
 		var soDate = $('#txtSoDate').val();
@@ -856,7 +932,7 @@
 			    obj["sMode"] ="${sMode}";
 			    obj["towerNo"] =$('#lstTowerNo').val();
 			    obj["flatNo"] =flatNumber;
-			    obj["customerId"] =customerId;
+			    obj["customerId"] =$('#lstCustomerNm').val();
 			    obj["salesDate"] =$('#txtSoDate').val();
 			    obj["remarks"] =$('#txtRemarks').val().replace(/(\r\n|\n|\r)/gm, "");
 			    obj["createdById"] =1;
@@ -886,6 +962,7 @@
 			    	   $("#txtFlatNumber").attr('disabled', true);
 			    	   $("#txtRemarks").attr('disabled', true);
 			    	   $('#lstContractor').attr('disabled', true);
+			    	   $('#lstCustomerNm').attr('disabled', true);
 			    	   $("#divSearchItem").hide();
 			    	   $("#sotable").find("input,button,textarea,select").attr("disabled", "disabled");
 			    	   $('#btnSave').attr('disabled', true); 
@@ -894,6 +971,7 @@
 			    	   $('#btnPrint').show();
 				  } else {
 		           	  $("#msgId").addClass("alert alert-success");
+		           		alert(responseData.strMessage);
 		    	   	  $("#alertMsg").append(responseData.strMessage); 
 		    	   	$(this).prop('disabled', false);
 				}

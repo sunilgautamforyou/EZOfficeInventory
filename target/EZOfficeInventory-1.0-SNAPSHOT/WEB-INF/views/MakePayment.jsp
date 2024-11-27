@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Make PO Payment</title>
+    <title>Receive SO Payment</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
@@ -28,6 +28,9 @@
     <!-- Custom stylesheet - for your changes-->
     <!-- Favicon-->
     <link rel="shortcut icon" href="img/favicon.ico">
+    <style type="text/css">
+    	.input-disabled{background-color:#EBEBE4;border:1px solid #ABADB3;padding:2px 1px;}
+    </style>
 </head>
 <body>
      <!-- Side Navbar -->
@@ -66,7 +69,9 @@
                     </li>
                    <li class="active"><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Reports</a>
                   	<ul id="reports" class="collapse list-unstyled show">
-                  	<li><a href="https://salepurchasecompany.co.in/stockReport">Stock Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntRcvdRpt">Customer Payment SOA</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/SaleOrderStkRpt">Sales Order Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntPaidRpt">Supplier Payment SOA</a></li>
                   	</ul>
                   </li>                                        
                  	</ul>
@@ -131,17 +136,35 @@
                                  <input type="text" id="txtPymntDate" class="form-control input-group date" placeholder="Payment Date">
                                  <i class="fa fa-calendar"></i>
                              </div>	
-						</div>	
-						<div class="form-group row">
-							<label class="col-sm-4 col-md-2 col-form-label">Payment Amount</label>
-                            <div class="col-sm-3 col-md-3 pl0">
-                                <input type="text" class="form-control" onkeypress="return isNumber(event)" id="txtPymntAmt" placeholder="Payment Amount">
-                             </div> 
                              <label class="col-sm-4 col-md-1 col-form-label pl15">Remarks</label>
                              <div class="col-sm-6 col-md-3 pl0">
                                  <input type="text" id="txtRemarks" class="form-control" placeholder="Remarks">
-                             </div>                              							
-						</div>			
+                             </div>                              
+						</div>	
+					</div>
+					<div class="col-md-12 commen-space">
+						<div id="billDtl" class="table-responsive style-8">
+						  <table class="table table-bordered table-hover" id="billtable">
+						  	<thead id="billMainHead" class="thead-dark">
+						  		<tr>
+						  		<th scope="col">Total Bill Amount</th>
+						  		<th scope="col">Prev. Received Amount</th>
+						  		<th scope="col">Advance Amount</th>
+						  		<th scope="col">Received Amount</th>
+						  		<th scope="col">Balance Amount</th>
+						  		</tr>
+						  	</thead>
+						  	<tbody>
+						  	<tr> 
+						  		<td><input type="text" id="txtTotalBillAmt"></td>
+						  		<td><input type="text" id="txtPrevBillAmt"></td>
+						  		<td><input type="text" id="txtAdvBillAmt"></td>
+						  		<td><input type="text" id="txtRecvdBillAmt" onkeypress="return allowNumericWithDecimal(event)" placeholder="Enter Amount"></td>
+						  		<td><input type="text" id="txtBalBillAmt"></td>
+						  	</tr>
+						  	</tbody>	
+						  </table>
+						</div>
 					</div>
                    	<div id="msgId">
           			<h5 id="alertMsg"></h5>
@@ -149,63 +172,32 @@
                     <div class="col-sm-6 text-center btn-spaceing mt15">
                        <div class=" w3-bar">
                           <Button ID="btnSave" onclick="saveData()" class="common-btn">Save</Button>
-                          <Button ID="btnRefresh" class="common-btn">Refresh</Button>
+                          <Button ID="b
+                          tnRefresh" class="common-btn">Refresh</Button>
                           <Button ID="btnClose" onclick="exitToHomePage()" class="common-btn gray-btn">Exit</Button>
                       </div>
                    </div>						
 					<div class="col-md-12 commen-space">
-						<div id="report" class="table-responsive style-8">
-							<table class="table table-bordered table-hover" id="potable">
-								<thead id="reportMainHead" class="thead-dark">
-									<tr>
-										<th scope="col" hidden="true">PoId</th>
-										<th scope="col" hidden="true">PymntId</th>
-										<th scope="col">Sr No.</th>
-										<th scope="col">Purchase Order Number</th>
-										<th scope="col">Last Payment Date</th>
-										<th scope="col">Purchase Order Amount</th>
-										<th scope="col">Amount Paid</th>
-										<th scope="col">Balance</th>
-									</tr>
+						<div id="billDtl" class="table-responsive style-8">
+							<table class="table table-bordered table-hover" id="pymntGridTab">
+								<thead id="pymntGridHead" class="thead-dark">
+						  		<tr>
+							  		<th scope="col">Srl.</th>
+							  		<th scope="col">Bill Date</th>
+							  		<th scope="col">Bill Number</th>
+							  		<th scope="col">Party Name</th>
+							  		<th scope="col">Bill Amount</th>
+							  		<th scope="col">Received Amount</th>
+							  		<th scope="col">Balance Amount</th>
+						  		</tr>								
 								</thead>
-								<tbody id="reportDtltdata"></tbody>
-								<tr rowspan="2">
-									<td hidden="true"></td>
-									<td hidden="true"></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td class="border-left"><b>Total Amount :-</b></td>
-									<td class="border-left"><span><b><label
-												id="lblTotal"></label></b></span> <i class="fa fa-rupee-sign"></i></td>
-								</tr>
-								<tr rowspan="2">
-									<td hidden="true"></td>
-									<td hidden="true"></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td class="border-left"><b>Total Amount Paid :-</b></td>
-									<td class="border-left"><span><b><label
-												id="lblTotalAmtPaid"></label></b></span> <i class="fa fa-rupee-sign"></i>
-									</td>
-								</tr>
-								<tr rowspan="2">
-									<td hidden="true"></td>
-									<td hidden="true"></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td class="border-left"><b>Balance :-</b></td>
-									<td class="border-left"><span><b><label id="lblBalance"></label></b></span> <i class="fa fa-rupee-sign"></i></td>
-								</tr>
+								<tbody id="pymntGridBody">
+								
 								</tbody>
+								
 							</table>
 						</div>
-					</div>	
+					</div>   
 				</div>
 			</div>
 		</div>		
@@ -259,12 +251,13 @@
     <!-- Main File-->
     <script src="js/custom.js"></script>
     <script type="text/javascript">
+    var advanceAmount = 0;
     $('.input-group.date').datepicker({
         format: "dd-M-yy",
         todayHighlight: true,
         autoclose: true,
         showMeridian: true,
-        startDate: "-90d",
+        startDate: "-365d",
         endDate: "+30d",
     }).on('changeDate', function (ev) {
         $(this).datepicker('hide');
@@ -277,6 +270,16 @@
     	$('#report').hide();
     	loadPartyData();
     	setCurrentDate();
+    	$('#report').hide();
+    	$('#txtTotalBillAmt').attr('readonly', true);
+    	$('#txtTotalBillAmt').addClass('input-disabled');
+    	$('#txtPrevBillAmt').attr('readonly', true);
+    	$('#txtPrevBillAmt').addClass('input-disabled');  
+    	$('#txtAdvBillAmt').attr('readonly', true);
+    	$('#txtAdvBillAmt').addClass('input-disabled');     
+    	$('#txtBalBillAmt').attr('readonly', true);
+    	$('#txtBalBillAmt').addClass('input-disabled');     
+    	$('#pymntGridTab').hide();    	
     });    
 	function showPymntHistModal(poId) {
 		$('#lblModalTitle').html('');
@@ -315,7 +318,7 @@
     		contentType: 'application/json',	
     		   data: JSON.stringify(
     		   	{
-    		   		"searchVarData":""
+    		   		"searchVarData":"poParty"
 	   		   	}),
     		   	dataType: 'json',
     		   	success: function (data) {
@@ -386,7 +389,39 @@
     });
     $('#lstPoNo').on('change', function() {
     	//alert($('#lstPoNo').val());
+    	refreshControl();
+    	if ($('#lstPoNo').val() != "0") {
+    		fillPymntDetailForPO($('#lstPoNo').val());
+    		$('#txtRecvdBillAmt').focus();
+    		getPOPaidData($('#lstPoNo').val(),null);
+    	}    	
     });
+    function fillPymntDetailForPO(poId) {
+    	$.ajax({
+    		//url: '/EZOfficeInventory/getTotalPaymentDetailsByPONo',
+    		url: 'https://salepurchasecompany.co.in/getTotalPaymentDetailsByPONo',
+         	type: 'POST',
+    		contentType: 'application/json',	
+    		   data: JSON.stringify(
+    		   	{
+    		   		"searchVarData":poId
+	   		   	}),
+    		   	dataType: 'json',
+    		   	success: function (data) {
+    		   		console.log(data);
+    		   		if (data != null) {
+    		   			$('#txtTotalBillAmt').val(formatNumber(data.totalBillAmount));
+  		   				$('#txtPrevBillAmt').val(formatNumber(data.totalPaidAmount));
+  		   				$('#txtAdvBillAmt').val(formatNumber(data.advanceAmount));
+  		   				$('#txtBalBillAmt').val(formatNumber(parseFloat(data.totalBillAmount) - (parseFloat(data.totalPaidAmount))));
+  		   				advanceAmount = data.advanceAmount;
+    		   		} 
+	   		   	},
+    		    error: function (error) {
+    		        console.log(`Error ${error}`);
+    		    }
+    	});    	
+    }            
     function fillPoNumber() {
     	$.ajax({
     		//url: '/EZOfficeInventory/fillPOInMakePymntPG',
@@ -418,7 +453,7 @@
     	var partyNo = $('#lstPartyNo').val();
     	var poNo = $('#lstPoNo').val();
     	var txtPymntDate = $('#txtPymntDate').val();
-    	var txtPymntAmt = $('#txtPymntAmt').val();
+    	var txtPymntAmt = $('#txtRecvdBillAmt').val();
     	
     	
     	if (partyNo == "0" || partyNo == "Choose Any Party...") {
@@ -455,23 +490,42 @@
 	        		$('#txtPymntAmt').focus();
 	        		return false;	    			
 	    		}	    		
-	    		if (txtPymntAmt > stringify[k]['balancePymnt']) {
+/* 	    		if (txtPymntAmt > stringify[k]['balancePymnt']) {
 	        		alert("Payment Amount ["+txtPymntAmt+"] Cannot be Greator Than \n PO Balance [" + stringify[k]['balancePymnt'] + "] payable Amount");
 	        		$('#txtPymntAmt').focus();
 	        		return false;	    			
-	    		}
+	    		} */
 	    	}
     	}
     	
     	return true;
     }
+  	$("#billtable").on('keyup','#txtRecvdBillAmt',function(){
+		var totalBillAmt = convertStringToFloat($(this).closest('tr').find('#txtTotalBillAmt').val());
+		var prevRecvdAmt = convertStringToFloat($(this).closest('tr').find('#txtPrevBillAmt').val());
+		var currentRecvdAmt = convertStringToFloat($(this).closest('tr').find('#txtRecvdBillAmt').val());
+		
+		if (parseFloat(currentRecvdAmt,10) > parseFloat(totalBillAmt)) {
+			$(this).closest('tr').find('#txtAdvBillAmt').val(formatNumber(parseFloat(currentRecvdAmt - totalBillAmt)));
+		} else {
+			$(this).closest('tr').find('#txtAdvBillAmt').val(formatNumber(parseFloat(advanceAmount)));
+		}
+		
+		if (currentRecvdAmt == "" || isNaN(currentRecvdAmt)) {
+			currentRecvdAmt = 0;
+		}
+		
+		var balanceAmt = formatNumber(parseFloat(totalBillAmt) - (parseFloat(prevRecvdAmt) + parseFloat(currentRecvdAmt)));
+		$(this).closest('tr').find('#txtBalBillAmt').val(balanceAmt);
+
+	});        
     function saveData() {
     	if (validate()==true) {
     		if (confirm('Are you sure you want to save?')) {
 	   	    	var partyNo = $('#lstPartyNo').val();
 	   	    	var poNo = $('#lstPoNo').val();
 	   	    	var txtPymntDate = $('#txtPymntDate').val();
-	   	    	var txtPymntAmt = $('#txtPymntAmt').val();   			
+	   	    	var txtPymntAmt = $('#txtRecvdBillAmt').val();   			
     			var data= {
 	   			    "partyID":partyNo,
 	   			    "poID":poNo,
@@ -494,7 +548,7 @@
  							$('#lstPartyNo').attr('disabled', true);
  							$('#lstPoNo').attr('disabled', true);
  							$('#txtPymntDate').attr('disabled', true);
- 							$('#txtPymntAmt').attr('disabled', true);
+ 							$('#txtRecvdBillAmt').attr('disabled', true);
  							$('#btnSave').attr('disabled', true);
  							$('#txtRemarks').attr('disabled', true);
    				            $("#msgId").addClass("alert alert-success");
@@ -509,6 +563,55 @@
     		}
     	}
     }
+    function getPOPaidData(poId,partyId) {
+    	var tabRowLen = 1; 
+    	var totalBill = 0;
+    	var runningBalance = 0;
+    	$('#pymntGridBody').html('');
+    	$.ajax({
+    		//url: '/EZOfficeInventory/getAllPymentPaidHistoryData',
+    		url: 'https://salepurchasecompany.co.in/getAllPymentPaidHistoryData',
+         	type: 'POST',
+    		contentType: 'application/json',	
+    		   data: JSON.stringify(
+    		   	{
+    		   		"searchVarData":poId,
+    		   		"customerName":partyId
+	   		   	}),
+    		   	dataType: 'json',
+    		   	success: function (data) {
+    		   		console.log(data);
+    		   		if (data.length > 0) {
+    		   			$('#pymntGridTab').show();
+    		   			for(var i=0;i<data.length;i++){
+       		        		if (data[i].totalBillAmount > 0) {
+       		        			totalBill = data[i].totalBillAmount;
+       		        		}
+       		        		runningBalance = totalBill - data[i].totalPaidAmount;
+    		   				$('#pymntGridBody').append(
+		                        '<tr>'+
+		                        '<td>'+tabRowLen+'</td>'+
+			                     '<td>'+data[i].poDate+'</td>'+ 
+			                     /* '<td <a href="#" onclick="vwPOReport('+data[i].poID+');">'+data[i].poNo+'</a></td>'+ */
+			                     '<td><a href="#" onclick="vwPOReport('+data[i].ipoId+');">'+data[i].poNo+'</a></td>'+
+			                      '<td>'+data[i].supplierName+'</td>'+
+			                      '<td>'+formatNumber(data[i].totalBillAmount)+'</td>'+
+			                      '<td>'+formatNumber(data[i].totalPaidAmount)+'</td>'+
+			                      '<td>'+formatNumber(runningBalance)+'</td>'+
+			                      '</tr>'); 
+       		        		tabRowLen++;
+       		        		totalBill = runningBalance;
+    		        	}    		   			
+    		   		} else {
+    		   			alert("No Payment Data Found");
+    		   		}
+
+    		   	},
+    		    error: function (error) {
+    		        console.log(`Error ${error}`);
+    		    }
+    	});    	
+    }    
     function loadPaymentHistory() {
         var tabRowLen = 0; 
         $('#reportDtltdata').html('');
@@ -582,6 +685,46 @@
 	function exitToHomePage() {
 		//location.href = "/EZOfficeInventory/ItemMaster";
 		location.href = "https://salepurchasecompany.co.in/makePayment";
-	}       
+	}      
+	function allowNumericWithDecimal(event) {
+	    if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
+	            $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+	        event.preventDefault();
+	    }		
+	}	
+    function refreshControl() {
+    	$('#txtTotalBillAmt').val('0.00');
+    	$('#txtPrevBillAmt').val('0.00');
+    	$('#txtAdvBillAmt').val('0.00');
+    	$('#txtRecvdBillAmt').val('0.00');
+    	$('#txtBalBillAmt').val('0.00');
+    	$('#pymntGridBody').html('');
+    	$('#pymntGridTab').hide();
+    }	
+  	function formatNumber(n) {
+    	  return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+   	}  	    
+	function convertStringToFloat(str)
+	{
+		cleanNum = str.replace(",", "");
+		return parseFloat(cleanNum);		
+	}
+	
+	function vwPOReport(poId) {
+		srchData = {
+				"poId" : poId
+			};
+			//window.location.href = "/EZOfficeInventory/PrintPO?"
+			 //window.location.href = "https://salepurchasecompany.co.in/OpenPurchaseOrder?"
+				//	+ $.param(srchData);
+			//var poLink = "/EZOfficeInventory/PrintPO?"+ $.param(srchData);
+			var poLink = "https://salepurchasecompany.co.in/PrintPO?"+ $.param(srchData);
+			popitup(poLink);
+	}
+	function popitup(url) {
+		newwindow=window.open(url,'name','height=600,width=900');
+		if (window.focus) {newwindow.focus()}
+		return false;
+		}		
     </script>
 </html>

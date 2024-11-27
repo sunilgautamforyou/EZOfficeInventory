@@ -167,7 +167,7 @@ min-width: 100px;
 <div class="canvas_div_pdf">
 <div class="purchase-section">
 <h1>
-Chaudhary Buildwell PVT. LTD.
+Chaudhary Buildwell
 </h1>
 <h3>QUOTATION REPORT</h3>
 

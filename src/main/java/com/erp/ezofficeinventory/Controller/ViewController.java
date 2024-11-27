@@ -1,8 +1,11 @@
 package com.erp.ezofficeinventory.Controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.erp.ezofficeinventory.entity.PrjSearch;
 
 
 
@@ -184,10 +187,67 @@ public class ViewController {
 	
 	@GetMapping("/category")
 	public ModelAndView openCateoryMaster() {
-		System.err.println("----- Open Category Master Page ---");
 		ModelAndView view = new ModelAndView();
 		view.addObject("sMode", "new");
 		view.setViewName("CategoryMaster");
 		return view;
+	}
+	
+	@GetMapping("/SaleOrderStkRpt")
+	public ModelAndView getSaleOrderStkRpt() {	
+		ModelAndView view = new ModelAndView();
+		view.setViewName("SalesOrderStockRpt");
+		return view;
 	}	
+	
+	@GetMapping("/pymntRcvdRpt")
+	public ModelAndView getPymntRcptSOA() {	
+		ModelAndView view = new ModelAndView();
+		view.setViewName("Report_PymntRcpt");
+		return view;
+	}	
+	
+	@GetMapping("/pymntPaidRpt")
+	public ModelAndView getPymntPaidSOA() {	
+		ModelAndView view = new ModelAndView();
+		view.setViewName("Report_pymntPaid");
+		return view;
+	}		
+
+	@GetMapping("/reportPymntSOA")
+	public ModelAndView openPymntRcdSOA(@RequestParam("towerNo") String towerNo,
+			@RequestParam("flatNo") String flatNo,@RequestParam("customerId") String customerId,
+			@RequestParam("customerMobileNo") String customerMobileNo,@RequestParam("salesOrderId") String salesOrderId,
+			@RequestParam("customerName") String customerName) {
+		PrjSearch projSrchData = new PrjSearch();
+		projSrchData.setTowerNo(towerNo +"/" + flatNo);
+		projSrchData.setFlatNo(flatNo==""?"0":flatNo);
+		projSrchData.setCustomerId(customerId==""?"0":customerId);
+		projSrchData.setCustomerMobileNo(customerMobileNo==""?"":customerMobileNo);
+		projSrchData.setSalesOrderId(salesOrderId==""?"0":salesOrderId);
+		projSrchData.setCustomerName(customerName==""?"":customerName);
+		projSrchData.setTowerName(towerNo==""?"0":towerNo);
+		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("Print_customer_SOA");
+		view.addObject("rcvdSOA", projSrchData);
+		return view;
+	}		
+	
+	@GetMapping("/reportSupplierSOA")
+	public ModelAndView openSupplierPymntSOA(@RequestParam("supplierId") String supplierId,
+			@RequestParam("supplierName") String supplierName,@RequestParam("supplierMobileNo") String supplierMobileNo,
+			@RequestParam("poId") String poId) {
+		PrjSearch prjSrchData = new PrjSearch();
+		prjSrchData.setSupplierId(supplierId);
+		prjSrchData.setSupplierName(supplierName);
+		prjSrchData.setSupplierMobileNo(supplierMobileNo);
+		prjSrchData.setPoId(poId);
+		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("PrintVendor_SOA");
+		view.addObject("vendSOA",prjSrchData);
+		return view;
+	}
+	
 }

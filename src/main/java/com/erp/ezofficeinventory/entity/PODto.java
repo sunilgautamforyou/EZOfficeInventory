@@ -25,6 +25,10 @@ public class PODto {
 	private double taxAmount;
 	private double withoutTaxAmount;
 	
+	private double totalBillAmount;
+	private double totalPaidAmount;
+	private double advanceAmount;
+	
 	
 	public String getsMode() {
 		return sMode;
@@ -181,6 +185,30 @@ public class PODto {
 	}
 	public void setWithoutTaxAmount(double withoutTaxAmount) {
 		this.withoutTaxAmount = withoutTaxAmount;
+	}
+	
+	
+	
+	public double getTotalBillAmount() {
+		return totalBillAmount;
+	}
+	public void setTotalBillAmount(double totalBillAmount) {
+		this.totalBillAmount = totalBillAmount;
+	}
+	public double getTotalPaidAmount() {
+		return totalPaidAmount;
+	}
+	public void setTotalPaidAmount(double totalPaidAmount) {
+		this.totalPaidAmount = totalPaidAmount;
+	}
+	
+	
+	
+	public double getAdvanceAmount() {
+		return advanceAmount;
+	}
+	public void setAdvanceAmount(double advanceAmount) {
+		this.advanceAmount = advanceAmount;
 	}
 	@Override
 	public String toString() {

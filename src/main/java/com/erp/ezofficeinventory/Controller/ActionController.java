@@ -1,5 +1,6 @@
 package com.erp.ezofficeinventory.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,8 +96,13 @@ public class ActionController {
 	
 	@PostMapping("get-all-HomePG-Party-data")
 	public List<PartyMasterDto> getPartyMasterHomePGData(@RequestBody PrjSearch prjSrch) {
-		System.err.println("getPartyMasterHomePGData---------------");
-		return ezServiceObj.getPartyMasterDataHomePG();
+		List<PartyMasterDto> partyMasterDto = new ArrayList<>();
+		if (prjSrch.getSearchVarData().equalsIgnoreCase("poParty")) {
+			partyMasterDto = ezServiceObj.getVendorWhichPOExists();
+		} else  {
+			partyMasterDto = ezServiceObj.getPartyMasterDataHomePG();
+		}
+		return partyMasterDto;
 	}
 	
 	@GetMapping("/OpenParty")
@@ -193,7 +199,7 @@ public class ActionController {
 	}
 	
 	@PostMapping("/search-customer-by-flatNo")
-	public SalesOrderDto getCustomerDataByFlatNo(@RequestBody PrjSearch prjSrch) {
+	public List<SalesOrderDto> getCustomerDataByFlatNo(@RequestBody PrjSearch prjSrch) {
 		System.err.println("-----Open getCustomerDataByFlatNo Master ---");
 		return ezServiceObj.getCustomerDataByFlatNo(prjSrch);
 	}	
@@ -332,7 +338,9 @@ public class ActionController {
 	
 	@PostMapping("/findRFQInSalesOrder")
 	public List<SalesOrderDto> findRFQInSalesOrder(@RequestBody PrjSearch prjSrch) {
-		return ezServiceObj.findRFQInSalesOrder(Integer.valueOf(prjSrch.getTowerNo()),Integer.valueOf(prjSrch.getFlatNo()));
+		return ezServiceObj.findRFQInSalesOrder(Integer.valueOf(prjSrch.getTowerNo())
+				,Integer.valueOf(prjSrch.getFlatNo())
+				,Integer.valueOf(prjSrch.getCustomerName()));
 	};	
 
 	@GetMapping("/PrintPO")
@@ -369,6 +377,40 @@ public class ActionController {
 		ModelAndView view = new ModelAndView();
 		view.setViewName("SalesOrderRpt");
 		view.addObject("soRpt", ezServiceObj.vwSalesOrderReportHeader(Integer.valueOf(salesOrderId)));
+		return view;
+	}	
+	
+	@GetMapping("/PrintSalesOrderStockReport")
+	public ModelAndView openSalesOrderStockReport(@RequestParam("towerNo") String towerNo,
+			@RequestParam("flatNo") String flatNo,@RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate,@RequestParam("customerName") String customerName,
+			@RequestParam("customerMobileNo") String customerMobileNo,@RequestParam("towerName") String towerName,
+			@RequestParam("customerId") String customerId
+			) {
+		System.err.println("-----Print Sales Order Stock Report ---");
+		PrjSearch projSrchData = new PrjSearch();
+		projSrchData.setTowerNo(towerNo);
+		projSrchData.setFlatNo(flatNo==""?"":flatNo);
+		projSrchData.setFromDate(fromDate);
+		projSrchData.setToDate(toDate);
+		if (customerName.equalsIgnoreCase("Choose Customer")) {
+			projSrchData.setCustomerName("");
+			projSrchData.setSearchVarData("");
+			projSrchData.setCustomerId("");
+		} else {
+			projSrchData.setCustomerName(customerName);
+			projSrchData.setSearchVarData("Customer Name");
+			projSrchData.setCustomerId(customerId);
+		}
+		projSrchData.setCustomerMobileNo(customerMobileNo);
+		if (towerName.equalsIgnoreCase("Choose Tower Number..")) {
+			projSrchData.setTowerName("");
+		} else {
+			projSrchData.setTowerName(towerName);
+		}
+		ModelAndView view = new ModelAndView();
+		view.setViewName("PrintStockSalesRpt");
+		view.addObject("stkRpt", projSrchData);
 		return view;
 	}	
 	
@@ -421,4 +463,56 @@ public class ActionController {
 	public List<ReceivedPymntDto> getPymntRecvdAgSO(@RequestBody PrjSearch prjSrch) {
 		return ezServiceObj.getPymntRecvdAgSO(prjSrch.getSearchVarData());
 	}	
+			
+	
+	@PostMapping("/search-SoStk-Rpt")
+	public List<SalesOrderDto> getSalesOrderStkRpt(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.getSalesOrderStkRpt(prjSrch);
+	}
+	
+	@PostMapping("/getSaleOrderPymntDtls")
+	public SalesOrderDto getSaleOrderPymntDtls(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.getSaleOrderPymntDtls(prjSrch.getSearchVarData());
+	}
+	
+	@PostMapping("/getSOPymntRecvdData")
+	public List<SalesOrderDto> getSOPymntRecvdData(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.getSOPymntRecvdData(prjSrch);
+	}
+	
+	@PostMapping("/getCustomerListFromSO")
+	public List<SalesOrderDto> getCustomerListFromSO(@RequestBody PrjSearch prjSrch){
+		return ezServiceObj.getCustomerListFromSO();
+	}
+	
+	@PostMapping("/getTotalPaymentDetailsByPONo")
+	public PODto getTotalPaymentDetailsByPONo(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.getTotalPaymentDetailsByPONo(prjSrch.getSearchVarData());
+	}
+	
+	@PostMapping("/getAllPymentPaidHistoryData")
+	public List<PODto> getAllPymentPaidHistoryData(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.getPymntDataByPO(prjSrch.getCustomerName(),prjSrch.getSearchVarData());
+	}
+	
+	@PostMapping("/searchCustomerData")
+	public List<CustomerDto> searchCustomerData(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.searchCustomerData(prjSrch);
+	}	
+	
+	@PostMapping("/getCustomerSOAStmtData")
+	public List<SalesOrderDto> getCustomerSOAStmtData(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.getCustomerSOAStmtData(prjSrch);
+	}
+	@PostMapping("/fillCustomerByFrmSO")
+	public List<CustomerDto> fillCustomerByFrmSO(@RequestBody PrjSearch prjSrch) {
+		System.err.println("-----Open getAllCustomerHomePGData Master ---");
+		return ezServiceObj.fillCustomerByFrmSO(null);
+	}	
+	
+	@PostMapping("/iUpdateReceivedPayment")
+	public ResponseWrapper iUpdateReceivedPayment(@RequestBody ReceivedPymntDto receivedPymntDto) {
+		return ezServiceObj.iUpdateReceivedPayment(receivedPymntDto);
+	}
+
 }

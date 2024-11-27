@@ -100,6 +100,24 @@ public interface MapperDAO {
 	})
 	public List<PartyMasterDto> getPartyMasterDataHomePG(@Param("partyId") String partyId,@Param("partyType") String partyType);
 	
+	@Select("SELECT DISTINCT PARTYID,PARTYNAME,ADDRESS,PHONENO,A.PANNO,GSTNO,REMARKS,\r\n"
+			+ "DATE_FORMAT(CREATED_DATE, '%d-%b-%y')CREATED_DATE,B.LOGIN_NAME,A.REMARKS,A.PARTYTYPE\r\n"
+			+ "FROM PARTYMASTER A,LOGINMASTER B WHERE A.CREATED_BY = B.LOGIN_ID\r\n"
+			+ "and exists (Select 1 from POMASTER where SUPPLIERID = A.PARTYID) Order by PARTYNAME")
+	@Results({
+		@Result(property = "partyId",column = "PartyId"),
+		@Result(property = "partyName",column = "PartyName"),
+		@Result(property = "address",column = "Address"),
+		@Result(property = "phoneNo",column = "PhoneNo"),
+		@Result(property = "gstNo",column = "GSTNO"),
+		@Result(property = "panNo",column = "PANNo"),
+		@Result(property = "remarks",column = "Remarks"),
+		@Result(property = "createdDt",column = "Created_Date"),
+		@Result(property = "createdByName",column = "Login_Name"),
+		@Result(property = "partyType",column = "PartyType")
+	})
+	public List<PartyMasterDto> getVendorWhichPOExists();	
+	
 	@Update("UPDATE PARTYMASTER SET ADDRESS=#{partyMasterDtp.address},PHONENO=#{partyMasterDtp.phoneNo},"
 			+ "PANNO=#{partyMasterDtp.panNo},GSTNO=#{partyMasterDtp.gstNo},REMARKS=#{partyMasterDtp.remarks}"
 			+ ",MODIFIED_DATE=NOW(),Created_By=#{partyMasterDtp.createdBy},PARTYTYPE=#{partyMasterDtp.partyType} Where PARTYID=#{partyMasterDtp.partyId}")
@@ -147,7 +165,7 @@ public interface MapperDAO {
 	public int iInsertCustomerMaster(@Param("customerDto") CustomerDto customerDto);
 	
 	@Select("SELECT CUSTOMERID,CUSTOMERNAME,B.TOWERNUMBER,B.TOWERDESC,B.TOWERID,FLATNO,MOBILENO,CREATEDBY,DATE_FORMAT(CREATEDDATE, '%d-%b-%y')CreatedDate,C.LOGIN_NAME,A.REMARKS \r\n"
-			+ "FROM CUSTOMERMASTER A,TOWERMASTER B,LOGINMASTER C WHERE A.TOWERNO = B.TOWERID AND A.CREATEDBY = C.LOGIN_ID AND CUSTOMERID=coalesce(#{customerId},CUSTOMERID)")
+			+ "FROM CUSTOMERMASTER A,TOWERMASTER B,LOGINMASTER C WHERE A.TOWERNO = B.TOWERID AND A.CREATEDBY = C.LOGIN_ID AND CUSTOMERID=coalesce(#{customerId},CUSTOMERID) Order By CUSTOMERNAME")
 	@Results({
 		@Result(property = "customerId",column = "CustomerID"),
 		@Result(property = "customerName",column = "CustomerName"),
@@ -246,7 +264,7 @@ public interface MapperDAO {
 		@Result(property = "flatNo",column = "FlatNo"),
 		@Result(property = "cutomerMobileNo",column = "MobileNo")
 	})
-	public SalesOrderDto getCustomerDataByFlatNo(@Param("prjSrch") PrjSearch prjSrch);
+	public List<SalesOrderDto> getCustomerDataByFlatNo(@Param("prjSrch") PrjSearch prjSrch);
 	
 	@Insert("INSERT INTO SALEHEADER(SALEDATE,TOWERID,FLATNO,REMARKS,CUSTOMERID,RFQID,CONTID) "
 			+ "Values (STR_TO_DATE(#{salesOrderDto.salesDate}, '%d-%b-%y'),#{salesOrderDto.towerNo},#{salesOrderDto.flatNo}"
@@ -319,7 +337,7 @@ public interface MapperDAO {
 	public List<SalesOrderDto> getAllSalesOrderDetailsItem(@Param("salesOrderId") String salesOrderId);
 	
 	
-	@Update("UPDATE SALEHEADER SET TOWERID=#{salesOrderDto.towerNo},FLATNO=#{salesOrderDto.flatNo},"
+	@Update("UPDATE SALEHEADER SET TOWERID=#{salesOrderDto.towerNo},FLATNO=#{salesOrderDto.flatNo},SALEDATE=STR_TO_DATE(#{salesOrderDto.salesDate}, '%d-%b-%y'),"
 			+ "REMARKS=#{salesOrderDto.remarks},CUSTOMERID=#{salesOrderDto.customerId},RFQID=#{salesOrderDto.rfQId},CONTID=#{salesOrderDto.contId} "
 			+ "WHERE SALEID=#{salesOrderDto.saleId}")
 	public int iUpdateSalesMasterHead(@Param("salesOrderDto") SalesOrderDto salesOrderDto);
@@ -526,7 +544,8 @@ public interface MapperDAO {
 	
 	@Select("SELECT RFQID,RFQNO,DATE_FORMAT(A.RFQDATE, '%d-%b-%y')RFQDATE,\r\n"
 			+ "coalesce(B.CUSTOMERNAME,'')CUSTOMERNAME,coalesce(B.MOBILENO,'')MOBILENO,\r\n"
-			+ "if(A.FLATNO=0,'',A.FLATNO)FLATNO,if(A.TOWERID=0,'',A.TOWERID)TOWERID,C.TOWERNUMBER,C.TOWERDESC,A.CUSTOMERID\r\n"
+			+ "if(A.FLATNO=0,'',A.FLATNO)FLATNO,if(A.TOWERID=0,'',A.TOWERID)TOWERID,C.TOWERNUMBER,C.TOWERDESC,A.CUSTOMERID,"
+			+ "coalesce(A.REMARKS,'')REMARKS\r\n"
 			+ "FROM RFQHEADER A LEFT OUTER JOIN CUSTOMERMASTER B \r\n"
 			+ "ON A.CUSTOMERID = B.CUSTOMERID \r\n"
 			+ "LEFT OUTER JOIN TOWERMASTER C\r\n"
@@ -542,7 +561,8 @@ public interface MapperDAO {
 		@Result(property = "towerId",column = "TowerID"),
 		@Result(property = "towerNo",column = "TowerNumber"),
 		@Result(property = "towerDescription",column = "TowerDesc"),
-		@Result(property = "customerId",column = "CustomerId")
+		@Result(property = "customerId",column = "CustomerId"),
+		@Result(property = "remarks",column = "REMARKS")
 	})
 	public List<RFQDto> getAllQuotationHomePGData(@Param("rfQId") String rfQId);
 	
@@ -568,12 +588,13 @@ public interface MapperDAO {
 	
 	@Select("Select coalesce(b.RFQNO,'')RFQNO,coalesce(b.RFQID,'')RFQID\r\n"
 			+ "from RFQHEADER b\r\n"
-			+ "Where b.TOWERID=#{towerNo} and b.FLATNO=#{flatNo}")
+			+ "Where b.TOWERID=#{towerNo} and b.FLATNO=#{flatNo} and b.customerId=#{customerId}")
 	@Results({
 		@Result(property = "rfQNumber",column = "RFQNO"),
 		@Result(property = "rfQId",column = "RfqID")
 	})
-	public List<SalesOrderDto> findRFQInSalesOrder(@Param("towerNo") int towerNo,@Param("flatNo") int flatNo);
+	public List<SalesOrderDto> findRFQInSalesOrder(@Param("towerNo") int towerNo,@Param("flatNo") int flatNo
+			,@Param("customerId") int customerId);
 	
 	
 	@Select("SELECT A.POID,A.PONO,B.PARTYNAME,DATE_FORMAT(A.PODATE, '%d-%b-%y')PODATE,B.ADDRESS,B.PHONENO,A.REMARKS \r\n"
@@ -646,14 +667,14 @@ public interface MapperDAO {
 	})
 	public List<RFQDto> getQuotationDtlReportDat(@Param("rfqId") int rfqId);
 	
-	@Select("SELECT A.SALEID,A.SALENUMBER,A.SALEDATE\r\n"
+	@Select("SELECT A.SALEID,A.SALENUMBER,DATE_FORMAT(A.SALEDATE,'%d-%M-%y')SALEDATE\r\n"
 			+ ",COALESCE(D.TOWERNUMBER,'')TOWERNUMBER,COALESCE(D.TOWERDESC,'')TOWERDESC\r\n"
-			+ ",COALESCE(C.FLATNO,'')FLATNO,COALESCE(B.RFQNO,'')RFQNO,COALESCE(B.RFQDATE,'')RFQDATE,"
+			+ ",COALESCE(A.FLATNO,'')FLATNO,COALESCE(B.RFQNO,'')RFQNO,COALESCE(B.RFQDATE,'')RFQDATE,"
 			+ "COALESCE(C.CUSTOMERNAME,'')CUSTOMERNAME,COALESCE(C.MOBILENO,'')MOBILENO\r\n"
 			+ "FROM SALEHEADER A \r\n"
 			+ "LEFT OUTER JOIN RFQHEADER B ON A.RFQID = B.RFQID \r\n"
 			+ "LEFT OUTER JOIN CUSTOMERMASTER C ON A.CUSTOMERID = C.CUSTOMERID\r\n"
-			+ "LEFT OUTER JOIN TOWERMASTER D ON D.TOWERID = C.TOWERNO WHERE SALEID=#{salesId}")
+			+ "LEFT OUTER JOIN TOWERMASTER D ON D.TOWERID = A.TOWERID WHERE SALEID=#{salesId}")
 	@Results({
 		@Result(property = "saleId",column = "SaleID"),
 		@Result(property = "salesOrderNumber",column = "SaleNumber"),
@@ -806,4 +827,261 @@ public interface MapperDAO {
 			@Result(property = "soNo",column = "saleNumber")
 		})		
 		public List<ReceivedPymntDto> getPymntRecvdAgSO(@Param("soId") String soId);
+		
+		
+		
+		@Select("SELECT SH.TOWERID,TOW.TOWERNUMBER, SH.FLATNO,SH.SALENUMBER,DATE_FORMAT(SH.SALEDATE, '%d-%b-%y')SALEDATE,IM.ITEMNAME,UOM.UOM_DESCRIPTION,CAST(SD.QUANTITY AS DECIMAL(12,2))QUANTITY,\r\n"
+				+ "CAST(SD.RATE AS DECIMAL(12,2))RATE,CAST(SD.GSTPCT AS DECIMAL(12,2))GSTPCT,\r\n"
+				+ "CAST(SD.AMOUNT AS DECIMAL(12,2))AMOUNT,ROUND((SD.AMOUNT - ROUND(((QUANTITY * RATE) * COALESCE(SD.GSTPCT,0) / 100),2)),2)WITHOUTTAXAMOUNT,"
+				+ "CAST(SD.AMOUNT AS DECIMAL(12,2))AMOUNT,ROUND(((SD.QUANTITY * SD.RATE) * COALESCE(SD.GSTPCT,0) / 100),2)TAXAMOUNT,"
+				+ "CONCAT(cm.CUSTOMERNAME, '-' ,  cm.MOBILENO)CUSTOMERNAME \r\n"
+				+ "FROM SALEHEADER SH INNER JOIN SALEDETAILS SD ON SH.SALEID = SD.SALEID\r\n"
+				+ "INNER JOIN ITEMMASTER IM ON SD.ITEMID=IM.ITEMID\r\n"
+				+ "INNER JOIN UOMMASTER UOM ON SD.UOMID=UOM.UOM_ID\r\n"
+				+ "INNER JOIN TOWERMASTER TOW ON TOW.TOWERID = SH.TOWERID\r\n"
+				+ "LEFT JOIN CUSTOMERMASTER cm on cm.CUSTOMERID = SH.CUSTOMERID WHERE SD.DELFLAG='0' \r\n"
+				+ "AND SH.SALEDATE BETWEEN #{dateFr} AND #{dateTo}\r\n"
+				+ "AND SH.FLATNO = (CASE WHEN #{flatNo} = '' THEN SH.FLATNO ELSE #{flatNo} END) AND SH.TOWERID = (CASE WHEN #{towerId} = '0' THEN SH.TOWERID ELSE #{towerId} END) "
+				+ "AND SH.CUSTOMERID = (CASE WHEN #{customerId} = '' THEN SH.CUSTOMERID ELSE #{customerId} END) "
+				+ "ORDER BY SH.SALEDATE,TOW.TOWERNUMBER,SH.FLATNO,cm.CUSTOMERID")
+		@Results({
+			@Result(property = "flatNo",column = "FLATNO"),
+			@Result(property = "towerDescription",column = "TOWERNUMBER"),
+			@Result(property = "salesOrderNumber",column = "SALENUMBER"),
+			@Result(property = "salesDate",column = "SALEDATE"),
+			@Result(property = "itemDesc",column = "ITEMNAME"),
+			@Result(property = "uomDesc",column = "UOM_DESCRIPTION"),
+			@Result(property = "soQty",column = "QUANTITY"),
+			@Result(property = "soRate",column = "RATE"),
+			@Result(property = "gstPct",column = "GSTPCT"),
+			@Result(property = "uomDesc",column = "UOM_DESCRIPTION"),
+			@Result(property = "soAmount",column = "AMOUNT"),
+			@Result(property = "withOutTaxAmount",column = "WithOutTaxAmount"),
+			@Result(property = "customerName",column = "CUSTOMERNAME"),
+			@Result(property = "taxAmount",column = "TaxAmount")
+		})
+		public List<SalesOrderDto> getSalesOrderStkRpt(@Param("towerId") String towerId,
+				@Param("flatNo") String flatNo,@Param("dateFr") String dateFr,@Param("dateTo") String dateTo,@Param("customerId") String customerId);		
+		
+		
+		@Select("Select ROUND(X.TotalBillAmount,2)TotalBillAmount,coalesce(ROUND(X.PYMNTAMOUNT,2),0)PYMNTAMOUNT,\r\n"
+				+ "(Case When X.PYMNTAMOUNT > X.TotalBillAmount Then\r\n"
+				+ "ROUND((X.PYMNTAMOUNT-X.TotalBillAmount),2) else 0 end)AdvanceAmount  From (\r\n"
+				+ "Select Sum(AMOUNT)TotalBillAmount,\r\n"
+				+ "(Select Sum(PYMNTAMOUNT) from RECVDMASTER where SOID=#{soId})PYMNTAMOUNT\r\n"
+				+ "from SALEHEADER sh inner join SALEDETAILS sd on sh.SALEID = sd.SALEID \r\n"
+				+ "Where sh.SALEID = #{soId})X")
+		@Results({
+			@Result(property = "totalBillAmount",column = "TotalBillAmount"),
+			@Result(property = "recvdBillAmount",column = "PYMNTAMOUNT"),
+			@Result(property = "advanceBillAmount",column = "AdvanceAmount")
+		})
+		public SalesOrderDto getSaleOrderPymntDtls(@Param("soId") String soId);
+		
+		
+		@Select("Select A.SALENUMBER,date_format(A.SALEDATE,'%d-%b-%y')SALEDATE,A.FLATNO,A.TOWERDESC"
+				+ ",A.CUSTOMERNAME,ROUND(A.BillAMOUNT,2) as BillAMOUNT,A.ReceivedAmount,A.SALEID,A.PYMNTID"
+				+ " From (\r\n"
+				+ "select 1 as SEQ,0 as PYMNTID,SH.SALEID, SH.SALENUMBER,SH.SALEDATE,SH.FLATNO,\r\n"
+				+ "TM.TOWERDESC,CM.CUSTOMERNAME,SUM(SD.AMOUNT) BillAMOUNT,'' as ReceivedAmount\r\n"
+				+ "from SALEHEADER SH\r\n"
+				+ "INNER JOIN SALEDETAILS SD ON SH.SALEID=SD.SALEID\r\n"
+				+ "INNER JOIN TOWERMASTER TM ON SH.TOWERID=TM.TOWERID\r\n"
+				+ "INNER JOIN CUSTOMERMASTER CM ON SH.CUSTOMERID=CM.CUSTOMERID\r\n"
+				+ "Where 1=1 and SH.CUSTOMERID=coalesce(#{prjSrch.customerId},SH.CUSTOMERID)\r\n"
+				+ "and SH.SALEID = coalesce(#{prjSrch.salesOrderId},SH.SALEID) and TM.TOWERID = coalesce(#{prjSrch.towerNo},TM.TOWERID) "
+				+ "AND SH.FLATNO = COALESCE(#{prjSrch.flatNo},SH.FLATNO) and coalesce(SD.DELFLAG,0)=0 "
+				+ "and date_format(SH.SALEDATE,'%Y-%m-%d') between #{prjSrch.fromDate} AND #{prjSrch.toDate}\r\n"
+				+ "GROUP BY SD.SALEID\r\n"
+				+ "UNION ALL\r\n"
+				+ "SELECT 2 as SEQ,RM.PYMNTID,SH.SALEID, SH.SALENUMBER,RM.PYMNTDATE, SH.FLATNO,\r\n"
+				+ "TM.TOWERDESC,CM.CUSTOMERNAME,  '' as BillAMOUNT,ROUND(RM.PYMNTAMOUNT,2) as ReceivedAmount\r\n"
+				+ "FROM `RECVDMASTER` RM \r\n"
+				+ "INNER JOIN SALEHEADER SH ON RM.SOID=SH.SALEID\r\n"
+				+ "INNER JOIN TOWERMASTER TM ON SH.TOWERID=TM.TOWERID\r\n"
+				+ "INNER JOIN CUSTOMERMASTER CM ON SH.CUSTOMERID=CM.CUSTOMERID\r\n"
+				+ "where 1=1  and RM.CUSTOMERID=coalesce(#{prjSrch.customerId},SH.CUSTOMERID)\r\n"
+				+ "and SH.SALEID = coalesce(#{prjSrch.salesOrderId},SH.SALEID) "
+				+ "AND SH.FLATNO = COALESCE(#{prjSrch.flatNo},SH.FLATNO) and TM.TOWERID = coalesce(#{prjSrch.towerNo},TM.TOWERID) "
+				+ "and date_format(SH.SALEDATE,'%Y-%m-%d') between #{prjSrch.fromDate} AND #{prjSrch.toDate}) A order by  A.CUSTOMERNAME,A.SALEID,A.SEQ,A.PYMNTID")
+		@Results({
+			@Result(property = "salesOrderNumber",column = "SALENUMBER"),
+			@Result(property = "salesDate",column = "SALEDATE"),
+			@Result(property = "flatNo",column = "FLATNO"),
+			@Result(property = "towerNo",column = "TOWERDESC"),
+			@Result(property = "customerName",column = "CUSTOMERNAME"),
+			@Result(property = "totalBillAmount",column = "BillAMOUNT"),
+			@Result(property = "recvdBillAmount",column = "ReceivedAmount"),
+			@Result(property = "pymntId",column = "PYMNTID"),
+			@Result(property = "saleId",column = "SALEID")
+		})
+		public List<SalesOrderDto> getSOPymntRecvdData(@Param("prjSrch") PrjSearch prjSrch);
+		
+		
+		
+		@Select("Select distinct cus.CUSTOMERID,cus.CUSTOMERNAME,cus.MOBILENO,\r\n"
+				+ "tow.TOWERNUMBER,so.FLATNO,tow.TOWERID,tow.TOWERDESC\r\n"
+				+ "from CUSTOMERMASTER cus INNER JOIN SALEHEADER so \r\n"
+				+ "left outer join TOWERMASTER tow on tow.TOWERID = so.TOWERID\r\n"
+				+ "where cus.CUSTOMERID = so.CUSTOMERID Order by cus.CUSTOMERNAME")
+		@Results({
+			@Result(property = "customerId",column = "CUSTOMERID"),
+			@Result(property = "customerName",column = "CUSTOMERNAME"),
+			@Result(property = "cutomerMobileNo",column = "MOBILENO"),
+			@Result(property = "towerNo",column = "TOWERNUMBER"),
+			@Result(property = "flatNo",column = "FLATNO"),
+			@Result(property = "towerId",column = "TOWERID"),
+			@Result(property = "towerDescription",column = "TOWERDESC")
+		})
+		public List<SalesOrderDto> getCustomerListFromSO();
+		
+		
+		@Select("Select A.POID,A.PONO,A.PODATE,A.PARTYNAME,ROUND(A.BillAMOUNT,2) as BillAMOUNT,ROUND(A.PaidAmount,2) as PaidAmount from (\r\n"
+				+ "select 1 as SEQ,0 as PYMNTID,po.POID,po.PONO,DATE_FORMAT(po.PODATE, '%d-%b-%y')PODATE,pm.PARTYNAME,ROUND(SUM(pd.AMOUNT),2) BillAMOUNT,'' as PaidAmount\r\n"
+				+ " from POMASTER po inner join PODETAILS pd on po.POID = pd.POID\r\n"
+				+ "Inner Join PARTYMASTER pm on pm.PARTYID = po.SUPPLIERID\r\n"
+				+ "Where 1=1 and po.SUPPLIERID = coalesce(#{customerId},po.SUPPLIERID)\r\n"
+				+ "and po.POID = coalesce(#{poId},po.POID)\r\n"
+				+ "group by po.POID\r\n"
+				+ "union all\r\n"
+				+ "select 2 as SEQ,pm.PYMNTID,pm.POID,po.PONO,DATE_FORMAT(pm.PYMNTDATE, '%d-%b-%y')PYMNTDATE,party.PARTYNAME, '' as BillAMOUNT,round(pm.PYMNTAMOUNT,2) as PaidAmount\r\n"
+				+ " from PYMNTMASTER pm inner join POMASTER po on pm.POID = po.POID\r\n"
+				+ "inner join PARTYMASTER party on party.PARTYID = po.SUPPLIERID\r\n"
+				+ "where 1=1 and po.SUPPLIERID = coalesce(#{customerId},po.SUPPLIERID)\r\n"
+				+ "and po.POID = coalesce(#{poId},po.POID))A order by A.POID,A.SEQ,A.PYMNTID")
+		@Results({
+			@Result(property = "poNo",column = "PONO"),
+			@Result(property = "ipoId",column = "POID"),
+			@Result(property = "poDate",column = "PODATE"),
+			@Result(property = "supplierName",column = "PARTYNAME"),
+			@Result(property = "totalBillAmount",column = "BillAMOUNT"),
+			@Result(property = "totalPaidAmount",column = "PaidAmount")
+		})
+		public List<PODto> getPymntDataByPO(@Param("customerId") String customerId,@Param("poId") String poId);
+		
+		
+		@Select("Select ROUND(X.TotalBillAmount,2)TotalBillAmount,\r\n"
+				+ "coalesce(ROUND(X.PYMNTAMOUNT,2),0)PYMNTAMOUNT,\r\n"
+				+ "(Case When X.PYMNTAMOUNT > X.TotalBillAmount Then\r\n"
+				+ "ROUND((X.PYMNTAMOUNT-X.TotalBillAmount),2) else 0 end)AdvanceAmount\r\n"
+				+ " from (\r\n"
+				+ "Select ROUND(Sum(AMOUNT),2)TotalBillAmount,(Select Sum(PYMNTAMOUNT) from PYMNTMASTER where POID=po.POID)PYMNTAMOUNT\r\n"
+				+ " from POMASTER po inner join PODETAILS pd on po.poId = pd.PoId\r\n"
+				+ "Where po.POID = #{poId})X")
+		@Results({
+			@Result(property = "totalBillAmount",column = "TotalBillAmount"),
+			@Result(property = "totalPaidAmount",column = "PYMNTAMOUNT"),
+			@Result(property = "advanceAmount",column = "AdvanceAmount")
+		})
+		public PODto getTotalPaymentDetailsByPONo(@Param("poId") String poId);
+		
+		
+		@Select("Select A.CUSTOMERID,A.CUSTOMERNAME,A.MOBILENO,\r\n"
+				+ "B.TOWERDESC,A.FLATNO FROM CUSTOMERMASTER A,TOWERMASTER B\r\n"
+				+ " where \r\n"
+				+ " A.TOWERNO = B.TOWERID and\r\n"
+				+ " (upper(CUSTOMERNAME) like Upper('%' #{searchTextData} '%') or MOBILENO LIKE '%' #{searchTextData} '%')")
+		@Results({
+			@Result(property = "customerName",column = "CUSTOMERNAME"),
+			@Result(property = "mobileNuber",column = "MOBILENO"),
+			@Result(property = "towerNuber",column = "TOWERDESC"),
+			@Result(property = "flatNumber",column = "FLATNO"),
+			@Result(property = "customerId",column = "CUSTOMERID")
+		})
+		public List<CustomerDto> searchCustomerData(@Param("searchTextData") String searchTextData);
+		
+		@Select("SELECT A.FLATNO,\r\n"
+				+ "       A.TOWERDESC,\r\n"
+				+ "       CONCAT(A.CUSTOMERNAME, '<->', A.MOBILENO) AS CUSTOMERNAME,\r\n"
+				+ "       A.CUSTOMERID,\r\n"
+				+ "       ROUND(SUM(A.BILLAMOUNT), 2) AS BILLAMOUNT,\r\n"
+				+ "       ROUND(SUM(A.RECEIVEDAMOUNT), 2) AS RECEIVEDAMOUNT,\r\n"
+				+ "       ROUND(SUM(A.BILLAMOUNT) - SUM(A.RECEIVEDAMOUNT), 2) BALANCE\r\n"
+				+ "FROM   (SELECT 1  AS SEQ,\r\n"
+				+ "               0 AS PYMNTID,\r\n"
+				+ "               SH.SALEID,\r\n"
+				+ "               SH.SALENUMBER,\r\n"
+				+ "               SH.SALEDATE,\r\n"
+				+ "               SH.FLATNO,\r\n"
+				+ "               TM.TOWERDESC,\r\n"
+				+ "               CM.CUSTOMERNAME,\r\n"
+				+ "               CM.MOBILENO,\r\n"
+				+ "               CM.CUSTOMERID,\r\n"
+				+ "               SUM(SD.AMOUNT) BILLAMOUNT,\r\n"
+				+ "               '' AS RECEIVEDAMOUNT\r\n"
+				+ "        FROM   SALEHEADER SH\r\n"
+				+ "               INNER JOIN SALEDETAILS SD ON SH.SALEID = SD.SALEID\r\n"
+				+ "               INNER JOIN TOWERMASTER TM ON SH.TOWERID = TM.TOWERID\r\n"
+				+ "               INNER JOIN CUSTOMERMASTER CM ON SH.CUSTOMERID = CM.CUSTOMERID\r\n"
+				+ "        WHERE  1 = 1\r\n"
+				+ "               AND COALESCE(SD.DELFLAG, 0) = 0\r\n"
+				+ "               AND CM.CUSTOMERID = COALESCE(#{prjSrchDat.customerId},CM.CUSTOMERID)\r\n"
+				+ "               AND TM.TOWERID = COALESCE(#{prjSrchDat.towerName},TM.TOWERID)\r\n"
+				+ "               AND SH.FLATNO = COALESCE(#{prjSrchDat.flatNo},SH.FLATNO) "
+				+ "and date_format(SH.SALEDATE,'%d-%b-%y') between #{prjSrchDat.fromDate} AND #{prjSrchDat.toDate}\r\n"
+				+ "        GROUP  BY SD.SALEID\r\n"
+				+ "        UNION ALL\r\n"
+				+ "        SELECT 2 AS SEQ,\r\n"
+				+ "               RM.PYMNTID,\r\n"
+				+ "               SH.SALEID,\r\n"
+				+ "               SH.SALENUMBER,\r\n"
+				+ "               RM.PYMNTDATE,\r\n"
+				+ "               SH.FLATNO,\r\n"
+				+ "               TM.TOWERDESC,\r\n"
+				+ "               CM.CUSTOMERNAME,\r\n"
+				+ "               CM.MOBILENO,\r\n"
+				+ "               CM.CUSTOMERID,\r\n"
+				+ "               '' AS BILLAMOUNT,\r\n"
+				+ "               ROUND(RM.PYMNTAMOUNT, 2) AS RECEIVEDAMOUNT\r\n"
+				+ "        FROM   RECVDMASTER RM\r\n"
+				+ "               INNER JOIN SALEHEADER SH ON RM.SOID = SH.SALEID\r\n"
+				+ "               INNER JOIN TOWERMASTER TM ON SH.TOWERID = TM.TOWERID\r\n"
+				+ "               INNER JOIN CUSTOMERMASTER CM ON SH.CUSTOMERID = CM.CUSTOMERID\r\n"
+				+ "        WHERE  1 = 1 \r\n"
+				+ "        AND COALESCE(CM.CUSTOMERID) = COALESCE(#{prjSrchDat.customerId},CM.CUSTOMERID)\r\n"
+				+ "        AND TM.TOWERID = COALESCE(#{prjSrchDat.towerName},TM.TOWERID)\r\n"
+				+ "        AND SH.FLATNO = COALESCE(#{prjSrchDat.flatNo},SH.FLATNO "
+				+ "and date_format(SH.SALEDATE,'%d-%b-%y') between #{prjSrchDat.fromDate} AND #{prjSrchDat.toDate})) A\r\n"
+				+ "       INNER JOIN CUSTOMERMASTER CM ON A.CUSTOMERID = CM.CUSTOMERID\r\n"
+				+ "GROUP  BY A.FLATNO,\r\n"
+				+ "          A.TOWERDESC,\r\n"
+				+ "          A.CUSTOMERNAME,\r\n"
+				+ "          A.MOBILENO,\r\n"
+				+ "          A.CUSTOMERID\r\n"
+				+ "ORDER BY A.CUSTOMERNAME,A.TOWERDESC     \r\n"
+				+ "           ")
+				@Results({
+					@Result(property = "flatNo",column = "FLATNO"),
+					@Result(property = "towerDescription",column = "TOWERDESC"),
+					@Result(property = "customerName",column = "CUSTOMERNAME"),
+					@Result(property = "customerId",column = "CUSTOMERID"),
+					@Result(property = "totalBillAmount",column = "BILLAMOUNT"),
+					@Result(property = "recvdBillAmount",column = "RECEIVEDAMOUNT"),
+					@Result(property = "advanceBillAmount",column = "BALANCE")
+				})
+				public List<SalesOrderDto> getCustomerSOAStmtData(@Param("prjSrchDat") PrjSearch prjSrchDat);
+		
+		@Select("Select distinct cm.CUSTOMERID,cm.CUSTOMERNAME,cm.MOBILENO,tm.TOWERDESC,cm.FLATNO\r\n"
+				+ " from SALEHEADER sh inner join CUSTOMERMASTER cm on sh.CUSTOMERID = cm.CUSTOMERID\r\n"
+				+ " inner join TOWERMASTER tm on tm.TOWERID = sh.TOWERID\r\n"
+				+ " where exists (select 1 from SALEDETAILS sd where sh.SALEID = sd.SALEID and coalesce(sd.DELFLAG,0)=0 )\r\n"
+				+ " and cm.CUSTOMERID = COALESCE(#{customerId},cm.CUSTOMERID)\r\n"
+				+ " Order by cm.CUSTOMERNAME")
+		@Results({
+			@Result(property = "customerId",column = "CUSTOMERID"),
+			@Result(property = "customerName",column = "CUSTOMERNAME"),
+			@Result(property = "towerDesc",column = "TOWERDESC"),
+			@Result(property = "flatNumber",column = "FLATNO"),
+			@Result(property = "mobileNuber",column = "MOBILENO")
+		})
+		public List<CustomerDto> fillCustomerByFrmSO(@Param("customerId") String customerId);		
+		
+		@Update("Update RECVDMASTER set LAST_UPDATED_VALUE=PYMNTAMOUNT,PYMNTAMOUNT=#{receivedPymntDto.pymntAmount},"
+				+ "UPDATED_DATE=now() where PYMNTID=#{receivedPymntDto.pymntId} and CUSTOMERID=#{receivedPymntDto.customerId} and SOID=#{receivedPymntDto.soID}")
+		public int iUpdateReceivedPayment(@Param("receivedPymntDto") ReceivedPymntDto receivedPymntDto);
+		
+		
 }
+
+
+

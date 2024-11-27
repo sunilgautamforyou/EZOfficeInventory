@@ -23,7 +23,7 @@
     <!-- Custom Scrollbar-->
     <link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="css/style.css">
+     <link rel="stylesheet" href="css/style.css"> 
     <link rel="stylesheet" href="css/responsive.css">
     <!-- Custom stylesheet - for your changes-->
     <!-- Favicon-->
@@ -88,7 +88,9 @@
                     </li> 
                    <li class="active"><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Reports</a>
                   	<ul id="reports" class="collapse list-unstyled show">
-                  	<li><a href="https://salepurchasecompany.co.in/stockReport">Stock Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntRcvdRpt">Customer Payment SOA</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/SaleOrderStkRpt">Sales Order Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntPaidRpt">Supplier Payment SOA</a></li>
                   	</ul>
                   </li>                                       
                  	</ul>
@@ -160,6 +162,7 @@
 jQuery(document).ready(function($){
 	var viewBtn;
 	var editBtn;
+	var printBtn;
 	var table ;
 	loadCustomerHomePGData();
 });
@@ -183,6 +186,7 @@ function loadCustomerHomePGData() {
 		        		// '<th>Sr. No</th>'+
 		                 '<th hidden>SaleOrderId</th>'+
 		                 '<th >SO Number</th>'+
+		                 '<th >SO Date</th>'+
 		                 '<th>Customer Name</th>'+
 		                 '<th>Mobile No</th>'+
 		                 '<th>Flat Number</th>'+
@@ -192,14 +196,16 @@ function loadCustomerHomePGData() {
 		        for(var i=0;i<data.length;i++){
 		        	viewBtn= '<button type="button" class="common-btn btn-sm" id="viewbtn" onclick=OpenEntryPG("view",'+data[i].saleId+')>View</button>';
 		        	editBtn= '<button type="button" class="common-btn gray-btn btn-sm" id="editbtn" onclick=OpenEntryPG("edit",'+data[i].saleId+')>Edit</button>';
+		        	printBtn = '<button type="button" class="common-btn gray-btn btn-sm" id="editbtn" onclick=vwReport('+data[i].saleId+')>Print</button>';
 		        	$('#tdata').append(
 		        		'<tr>'+
 		        		'<td hidden>'+data[i].saleId +'</td>'+
 		        		'<td>'+data[i].salesOrderNumber+'</td>'+
+		        		'<td>'+data[i].salesDate+'</td>'+
 		        		'<td>'+data[i].customerName+'</td>'+
 		        		'<td>'+data[i].cutomerMobileNo+'</td>'+
 		        		'<td>'+data[i].flatNo+'</td>'+
-		        		'<td>'+viewBtn +'  '+editBtn+'</td>'+
+		        		'<td>'+viewBtn +'  '+editBtn+' '+printBtn+'</td>'+
 		        		'</tr>'
 		        	);		
 		        }
@@ -226,5 +232,21 @@ function OpenEntryPG(sMode, salesOrderId) {
      window.location.href = "https://salepurchasecompany.co.in/OpenSalesOrder?"
 			+ $.param(srchData);
 }
+function vwReport(salesOrderId) {
+	srchData = {
+			"salesOrderId" : salesOrderId
+		};
+		//window.location.href = "/EZOfficeInventory/PrintPO?"
+		 //window.location.href = "https://salepurchasecompany.co.in/OpenPurchaseOrder?"
+			//	+ $.param(srchData);
+		//var poLink = "/EZOfficeInventory/PrintSalesOrder?"+ $.param(srchData);
+		var poLink = "https://salepurchasecompany.co.in/PrintSalesOrder?"+ $.param(srchData);
+		popitup(poLink);
+}
+function popitup(url) {
+	newwindow=window.open(url,'name','height=600,width=900');
+	if (window.focus) {newwindow.focus()}
+	return false;
+	} 
 </script>
 </html>

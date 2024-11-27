@@ -66,7 +66,9 @@
                     </li>  
                    <li class="active"><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Reports</a>
                   	<ul id="reports" class="collapse list-unstyled show">
-                  	<li><a href="https://salepurchasecompany.co.in/stockReport">Stock Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntRcvdRpt">Customer Payment SOA</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/SaleOrderStkRpt">Sales Order Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntPaidRpt">Supplier Payment SOA</a></li>
                   	</ul>
                   </li>                                      
                  	</ul>
@@ -126,17 +128,20 @@
 								</div>
 								<label class="col-sm-4 col-md-1 col-form-label pl15">Flat</label>
 								<div class="col-sm-6 col-md-3 pl0 cal-position">
-									<input type="text" id="txtFlatNumber" class="form-control" onblur="findCustomerData()" onkeypress="return isNumber(event)" placeholder="Flat Number">									
+									<input type="text" id="txtFlatNumber" class="form-control" onblur="findCustomerData()" onkeypress="return isNumber(event)" placeholder="Flat Number"/>									
 								</div>
 							</div>
 							<div class="form-group row">
 							<label class="col-sm-4 col-md-1 col-form-label">Customer</label>
 							<div class="col-sm-6 col-md-3 pl0">
-								<input type="text" id="txtCustomerNm" class="form-control" placeholder="Customer Name">
+								<!-- <input type="text" id="txtCustomerNm" class="form-control" placeholder="Customer Name"> -->
+								<select class="custom-select" id="lstCustomerNm">
+									<option selected="selected" value="0">Choose Customer</option>
+								</select>
 							</div>
 							<label class="col-sm-4 col-md-1 col-form-label pl15">Mobile</label>	
 							 <div class="col-sm-6 col-md-3 pl0 cal-position">
-								<input type="text" id="txtCustomerMobile" class="form-control" onkeypress="return isNumber(event)" placeholder="Contact Number">
+								<input type="text" id="txtCustomerMobile" class="form-control" onkeypress="return isNumber(event)" placeholder="Contact Number"/>
 							 </div>	
 							</div>	
                              <div class="form-group row">
@@ -268,12 +273,13 @@
     var delBtn;	
     var customerId = 0;
     var rfqId = 0;
+    customerDataArray=[];
 	    $('.input-group.date').datepicker({
 	        format: "dd-M-yy",
 	        todayHighlight: true,
 	        autoclose: true,
 	        showMeridian: true,
-	        startDate: "-90d",
+	        startDate: "-365d",
 	        endDate: "+30d",
 	    }).on('changeDate', function (ev) {
 	        $(this).datepicker('hide');
@@ -293,7 +299,7 @@
 	    $(document).ready(function () {
 	    	$('#txtRFQNumber').attr('disabled', true);
 	    	$('#btnPrint').hide();
-	    	$('#txtCustomerNm').attr('disabled', true);
+	    	$('#lstCustomerNm').attr('disabled', false);
 	    	$('#txtCustomerMobile').attr('disabled', true);	 
 	    	if ("${sMode}" == "new" || "${sMode}" == "edit") {
 	    		fillTowerData("0");
@@ -306,9 +312,9 @@
 	    		$('#btnPrint').show();
 	    		rfqId = "${rfq.getRfqId()}";
 	    		if ("${rfq.getCustomerName()}" != "") {
-	    			$('#txtCustomerNm').val("${rfq.getCustomerName()}");
-	    			$('#txtCustomerNm').attr('disabled', true);
-	    			customerId = "${rfq.getCustomerId()}";	    			
+	    			$('#lstCustomerNm').html('');
+	    			$('#lstCustomerNm').append('<option value='+"${rfq.getCustomerId()}"+'>'+"${rfq.getCustomerName()}"+'</option>');
+	    			$('#lstCustomerNm').attr('disabled', true);
 	    		}
 	    		if ("${rfq.getCutomerMobileNo()}" != "") {
 	    			$('#txtCustomerMobile').val("${rfq.getCutomerMobileNo()}");
@@ -418,11 +424,22 @@
 	    		    	} */
 	    		    	$('#txtFlatNumber').focus();
 		    });
+	    $('#lstCustomerNm').on('change', function() {
+    		let filter = 
+    			customerDataArray.filter(d => 
+   			    d.customerId == $('#lstCustomerNm').val());
+    		if (filter.length > 0) {
+    			var data = JSON.stringify(filter);
+    			var stringify = JSON.parse(data);
+    			$('#txtCustomerMobile').val(stringify[0]["mobileNo"]);
+    		}
+	    });
         function findCustomerData() {
         	
         	var towerNumber = $('#lstTowerNo').val();
         	var flatNumber = $('#txtFlatNumber').val();
-        	
+        	$('#lstCustomerNm').html('');
+        	$('#txtCustomerMobile').val('');
         	if ((flatNumber != "") && (towerNumber != "0")) {
             	$.ajax({
     	    		//url: '/EZOfficeInventory/search-customer-by-flatNo',
@@ -437,10 +454,23 @@
     	    		   	}),
     	    		   	dataType: 'json',
     	    		   	success: function (data) {
-    	    		   		console.log(data);
-    	    		   		$('#txtCustomerNm').val(data.customerName);
-    	    		   		$('#txtCustomerMobile').val(data.cutomerMobileNo);
-    	    		   		customerId = data.customerId;
+    	    		   		if (data.length > 1) {
+    	    		   			$('#lstCustomerNm').append('<option value=0>Choose Customer</option>');
+    	    		   			for(var i=0;i<data.length;i++){
+    	    		   				$('#lstCustomerNm').append('<option value='+data[i].customerId+'>'+data[i].customerName+'</option>');
+    	    		   				var customerData={};
+    	    		   				customerData["customerId"] = data[i].customerId;
+    	    		   				customerData["mobileNo"] = data[i].cutomerMobileNo;
+    	    		   				customerDataArray.push(customerData);
+    	    		   			}
+    	    		   			alert("Please choose the customer");
+    	    		   			$('#lstCustomerNm').focus();
+    	    		   		} else {
+    	    		   			$('#lstCustomerNm').html('');
+    	    		   			$('#lstCustomerNm').append('<option value='+data[0].customerId+'>'+data[0].customerName+'</option>');
+    	    		   			$('#txtCustomerMobile').val(data[0].cutomerMobileNo);
+    	    		   		}
+   	    		   		//customerId = data.customerId;
     	    		   	},
     	    		    error: function (error) {
     	    		        console.log(`Error ${error}`);
@@ -622,13 +652,13 @@
     		var soDate = $('#txtRFQDate').val();
     		var rfQDtlGrid = $("#reportDtltdata tr").length;
     		if (soDate == "") {
-    			alert('Quotaion Date Cannot be left Blank');
+    			alert('Quotation Date Cannot be left Blank');
     			$('#txtRFQDate').focus();
     			isVldFail = false;
     			return false;
     		}
     		if (rfQDtlGrid == "0") {
-    			alert('Atleast Select One Item In SO');
+    			alert('Atleast Select One Item In Quotation');
     			$('#searchData').focus();
     			isVldFail = false;
     			return false;				
@@ -692,7 +722,7 @@
     			    obj["sMode"] ="${sMode}";
     			    obj["towerNo"] =$('#lstTowerNo').val();
     			    obj["flatNo"] =flatNumber;
-    			    obj["customerId"] =customerId;
+    			    obj["customerId"] =$('#lstCustomerNm').val();;
     			    obj["rfqDate"] =$('#txtRFQDate').val();
     			    obj["remarks"] =$('#txtRemarks').val().replace(/(\r\n|\n|\r)/gm, "");
     			    obj["createdById"] =1;

@@ -13,6 +13,7 @@ public class CustomerDto {
 	private String createdModifiedDate;
 	private String towerDesc;
 	private int towerId;
+	private String errorMessage;
 	
 	public String getsMode() {
 		return sMode;
@@ -86,6 +87,12 @@ public class CustomerDto {
 	}
 	public void setMobileNuber(String mobileNuber) {
 		this.mobileNuber = mobileNuber;
+	}
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 	
 	

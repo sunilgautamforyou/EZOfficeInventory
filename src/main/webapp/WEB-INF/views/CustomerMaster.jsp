@@ -67,7 +67,9 @@
                     </li> 
                    <li class="active"><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Reports</a>
                   	<ul id="reports" class="collapse list-unstyled show">
-                  	<li><a href="https://salepurchasecompany.co.in/stockReport">Stock Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntRcvdRpt">Customer Payment SOA</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/SaleOrderStkRpt">Sales Order Report</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/pymntPaidRpt">Supplier Payment SOA</a></li>
                   	</ul>
                   </li>                                      
                  	</ul>
@@ -128,7 +130,7 @@
                                   <div class="form-group row">
                                     <label class="col-sm-4 col-md-2 col-form-label">Flat No.</label>
                                     <div class="col-sm-6 col-md-8 pl0">
-                                        <input type="text" class="form-control" onblur="validateFlatNo()" onkeypress="return isNumber(event)" id="txtflatNo" placeholder="Flat No.">
+                                        <input type="text" class="form-control" onkeypress="return isNumber(event)" id="txtflatNo" placeholder="Flat No.">
                                     </div>
                                   </div>
                                   <div class="form-group row">
@@ -325,7 +327,7 @@ function saveRecord() {
 	}
 }
 
-function validateFlatNo() {
+/* function validateFlatNo() {
 	var towerNumber = $('#lstTowerNo').val();
 	var flatNumber = $('#txtflatNo').val();
 	
@@ -362,7 +364,7 @@ function validateFlatNo() {
 			return false;
 		}
 	}
-}
+} */
 
 function refresh() {
 	$('#txtCustomerNM').val('');

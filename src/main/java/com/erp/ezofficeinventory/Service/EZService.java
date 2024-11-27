@@ -40,7 +40,7 @@ public interface EZService {
 	public ResponseWrapper iSavePurchaseOrderData(List<PODto> poDtl);
 	public List<PODto> getAllPOData(String poId);
 	public List<PODto> getAllPoDetailData(String poId);
-	public SalesOrderDto getCustomerDataByFlatNo(PrjSearch prjSrch);
+	public List<SalesOrderDto> getCustomerDataByFlatNo(PrjSearch prjSrch);
 	public ResponseWrapper iInsertSalesOrderHead(List<SalesOrderDto> salesDto);
 	public List<SalesOrderDto> getAllSalesOrderData(String salesOrderId);
 	public List<SalesOrderDto> getAllSalesOrderDetailsItem(String salesOrderId);
@@ -58,7 +58,7 @@ public interface EZService {
 	public ResponseWrapper iInsertRFQHeader(List<RFQDto> rfqDto);
 	public List<RFQDto> getAllQuotationHomePGData(String rfQId);
 	public List<RFQDto> bindQuotationDataGrid(String rfQId);
-	public List<SalesOrderDto> findRFQInSalesOrder(int TowerId,int FlatNo);
+	public List<SalesOrderDto> findRFQInSalesOrder(int TowerId,int FlatNo,int customerId);
 	public PODto vwPurchaseOrderReport(int PoId);
 	public List<PODto> getAllPoDetailsForReport(int poId);
 	public RFQDto vwQuotationReportHeader(int rfqId);
@@ -74,4 +74,15 @@ public interface EZService {
 	public List<PartyMasterDto> getContractorList(String contractorId,String partyType);
 	public List<MakePymntDto> getPymntAgPO(String poId);
 	public List<ReceivedPymntDto> getPymntRecvdAgSO(String soId);
+	public List<SalesOrderDto> getSalesOrderStkRpt(PrjSearch prjSrch);
+	public SalesOrderDto getSaleOrderPymntDtls(String soId);
+	public List<SalesOrderDto> getSOPymntRecvdData(PrjSearch prjSrch);
+	public List<SalesOrderDto> getCustomerListFromSO();
+	public List<PODto> getPymntDataByPO(String customerId,String poId);
+	public PODto getTotalPaymentDetailsByPONo(String poId);
+	public List<PartyMasterDto> getVendorWhichPOExists();
+	public List<CustomerDto> searchCustomerData(PrjSearch searchTextData);
+	public List<SalesOrderDto> getCustomerSOAStmtData(PrjSearch prjSrch);
+	public List<CustomerDto> fillCustomerByFrmSO(String customerId);
+	public ResponseWrapper iUpdateReceivedPayment(ReceivedPymntDto receivedPaymentDto);
 }

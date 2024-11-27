@@ -1,11 +1,13 @@
 package com.erp.ezofficeinventory.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.erp.ezofficeinventory.SqlMapper.MapperDAO;
+import com.erp.ezofficeinventory.Utility.Utility;
 import com.erp.ezofficeinventory.entity.CategoryMasterDto;
 import com.erp.ezofficeinventory.entity.CustomerDto;
 import com.erp.ezofficeinventory.entity.ItemMasterDto;
@@ -147,7 +149,7 @@ public class EZDaoImpl implements EZDao {
 	}
 
 	@Override
-	public SalesOrderDto getCustomerDataByFlatNo(PrjSearch prjSrch) {
+	public List<SalesOrderDto> getCustomerDataByFlatNo(PrjSearch prjSrch) {
 		return sqlMapperDaoObj.getCustomerDataByFlatNo(prjSrch);
 	}
 
@@ -292,8 +294,8 @@ public class EZDaoImpl implements EZDao {
 	}
 
 	@Override
-	public List<SalesOrderDto> findRFQInSalesOrder(int TowerId, int FlatNo) {
-		return sqlMapperDaoObj.findRFQInSalesOrder(TowerId, FlatNo);
+	public List<SalesOrderDto> findRFQInSalesOrder(int TowerId, int FlatNo,int customerId) {
+		return sqlMapperDaoObj.findRFQInSalesOrder(TowerId, FlatNo,customerId);
 	}
 
 	@Override
@@ -391,6 +393,74 @@ public class EZDaoImpl implements EZDao {
 		return sqlMapperDaoObj.getPymntRecvdAgSO(soId);
 	}
 
+	@Override
+	public List<SalesOrderDto> getSalesOrderStkRpt(String towerId, String flatNo, String dateFr, String dateTo,String customerId) {
+		return sqlMapperDaoObj.getSalesOrderStkRpt(towerId, flatNo, dateFr, dateTo,customerId);
+	}
 
+	@Override
+	public SalesOrderDto getSaleOrderPymntDtls(String soId) {
+		return sqlMapperDaoObj.getSaleOrderPymntDtls(soId);
+	}
+
+	@Override
+	public List<SalesOrderDto> getSOPymntRecvdData(PrjSearch prjSrch) {
+		return sqlMapperDaoObj.getSOPymntRecvdData(prjSrch);
+	}
+
+	@Override
+	public List<SalesOrderDto> getCustomerListFromSO() {
+		return sqlMapperDaoObj.getCustomerListFromSO();
+	}
+
+	@Override
+	public List<PODto> getPymntDataByPO(String customerId, String poId) {
+		List<PODto> lstPoDto = new ArrayList<>();
+		try {
+			if (poId.equalsIgnoreCase("0")) {
+				poId = null;
+			}
+			
+			lstPoDto = sqlMapperDaoObj.getPymntDataByPO(customerId, poId);
+		} catch (Exception ex) {
+			System.out.println(Utility.getStackTrace(ex));
+		}
+		return lstPoDto;
+	}
+
+	@Override
+	public PODto getTotalPaymentDetailsByPONo(String poId) {
+		PODto poDto = new PODto();
+		try {
+			poDto = sqlMapperDaoObj.getTotalPaymentDetailsByPONo(poId);
+		} catch (Exception ex) {
+			System.out.println(Utility.getStackTrace(ex));
+		}
+		return poDto;
+	}
+
+	public List<PartyMasterDto> getVendorWhichPOExists() {
+		return sqlMapperDaoObj.getVendorWhichPOExists();
+	}
+
+	@Override
+	public List<CustomerDto> searchCustomerData(String searchTextData) {
+		return sqlMapperDaoObj.searchCustomerData(searchTextData);
+	}
+
+	@Override
+	public List<SalesOrderDto> getCustomerSOAStmtData(PrjSearch prjSrch) {
+		return sqlMapperDaoObj.getCustomerSOAStmtData(prjSrch);
+	}
+
+	@Override
+	public List<CustomerDto> fillCustomerByFrmSO(String customerId) {
+		return sqlMapperDaoObj.fillCustomerByFrmSO(customerId);
+	}
+
+	@Override
+	public int iUpdateReceivedPayment(ReceivedPymntDto receivedPaymentDto) {
+		return sqlMapperDaoObj.iUpdateReceivedPayment(receivedPaymentDto);
+	}
 
 }

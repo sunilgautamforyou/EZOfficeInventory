@@ -46,7 +46,7 @@ public interface EZDao {
 	public List<PODto> getAllPOData(String poId);
 	public List<PODto> getAllPoDetailData(String poId);
 	public int updateDelFlagInPoDtl(String poId);
-	public SalesOrderDto getCustomerDataByFlatNo(PrjSearch prjSrch);
+	public List<SalesOrderDto> getCustomerDataByFlatNo(PrjSearch prjSrch);
 	public int iInsertSalesOrderHead(SalesOrderDto salesDto);
 	public int iUpdateSalesOrderNo(String soNumber,String soId);
 	public int updateDelFlagInSoDtl(String soId);
@@ -75,7 +75,7 @@ public interface EZDao {
 	public int iUpdateDelFlagInRFQDtl(RFQDto rfqDto);
 	public List<RFQDto> getAllQuotationHomePGData(String rfQId);
 	public List<RFQDto> bindQuotationDataGrid(String rfQId);
-	public List<SalesOrderDto> findRFQInSalesOrder(int TowerId,int FlatNo);
+	public List<SalesOrderDto> findRFQInSalesOrder(int TowerId,int FlatNo,int customerId);
 	public int updateBillNoInMrnDataObj(int mrnId,String partyBillNo);
 	public PODto vwPurchaseOrderReport(int PoId);
 	public List<PODto> getAllPoDetailsForReport(int poId);
@@ -95,5 +95,15 @@ public interface EZDao {
 	public CategoryMasterDto validateSubCategory(int categId,String subCategName);
 	public List<MakePymntDto> getPymntAgPO(String poId);
 	public List<ReceivedPymntDto> getPymntRecvdAgSO(String soId);
-	
+	public List<SalesOrderDto> getSalesOrderStkRpt(String towerId,String flatNo,String dateFr,String dateTo,String customerId);
+	public SalesOrderDto getSaleOrderPymntDtls(String soId);
+	public List<SalesOrderDto> getSOPymntRecvdData(PrjSearch prjSrch);
+	public List<SalesOrderDto> getCustomerListFromSO();
+	public List<PODto> getPymntDataByPO(String customerId,String poId);
+	public PODto getTotalPaymentDetailsByPONo(String poId);
+	public List<PartyMasterDto> getVendorWhichPOExists();
+	public List<CustomerDto> searchCustomerData(String searchTextData);
+	public List<SalesOrderDto> getCustomerSOAStmtData(PrjSearch prjSrch);
+	public List<CustomerDto> fillCustomerByFrmSO(String customerId);
+	public int iUpdateReceivedPayment(ReceivedPymntDto receivedPaymentDto);
 }
