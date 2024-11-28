@@ -205,8 +205,9 @@ Supplier Mobile
 <tr>
 <th style="width: 40px;">Sr No.</th>
 <th>Supplier/Vendor Name</th>
-<th>Bill Date</th>
-<th>Bill Number</th>
+<th>Party Bill Number</th>
+<th>PO Number</th>
+<th>PO Date</th>
 <th>Bill Amount</th>
 <th>Paid Amount</th>
 <th>Balance Amount</th>
@@ -293,8 +294,9 @@ Supplier Mobile
 		                        '<tr>'+
 		                        '<td>'+tabRowLen+'</td>'+
 		                        '<td>'+data[i].supplierName+'</td>'+ 
+		                        '<td>'+data[i].partyBillNo+'</td>'+
+		                        '<td>'+data[i].poNo+'</td>'+
 		                        '<td>'+data[i].poDate+'</td>'+ 
-			                     '<td>'+data[i].poNo+'</td>'+
 			                      '<td>'+formatNumber(data[i].totalBillAmount)+'</td>'+
 			                      '<td>'+formatNumber(data[i].totalPaidAmount)+'</td>'+
 			                      '<td>'+formatNumber(runningBalance)+'</td>'+
@@ -305,7 +307,7 @@ Supplier Mobile
      		        		paidAmount =   paidAmount + data[i].totalPaidAmount;
   		        	}    
 		   			$('#pymntGridBody').append(
-		   					'<td colspan=4><b style="font-size: 22px;">TOTAL BALANCE:</b></td>'+				
+		   					'<td colspan=5><b style="font-size: 22px;">TOTAL BALANCE:</b></td>'+				
 		   					'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netBillAmt">'+formatNumber(billableValue)+'</label></td>'+
 		   					'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netPaidAmt">'+formatNumber(paidAmount)+'</label></td>'+
 		   					'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netalAmt">'+formatNumber(runningBalance)+'</label></td>'+

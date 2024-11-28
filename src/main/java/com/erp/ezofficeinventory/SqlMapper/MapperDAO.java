@@ -965,7 +965,9 @@ public interface MapperDAO {
 		public List<SalesOrderDto> getCustomerListFromSO();
 		
 		
-		@Select("Select A.POID,A.PONO,A.PODATE,A.PARTYNAME,ROUND(A.BillAMOUNT,2) as BillAMOUNT,ROUND(A.PaidAmount,2) as PaidAmount from (\r\n"
+		@Select("Select A.POID,A.PONO,A.PODATE,A.PARTYNAME,ROUND(A.BillAMOUNT,2) as BillAMOUNT,"
+				+ "ROUND(A.PaidAmount,2) as PaidAmount,"
+				+ "(Select distinct group_concat(BILLNO , '') from MRNHEAD where PO_ID=A.POID)PartyBillNo from (\r\n"
 				+ "select 1 as SEQ,0 as PYMNTID,po.POID,po.PONO,DATE_FORMAT(po.PODATE, '%d-%b-%y')PODATE,pm.PARTYNAME,ROUND(SUM(pd.AMOUNT),2) BillAMOUNT,'' as PaidAmount\r\n"
 				+ " from POMASTER po inner join PODETAILS pd on po.POID = pd.POID\r\n"
 				+ "Inner Join PARTYMASTER pm on pm.PARTYID = po.SUPPLIERID\r\n"
@@ -986,7 +988,8 @@ public interface MapperDAO {
 			@Result(property = "poDate",column = "PODATE"),
 			@Result(property = "supplierName",column = "PARTYNAME"),
 			@Result(property = "totalBillAmount",column = "BillAMOUNT"),
-			@Result(property = "totalPaidAmount",column = "PaidAmount")
+			@Result(property = "totalPaidAmount",column = "PaidAmount"),
+			@Result(property = "partyBillNo",column = "PartyBillNo")
 		})
 		public List<PODto> getPymntDataByPO(@Param("prjSrch") PrjSearch prjSrch);
 		
@@ -1111,6 +1114,10 @@ public interface MapperDAO {
 				+ "UPDATED_DATE=now() where PYMNTID=#{receivedPymntDto.pymntId} and CUSTOMERID=#{receivedPymntDto.customerId} and SOID=#{receivedPymntDto.soID}")
 		public int iUpdateReceivedPayment(@Param("receivedPymntDto") ReceivedPymntDto receivedPymntDto);
 		
+		@Select("Select group_concat(REVERSE(SUBSTRING(REVERSE(MRN_NO),1,LOCATE('/',REVERSE(MRN_NO))-1)) , '')MRN_NO\r\n"
+				+ "From MRNHEAD where PARTY_ID = #{prjSrch.supplierId} AND PO_ID = #{prjSrch.poId} \r\n"
+				+ "AND UPPER(BILLNO) = UPPER(#{prjSrch.billNumber})")
+		public String validateMrnBillNo(@Param("prjSrch") PrjSearch prjSrch);
 		
 }
 

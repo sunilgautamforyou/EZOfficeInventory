@@ -167,7 +167,7 @@ tbody tr:last-of-type td {
                				</div>	
                             <label class="col-sm-4 col-md-1 col-form-label pl15">Bill No.</label>
                             <div class="col-sm-6 col-md-3 pl0">
-                               <input type="text" id="txtBillNumber" class="form-control" placeholder="Party Bill Number">
+                               <input type="text" id="txtBillNumber" onblur="validatePartyBillNo();" class="form-control" placeholder="Party Bill Number">
                              </div>               										
 						</div> 
                         <div class="form-group row">
@@ -346,6 +346,32 @@ tbody tr:last-of-type td {
     		   		}
 
     		   	},
+    		    error: function (error) {
+    		        console.log(`Error ${error}`);
+    		    }
+    	});    	
+    }
+    function validatePartyBillNo() {
+    	$.ajax({
+    		//url: '/EZOfficeInventory/validateMrnBillNo',
+    		url: 'https://salepurchasecompany.co.in/validateMrnBillNo',
+         	type: 'POST',
+    		contentType: 'application/json',	
+    		   data: JSON.stringify(
+    		   	{
+    		   		"supplierId":$('#lstPartyNo').val(),
+    		   		"poId":$('#lstPoNo').val(),
+    		   		"billNumber":$('#txtBillNumber').val()
+	   		   	}),
+    		   	dataType: 'json',
+    		   	success: function (data) {
+    		   		console.log(data);
+    		   		if (data.MRN_NO != "") {
+    		   			alert("Bill No Already Exists in Following MRN:"+ data);
+    		   			$('#txtBillNumber').val('');
+    		   			$('#txtBillNumber').focus();
+    		   		} 
+  		   	},
     		    error: function (error) {
     		        console.log(`Error ${error}`);
     		    }
@@ -613,7 +639,7 @@ tbody tr:last-of-type td {
  	 		var xhr = new XMLHttpRequest();
  	 		//xhr.open("POST", "/EZOfficeInventory/InsertUpdateMrnData", true);
  	 		xhr.open("POST", "https://salepurchasecompany.co.in/InsertUpdateMrnData", true);
- 	 		xhr.setRequestHeader("Content-Type", "application/json");
+ 	 		//xhr.setRequestHeader("Content-Type", "application/json");
  	 		xhr.onreadystatechange = function () {
  	 			if (xhr.readyState === 4 && xhr.status === 200) {
  	 				 var responseData = JSON.parse(xhr.responseText);

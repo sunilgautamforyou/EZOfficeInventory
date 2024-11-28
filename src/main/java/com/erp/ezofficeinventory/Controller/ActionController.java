@@ -523,5 +523,10 @@ public class ActionController {
 	public ResponseWrapper iUpdateReceivedPayment(@RequestBody ReceivedPymntDto receivedPymntDto) {
 		return ezServiceObj.iUpdateReceivedPayment(receivedPymntDto);
 	}
+	
+	@PostMapping("/validateMrnBillNo")
+	public String validateMrnBillNo(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.validateMrnBillNo(prjSrch);
+	}
 
 }

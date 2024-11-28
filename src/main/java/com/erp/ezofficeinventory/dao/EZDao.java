@@ -108,4 +108,5 @@ public interface EZDao {
 	public int iUpdateReceivedPayment(ReceivedPymntDto receivedPaymentDto);
 	public List<PartyMasterDto> getVendorPoDtWisDtos(PrjSearch prjSrch);
 	public List<PODto> fillPOInPymntRpt(PrjSearch prjSrch);
+	public String validateMrnBillNo(PrjSearch prjSrch);
 }

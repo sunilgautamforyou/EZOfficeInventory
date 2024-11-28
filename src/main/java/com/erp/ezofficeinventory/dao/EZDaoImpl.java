@@ -472,4 +472,9 @@ public class EZDaoImpl implements EZDao {
 		return sqlMapperDaoObj.fillPOInPymntRpt(prjSrch);
 	}
 
+	@Override
+	public String validateMrnBillNo(PrjSearch prjSrch) {
+		return sqlMapperDaoObj.validateMrnBillNo(prjSrch);
+	}
+
 }

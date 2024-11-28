@@ -20,6 +20,7 @@ public class PrjSearch {
 	private String supplierAddress;
 	private String supplierName;
 	private String poId;
+	private String billNumber;
 	
 	public String getSearchVarData() {
 		return searchVarData;
@@ -163,6 +164,14 @@ public class PrjSearch {
 
 	public void setTowerId(String towerId) {
 		this.towerId = towerId;
+	}
+
+	public String getBillNumber() {
+		return billNumber;
+	}
+
+	public void setBillNumber(String billNumber) {
+		this.billNumber = billNumber;
 	}
 	
 	

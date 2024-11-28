@@ -29,7 +29,7 @@ public class PODto {
 	private double totalPaidAmount;
 	private double advanceAmount;
 	private String strMessage;
-	
+	private String partyBillNo;
 	
 	public String getsMode() {
 		return sMode;
@@ -219,6 +219,15 @@ public class PODto {
 	}
 	public void setStrMessage(String strMessage) {
 		this.strMessage = strMessage;
+	}
+	
+	
+	
+	public String getPartyBillNo() {
+		return partyBillNo;
+	}
+	public void setPartyBillNo(String partyBillNo) {
+		this.partyBillNo = partyBillNo;
 	}
 	@Override
 	public String toString() {

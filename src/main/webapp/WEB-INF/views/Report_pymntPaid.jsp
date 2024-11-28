@@ -171,8 +171,9 @@
 								<thead id="pymntGridHead" class="thead-dark">
 						  		<tr>
 							  		<th scope="col">Srl.</th>
-							  		<th scope="col">Bill Date</th>
-							  		<th scope="col">Bill Number</th>
+							  		<th scope="col">PO Date</th>
+							  		<th scope="col">Party Bill Number</th>
+							  		<th scope="col">PO Number</th>
 							  		<th scope="col">Supplier/Vendor Name</th>
 							  		<th scope="col">Bill Amount</th>
 							  		<th scope="col">Paid Amount</th>
@@ -366,6 +367,7 @@
 		                        '<td>'+tabRowLen+'</td>'+
 			                     '<td>'+data[i].poDate+'</td>'+ 
 			                     /* '<td <a href="#" onclick="vwPOReport('+data[i].poID+');">'+data[i].poNo+'</a></td>'+ */
+			                     '<td>'+data[i].partyBillNo+'</td>'+
 			                     '<td><a href="#" onclick="vwPOReport('+data[i].ipoId+');">'+data[i].poNo+'</a></td>'+
 			                      '<td>'+data[i].supplierName+'</td>'+
 			                      '<td>'+formatNumber(data[i].totalBillAmount)+'</td>'+

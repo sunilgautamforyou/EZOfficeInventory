@@ -821,4 +821,11 @@ public class EZServiceImpl implements EZService {
 
 
 
+	@Override
+	public String validateMrnBillNo(PrjSearch prjSrch) {
+		return ezDaoObj.validateMrnBillNo(prjSrch);
+	}
+
+
+
 }
