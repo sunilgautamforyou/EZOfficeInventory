@@ -222,6 +222,29 @@ FlatNo
 
 </tbody>
 </table>
+<div class="main-total-btm">
+<div class="total-btm-left">
+</div>
+<div class="main-total-btm">
+<div class="total-btm-left">
+</div>
+<div class="total-btm">
+    <table class="mr0">
+<!--         <tr>
+            <td>
+                <b style="font-size: 22px;">TOTAL BALANCE:</b>
+            </td>
+            <td style="color: #333; background-color: #ccc;align-items: center;">
+               <b><label id="netAmount"></label> </b>
+               <input type="hidden" id="hdnSoNo" value=""/>
+            </td>
+        </tr> -->
+       
+    </table>
+        
+    </div>
+</div>
+</div>
  <input type="hidden" id="hdnFromDate" value="${rcvdSOA.getFromDate()}"/>
  <input type="hidden" id="hdnToDate" value="${rcvdSOA.getToDate()}"/>
  <input type="hidden" id="hdnCutomerId" value="${rcvdSOA.getCustomerId()}"/>
@@ -245,6 +268,9 @@ FlatNo
    
    function getPaymentStatement(customerId,towerId,flatNo,fromDate,toDate) {
 	   var tabRowLen = 1; 
+	   var totalBillAmount = 0;
+	   var totalRecvdAmount = 0;
+	   var totalBalanceAmt = 0;
 	   	if (customerId == "0" || customerId == "") {
 	   		customerId = null;
 	   	}
@@ -283,7 +309,17 @@ FlatNo
 			                      '<td>'+formatNumber(data[i].advanceBillAmount)+'</td>'+
 			                      '</tr>'); 
   		   					tabRowLen++;
-	   		        	}    
+  		   				totalBillAmount = totalBillAmount + data[i].totalBillAmount;
+  		   				totalRecvdAmount = totalRecvdAmount + data[i].recvdBillAmount;
+  		   				totalBalanceAmt = totalBalanceAmt + data[i].advanceBillAmount;
+	   		        	}   
+			   			$('#pymntGridBody').append(
+			   					'<td colspan=3><b style="font-size: 22px;">TOTAL BALANCE:</b></td>'+				
+			   					'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netBillAmt">'+formatNumber(totalBillAmount)+'</label></td>'+
+			   					'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netPaidAmt">'+formatNumber(totalRecvdAmount)+'</label></td>'+
+			   					'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netalAmt">'+formatNumber(totalBalanceAmt)+'</label></td>'+
+			   					'</tr>'
+	     		   		)	   		   			
 	   		   			getPDF();
 	   		   		} else {
 	   		   			alert("No Payment Data Found");
