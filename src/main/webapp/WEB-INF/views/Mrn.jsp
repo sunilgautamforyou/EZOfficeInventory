@@ -606,7 +606,15 @@ tbody tr:last-of-type td {
   	  $(event.target).parents('tr').remove();
   	  calacuateNetMrnAmount();
  	};  
- 	
+    function isNumber(evt) {
+		console.log("number");
+	    evt = (evt) ? evt : window.event;
+	    var charCode = (evt.which) ? evt.which : evt.keyCode;
+	    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+	        return false;
+	    }
+	    return true;
+	} 	
  	function saveData() {
  		mrnGridItemArray=[];
  		if (validate() == true) {
@@ -639,7 +647,7 @@ tbody tr:last-of-type td {
  	 		var xhr = new XMLHttpRequest();
  	 		//xhr.open("POST", "/EZOfficeInventory/InsertUpdateMrnData", true);
  	 		xhr.open("POST", "https://salepurchasecompany.co.in/InsertUpdateMrnData", true);
- 	 		//xhr.setRequestHeader("Content-Type", "application/json");
+ 	 		xhr.setRequestHeader("Content-Type", "application/json");
  	 		xhr.onreadystatechange = function () {
  	 			if (xhr.readyState === 4 && xhr.status === 200) {
  	 				 var responseData = JSON.parse(xhr.responseText);
