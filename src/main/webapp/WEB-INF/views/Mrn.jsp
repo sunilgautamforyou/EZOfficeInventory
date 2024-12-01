@@ -591,8 +591,8 @@ tbody tr:last-of-type td {
     	    			'<td>'+stringify[k]['gstPct']+'</td>'+
     	    			'<td>'+stringify[k]['mrnQty']+'</td>'+
     	    			'<td>'+balanceQty+'</td>'+
-    	    			'<td><input type="text" class="form-control" id="txtMrnQty" onkeypress="return isNumber(event)" placeholder="Qty"></td>'+
-    	    			'<td><input type="text" class="form-control" id="txtDiscPct" onkeypress="return isNumber(event)" placeholder="Discount%"></td>'+
+    	    			'<td><input type="text" class="form-control" id="txtMrnQty"  placeholder="Qty"></td>'+
+    	    			'<td><input type="text" class="form-control" id="txtDiscPct"  placeholder="Discount%"></td>'+
     	    			'<td></td>'+
     	    			'<td>'+delBtn+'</td>'+
     	    		   +'</tr>'
@@ -606,15 +606,7 @@ tbody tr:last-of-type td {
   	  $(event.target).parents('tr').remove();
   	  calacuateNetMrnAmount();
  	};  
-    function isNumber(evt) {
-		console.log("number");
-	    evt = (evt) ? evt : window.event;
-	    var charCode = (evt.which) ? evt.which : evt.keyCode;
-	    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-	        return false;
-	    }
-	    return true;
-	} 	
+ 	
  	function saveData() {
  		mrnGridItemArray=[];
  		if (validate() == true) {
@@ -810,6 +802,8 @@ tbody tr:last-of-type td {
 		     $('#txtBillNumber').attr('disabled', true);
 		}
 		fillItemInMrnGrid("${mrn.getMrnId()}");
+	   	$('#txtMrnDate').attr('readonly', true);
+		$('#txtMrnDate').addClass('input-disabled');			
     });
     function fillItemInMrnGrid(mrnId) {
 		$.ajax({
