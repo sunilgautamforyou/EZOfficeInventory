@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%><%@ taglib uri="http://www.springframework.org/tags/form" prefix="s"%>
+    pageEncoding="ISO-8859-1"%>
+   
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="s"%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -21,6 +23,7 @@
     <!-- Custom Scrollbar-->
     <link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
@@ -36,6 +39,48 @@
 .pl-2 {
     padding-left: 0.5rem; /* Adjust as needed */
 }      
+ </style>
+    <style>
+        /* Style for the profile image container (square shape) */
+        .profile-image-container {
+            width: 150px; /* Fixed width */
+            height: 150px; /* Fixed height */
+            border: 2px solid #ddd; /* Border for the profile image container */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Style for the image inside the container */
+        .profile-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the image covers the area properly */
+        }
+
+        /* Style for the file input button */
+        .file-input-wrapper {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .file-input {
+            display: none; /* Hide the default file input */
+        }
+
+        .upload-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .upload-btn:hover {
+            background-color: #45a049;
+        }
     </style>
   </head>
   <body>
@@ -139,7 +184,7 @@
             <div class="card-body">
               <div class="container">
 				<div class="form-group row">
-				    <label class="col-sm-4 col-md-1 col-form-label">Name:</label>
+					<label class="col-sm-4 col-md-1 col-form-label">Name:</label>
 				    <div class="col-sm-1 col-md-1 pr-0">
 				        <select class="custom-select" id="lsGender">
 				            <option selected="selected" value="0">Mr.</option>
@@ -148,53 +193,130 @@
 				        </select>                	
 				    </div>
 				    <div class="col-sm-6 col-md-3 pl-0">
-				        <input type="text" id="txtCustomerId" class="form-control" placeholder="Enter Customer Name">
-				    </div>
-				    <label class="col-sm-4 col-md-1 col-form-label pl15">Work:</label>
-			        <div class="col-sm-6 col-md-3 pl0 pr-0">
-			        	<input type="text" id="txtProff" class="form-control" placeholder="Enter Profession">
-			        </div>
+				        <input type="text" id="txtCustName" class="form-control" placeholder="Enter Customer Name">
+				    </div>		
+				    <label class="col-sm-4 col-md-1 col-form-label p15">Father:</label>
+				    <div class="col-sm-1 col-md-1 pr-0">
+				        <select class="custom-select" id="lsGurGender">
+				            <option selected="selected" value="0">Mr.</option>
+				            <option value="1">Ms.</option>
+				            <option value="2">Mrs.</option>
+				        </select>                
+				    </div>		
+				    <div class="col-sm-6 col-md-3 pl-0">
+				        <input type="text" id="txtGuardian" class="form-control" placeholder="Enter Guardian/Spouse Name">
+				    </div>				    		    		    					
 				</div>
-<div class="form-group row">
-    <label class="col-sm-4 col-md-1 col-form-label">Guardian:</label>
-    <div class="col-sm-1 col-md-1 pr-0">
-        <select class="custom-select" id="lsGender">
-            <option selected="selected" value="0">Mr.</option>
-            <option value="1">Ms.</option>
-            <option value="2">Mrs.</option>
-        </select>                
-    </div>
-    <div class="col-sm-6 col-md-3 pl-0">
-        <input type="text" id="txtGuardian" class="form-control" placeholder="Enter Guardian/Spouse Name">
-    </div>
-    <label class="col-sm-4 col-md-1 col-form-label pl-2">Identity:</label>
-    <div class="col-sm-1 col-md-1 pr-0">
-        <select class="custom-select" id="lsIdType">
-            <option selected="selected" value="0">AdharCard</option>
-            <option value="1">Pan</option>
-            <option value="2">DL</option>
-            <option value="3">Other</option>
-        </select>            
-    </div>
-    <div class="col-sm-6 col-md-3 pl-0 pr-0">
-        <input type="text" id="txtIdNo" class="form-control" placeholder="Enter IDNo">
-    </div>                   
-</div>
-
+				<div class="form-group row">
+					<label class="col-sm-4 col-md-1 col-form-label">Mobile:</label>
+					<div class="col-sm-6 col-md-4">
+						<input type="text" id="txtMobileNo" class="form-control" placeholder="Enter Mobile No">
+					</div>
+					<label class="col-sm-4 col-md-1 col-form-label p15">Profession:</label>
+					<div class="col-sm-6 col-md-4">
+						<input type="text" id="txtProff" class="form-control" placeholder="Work/Profession">
+					</div>					
+				</div>
 				<div class="form-group row">
 					<label class="col-sm-4 col-md-1 col-form-label">Current Address:</label>
-					<div class="col-sm-6 col-md-3 pr-0">
+					<div class="col-sm-6 col-md-4">
 						<textarea rows="2" id="txtCurrentAdd" class="form-control" placeholder="Enter Current Address"></textarea>
 					</div>
-				</div>	
-				<div class="form-group row">
-					<label class="col-sm-4 col-md-1 col-form-label">Permanent Address:</label>
-					<div class="col-sm-6 col-md-3 pr-0">
-						<textarea rows="2" id="txtPermanentAdd" class="form-control" placeholder="Enter Permanent Address"></textarea>
-					</div>
-				</div>						
-              </div>
-            </div>
+				<label class="col-sm-4 col-md-1 col-form-label p15">Permanent Address:</label>
+				<div class="col-sm-6 col-md-4">
+					<textarea rows="2" id="txtPermanentAdd" class="form-control" placeholder="Enter Permanent Address"></textarea>
+				</div>
+			</div>
+			<div id="msgId">
+				<h5 id="alertMsg"></h5>
+			</div>
+			<div class="col-sm-6 text-center btn-spaceing">
+				<div class=" w3-bar">
+					<Button ID="btnSave" class="common-btn" onclick="saveCustomerMasterData()">Save</Button>
+					<Button ID="btnRefresh" class="common-btn" onclick="refreshPage()">Refresh</Button>
+					<Button ID="btnCloseAdd" onclick="exitToHomePage()" class="common-btn gray-btn">Exit</Button>
+
+				</div>
+			</div>
+		</div>
+    <div class="container">
+        <div class="form-group row">
+        <table id="groupTable" class="table table-bordered table-hover"  style="width: 100%">
+        	<tr>
+        		<td style="width: 40%">
+        			<div id="billDtl" class="table-responsive style-12" style="width: !important;%">
+            <table id="tableAttachment" class="table table-bordered table-hover" style="width: 100%">
+                <thead id="attchHead" class="thead-dark">
+                    <tr>
+                        <th scope="col">Srl</th>
+                        <th scope="col">Document Type</th>
+                        <th scope="col">FileUploader</th>
+                        <th scope="col">Action</th>
+                        <th scope="col">Submit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            <div class="col-sm-12 col-md-12 pl0">
+                                <select class="custom-select" id="lsIdType">
+                                    <option selected="selected" value="0">AdharCard-Font</option>
+                                    <option value="1">AdharCard-Back</option>
+                                    <option value="2">Pan</option>
+                                    <option value="3">DL</option>
+                                    <option value="4">Other</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="file-input-wrapper">
+                                <label for="fileInput" class="upload-btn">Upload Image</label>
+                                <input type="file" id="fileInput" class="file-input" accept="image/*">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="profile-image-container">
+                                <img id="profileImagePreview" src="https://via.placeholder.com/150" alt="Profile Image" width="100%">
+                            </div>
+                        </td>
+                        <td>
+                            <input type="button" id="btnImgUpload" class="upload-btn" value="Submit" onclick="saveAttachmentData();">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>        			
+        			</div>
+        		</td>
+        		<td style="width: 40%; vertical-align: top;">
+        		<div class="table-responsive style-12" style="width: !important;%">
+        			<table class="table table-bordered table-hover" id="tblCalc" style="width: 100%">
+					<thead id="PymntsHead" class="thead-dark">
+						<tr>
+							<th scope="col">Srl</th>
+							<th scope="col">Document Type</th>
+							<th scope="col">Name</th>
+							<th scope="col">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					</tbody>        				
+        			</table>
+        		</div>
+        		</td>
+        	</tr>
+        </table>
+        </div>
+    </div>
+	<div class="container">
+	</div>
+          </div>
           </div>
         </div>
       </section>
@@ -202,5 +324,146 @@
         <p>Copyright © 2024-2025, Designed & Developed by ABC</p>
       </footer>
     </div>
-  </body>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>   
+    <script src="https://salepurchasecompany.co.in/js/jquery.min.js"></script>
+    <script src="https://salepurchasecompany.co.in/js/popper.min.js"></script>
+    <script src="https://salepurchasecompany.co.in/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <!-- Main File-->
+    <script src="https://salepurchasecompany.co.in/js/custom.js"></script>          
+    <script>
+		var data = "";
+        // JavaScript to handle the image upload and preview
+        const fileInput = document.getElementById('fileInput');
+        const profileImagePreview = document.getElementById('profileImagePreview');
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        function saveAttachmentData() {
+        	var name = document.getElementById("fileInput").files[0].name;
+        	var form_data = new FormData();
+        	var ext = name.split('.').pop().toLowerCase();
+        	if(jQuery.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+        		alert("Invalid Image File");
+        	} else {
+        		var oFReader = new FileReader();
+        		oFReader.readAsDataURL(document.getElementById("fileInput").files[0]);
+        		var f = document.getElementById("fileInput").files[0];
+        		var fsize = f.size||f.fileSize;
+        		if(fsize > 3000000) {
+        			alert("Image File Size is very big");
+        		} else {
+        			 form_data.append("adsImages", document.getElementById('fileInput').files[0]);
+        			 $.ajax({
+                         url:"/OfficeNet/customerMst/saveDocs",
+                         method:"POST",
+                         enctype: 'multipart/form-data',
+                         data: form_data,
+                         contentType: false,
+                         cache: false,
+                         processData: false,
+                         beforeSend:function(){
+                             $('#uploaded_image').html("<label class='text-success'>Image Uploading...</label>");
+                         },
+                         success:function(data)
+                         {
+                             $('#uploaded_image').html(data);
+                         }
+                         ,error: function(ts)
+                         {
+                             alert("error:" + ts.responseText);
+                         }
+        			 });
+        		}
+        			
+        	}
+        		
+        }
+        function validateCustomerData() {
+			var cust_name = $('#txtCustName').val();
+			var cust_Title = $('#lsGender').val();
+			var cust_Father = $('#txtGuardian').val();
+			var father_Title = $('#lsGurGender').val();
+			var cust_Mobile = $('#txtMobileNo').val();
+			var cust_Job = $('#txtProff').val();
+			var cust_CAdd = $('#txtCurrentAdd').val();
+			var cust_PAdd = $('#txtPermanentAdd').val();
+			
+			if (cust_name == "") {
+				alert("Cutomer Name Should not left blank");
+				$('#txtCustName').focus();
+				return false;
+			}
+			if (cust_Father == "") {
+				alert("Father Name Should not left blank");
+				$('#txtGuardian').focus();
+				return false;
+			}	
+			if (cust_Mobile == "") {
+				alert("MobileNo Should not left blank");
+				$('#txtMobileNo').focus();
+				return false;
+			}				
+			if (cust_CAdd == "" && cust_PAdd=="") {
+				alert("Current/Permanent Address  Should not left blank");
+				$('#txtCurrentAdd').focus();
+				return false;
+			}
+			
+			 data = JSON.stringify({
+       			    "cust_Name":cust_name,
+       			    "cust_Title":cust_Title,
+       			    "cust_Father":cust_Father,
+       			    "father_Title":father_Title,
+       			    "cust_Mobile":cust_Mobile,
+       			    "cust_Job":cust_Job,
+       			    "cust_CAdd":cust_CAdd,
+       			    "cust_PAdd":cust_PAdd
+       			});
+			
+			return true;
+			
+			
+        }
+        function saveCustomerMasterData() {
+        	if (validateCustomerData()==true) {
+        		if (confirm('Are you sure you want to save?')) {
+       			 $.ajax({
+                     url:"/loanApp/customerMst/saveCustomerMstObj",
+                     method:"POST",
+                     data: data,
+                     contentType: 'application/json',
+                     cache: false,
+                     processData: false,
+                     beforeSend:function(){
+                         $('#uploaded_image').html("<label class='text-success'>Image Uploading...</label>");
+                     },
+                     success:function(data)
+                     {
+                         
+                    	 $("#msgId").addClass("alert alert-success");
+                    	 $('#alertMsg').html(data.strMessage);
+                     }
+                     ,error: function(ts)
+                     {
+                    	 $("#msgId").addClass("alert alert-danger");
+                    	 alert("error:" + ts.responseText);
+                     }
+    			 });
+
+        		}
+        	}
+        }
+    </script>    
+    </body>
 </html>

@@ -8,11 +8,11 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.tradestrome</groupId>
-	<artifactId>loanApp</artifactId>
+	<artifactId>OfficeNet</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
     <description>A Step Towards Office Automation</description>
-    <name>LoanApp</name>
+    <name>OfficeNet</name>
     <properties>
         <java.version>17</java.version>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
