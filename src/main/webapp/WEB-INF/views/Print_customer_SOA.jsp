@@ -345,7 +345,7 @@ Customer Mobile
          		        		paidAmount =   paidAmount + data[i].recvdBillAmount;          		        		
        		        	}  
 		   			$('#pymntGridBody').append(
-	   					'<td colspan=4><b style="font-size: 22px;">TOTAL BALANCE:</b></td>'+				
+	   					'<td colspan=5><b style="font-size: 22px;">TOTAL BALANCE:</b></td>'+				
 	   					'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netBillAmt">'+formatNumber(billableValue)+'</label></td>'+
 	   					'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netPaidAmt">'+formatNumber(paidAmount)+'</label></td>'+
 	   					'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netalAmt">'+formatNumber(runningBalance)+'</label></td>'+
