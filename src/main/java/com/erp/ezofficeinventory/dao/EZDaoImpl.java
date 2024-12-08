@@ -21,6 +21,7 @@ import com.erp.ezofficeinventory.entity.RFQDto;
 import com.erp.ezofficeinventory.entity.ReceivedPymntDto;
 import com.erp.ezofficeinventory.entity.ResponseWrapper;
 import com.erp.ezofficeinventory.entity.SalesOrderDto;
+import com.erp.ezofficeinventory.entity.StockRptDto;
 import com.erp.ezofficeinventory.entity.TowerMaster;
 import com.erp.ezofficeinventory.entity.UomDto;
 import com.erp.ezofficeinventory.entity.stockMasterDto;
@@ -475,6 +476,17 @@ public class EZDaoImpl implements EZDao {
 	@Override
 	public String validateMrnBillNo(PrjSearch prjSrch) {
 		return sqlMapperDaoObj.validateMrnBillNo(prjSrch);
+	}
+
+	@Override
+	public List<StockRptDto> stockItemReport(PrjSearch prjSrch) {
+		List<StockRptDto> stockItemReport = new ArrayList<>();
+		try {
+			stockItemReport = sqlMapperDaoObj.stockItemReport(prjSrch);
+		} catch (Exception ex) {
+			stockItemReport.get(0).setStrErrMessage(Utility.getStackTrace(ex));
+		}
+		return stockItemReport;
 	}
 
 }

@@ -18,6 +18,7 @@ import com.erp.ezofficeinventory.entity.RFQDto;
 import com.erp.ezofficeinventory.entity.ReceivedPymntDto;
 import com.erp.ezofficeinventory.entity.ResponseWrapper;
 import com.erp.ezofficeinventory.entity.SalesOrderDto;
+import com.erp.ezofficeinventory.entity.StockRptDto;
 import com.erp.ezofficeinventory.entity.TowerMaster;
 import com.erp.ezofficeinventory.entity.UomDto;
 import com.erp.ezofficeinventory.entity.stockMasterDto;
@@ -109,4 +110,5 @@ public interface EZDao {
 	public List<PartyMasterDto> getVendorPoDtWisDtos(PrjSearch prjSrch);
 	public List<PODto> fillPOInPymntRpt(PrjSearch prjSrch);
 	public String validateMrnBillNo(PrjSearch prjSrch);
+	public List<StockRptDto> stockItemReport(PrjSearch prjSrch);
 }

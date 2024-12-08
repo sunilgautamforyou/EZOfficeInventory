@@ -90,6 +90,7 @@
                   	<li class="active"><a href="https://salepurchasecompany.co.in/stockReport">Stock Report</a></li>
                   	<li><a href="https://salepurchasecompany.co.in/SaleOrderStkRpt">Sales Order Report</a></li>
                   	<li><a href="https://salepurchasecompany.co.in/pymntPaidRpt">Supplier Payment SOA</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/itmStkRpt">ItemWise Stock Report</a></li>
                   	</ul>
                   </li>	
                  	</ul>

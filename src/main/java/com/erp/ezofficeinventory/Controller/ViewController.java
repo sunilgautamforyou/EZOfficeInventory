@@ -285,4 +285,23 @@ public class ViewController {
 		return view;
 	}
 	
+	@GetMapping("/openStockItemWiseReport")
+	public ModelAndView openStockItemWiseReport(@RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate) {
+		PrjSearch prjSrchData = new PrjSearch();
+		prjSrchData.setFromDate(fromDate);
+		prjSrchData.setToDate(toDate);		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("PrintItemWiseStkRpt");
+		view.addObject("stkItem",prjSrchData);
+		return view;		
+	}
+	
+	@GetMapping("/itmStkRpt")
+	public ModelAndView getItemWiseStkRpt() {	
+		ModelAndView view = new ModelAndView();
+		view.setViewName("ItemWiseStockReport");
+		return view;
+	}		
+	
 }

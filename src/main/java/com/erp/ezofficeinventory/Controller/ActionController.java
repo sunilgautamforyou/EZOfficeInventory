@@ -27,6 +27,7 @@ import com.erp.ezofficeinventory.entity.RFQDto;
 import com.erp.ezofficeinventory.entity.ReceivedPymntDto;
 import com.erp.ezofficeinventory.entity.ResponseWrapper;
 import com.erp.ezofficeinventory.entity.SalesOrderDto;
+import com.erp.ezofficeinventory.entity.StockRptDto;
 import com.erp.ezofficeinventory.entity.TowerMaster;
 import com.erp.ezofficeinventory.entity.UomDto;
 import com.erp.ezofficeinventory.entity.UserInputParam;
@@ -527,6 +528,11 @@ public class ActionController {
 	@PostMapping("/validateMrnBillNo")
 	public String validateMrnBillNo(@RequestBody PrjSearch prjSrch) {
 		return ezServiceObj.validateMrnBillNo(prjSrch);
+	}
+	
+	@PostMapping("/getStockItemWiseReport")
+	public List<StockRptDto> getStockItemReport(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.stockItemReport(prjSrch);
 	}
 
 }

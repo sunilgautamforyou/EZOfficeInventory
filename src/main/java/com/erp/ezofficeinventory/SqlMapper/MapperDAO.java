@@ -23,6 +23,7 @@ import com.erp.ezofficeinventory.entity.PrjSearch;
 import com.erp.ezofficeinventory.entity.RFQDto;
 import com.erp.ezofficeinventory.entity.ReceivedPymntDto;
 import com.erp.ezofficeinventory.entity.SalesOrderDto;
+import com.erp.ezofficeinventory.entity.StockRptDto;
 import com.erp.ezofficeinventory.entity.TowerMaster;
 import com.erp.ezofficeinventory.entity.UomDto;
 import com.erp.ezofficeinventory.entity.stockMasterDto;
@@ -1119,6 +1120,52 @@ public interface MapperDAO {
 				+ "AND UPPER(BILLNO) = UPPER(#{prjSrch.billNumber})")
 		public String validateMrnBillNo(@Param("prjSrch") PrjSearch prjSrch);
 		
+		@Select("Select ITEMID,ITEMNAME, UOM_DESCRIPTION, PO_QTY, PO_AMOUNT, MRN_QTY, Mrn_Amount, SO_QTY, So_Amount,\r\n"
+				+ " ROUND((MRN_QTY-SO_QTY),2)Bal_Qty,ROUND((Mrn_Amount-So_Amount),2)Bal_Amt\r\n"
+				+ "from (\r\n"
+				+ "Select item.ITEMID,item.ITEMNAME,uom.UOM_DESCRIPTION,\r\n"
+				+ "coalesce(PO.PO_QTY,0)PO_QTY,coalesce(PO.PO_AMOUNT,0)PO_AMOUNT, \r\n"
+				+ "coalesce(mrn.MRNQTY,0)MRN_QTY,coalesce(mrn.ITEMMRNAMOUNT,0)Mrn_Amount,\r\n"
+				+ "coalesce(So.SO_QTY,0)SO_QTY,coalesce(So.SO_Amount,0)So_Amount\r\n"
+				+ "from ITEMMASTER item \r\n"
+				+ "Inner Join UOMMASTER uom On item.UOMID = uom.UOM_ID\r\n"
+				+ "left outer join \r\n"
+				+ "(Select pod.ITEMID,pod.UOMID,ROUND(Sum(pod.QTY),2)PO_QTY,ROUND(Sum(pod.AMOUNT),2)PO_AMOUNT \r\n"
+				+ "from POMASTER po inner join PODETAILS pod \r\n"
+				+ "where po.POID = pod.POID \r\n"
+				+ "and date_format(po.PODATE,'%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
+				+ "and coalesce(pod.DELFLAG,0)=0\r\n"
+				+ "Group by pod.ITEMID,pod.UOMID)PO ON item.ITEMID = PO.ITEMID\r\n"
+				+ "AND item.UOMID = PO.UOMID Left Outer Join \r\n"
+				+ "(Select mrnDtl.ITEMID,mrnDtl.UOMID,Round(Sum(mrnDtl.MRNQTY),2)MRNQTY,\r\n"
+				+ "Round(Sum(mrnDtl.ITEMMRNAMOUNT),2)ITEMMRNAMOUNT \r\n"
+				+ "from MRNHEAD mrn inner join MRNDTL mrnDtl On \r\n"
+				+ "mrn.MRN_ID = mrnDtl.MRN_ID \r\n"
+				+ "and date_format(mrn.MRN_DATE,'%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
+				+ "and coalesce(mrnDtl.DEL_FLAG,0)=0\r\n"
+				+ "Group by mrnDtl.ITEMID,mrnDtl.UOMID)mrn On \r\n"
+				+ "mrn.ITEMID = item.ITEMID and mrn.UOMID = item.UOMID Left Outer Join\r\n"
+				+ "(Select sd.ITEMID,sd.UOMID,ROUND(Sum(sd.QUANTITY),2)SO_QTY,\r\n"
+				+ " ROUND(Sum(sd.AMOUNT),2)SO_Amount\r\n"
+				+ "from SALEDETAILS sd inner join SALEHEADER sh on sd.SALEID = sh.SALEID\r\n"
+				+ "and date_format(sh.SALEDATE,'%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
+				+ "and coalesce(sd.DELFLAG,0)=0\r\n"
+				+ "Group by sd.ITEMID,sd.UOMID)So on So.ITEMID = item.ITEMID\r\n"
+				+ "and So.UOMID = item.UOMID)X Where (X.PO_QTY > 0 OR X.MRN_QTY > 0 OR X.SO_QTY > 0) Order by ITEMNAME")
+		@Results({
+			@Result(property = "itemId",column = "ITEMID"),
+			@Result(property = "itemName",column = "ITEMNAME"),
+			@Result(property = "uomName",column = "UOM_DESCRIPTION"),
+			@Result(property = "poQty",column = "PO_QTY"),
+			@Result(property = "poAmt",column = "PO_AMOUNT"),
+			@Result(property = "mrnQty",column = "MRN_QTY"),
+			@Result(property = "mrnAmt",column = "Mrn_Amount"),
+			@Result(property = "soQty",column = "SO_QTY"),
+			@Result(property = "soAmt",column = "So_Amount"),
+			@Result(property = "balQty",column = "Bal_Qty"),
+			@Result(property = "balAmt",column = "Bal_Amt")			
+		})
+		public List<StockRptDto> stockItemReport (@Param("prjSrch") PrjSearch prjSrch);
 }
 
 

@@ -78,7 +78,7 @@
                     </li>
                     <li class="active"><a href="#purchase" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-bar-chart"></i>Transaction</a>
                         <ul id="purchase" class="collapse list-unstyled show">
-                            <li class="active"><a href="https://salepurchasecompany.co.in/purchase">Purchase Order</a></li>
+                            <li><a href="https://salepurchasecompany.co.in/purchase">Purchase Order</a></li>
                             <li><a href="https://salepurchasecompany.co.in/salesOrder">Sales Order</a></li>
                             <li><a href="https://salepurchasecompany.co.in/makePayment">Make Payment</a></li>
                             <li><a href="https://salepurchasecompany.co.in/receicePymnt">Received Payment</a></li>
@@ -89,8 +89,9 @@
                    <li class="active"><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Reports</a>
                   	<ul id="reports" class="collapse list-unstyled show">
                   	<li><a href="https://salepurchasecompany.co.in/pymntRcvdRpt">Customer Payment SOA</a></li>
-                  	<li><a href="https://salepurchasecompany.co.in/SaleOrderStkRpt">Sales Order Report</a></li>
+                  	<li  class="active"><a href="https://salepurchasecompany.co.in/SaleOrderStkRpt">Sales Order Report</a></li>
                   	<li><a href="https://salepurchasecompany.co.in/pymntPaidRpt">Supplier Payment SOA</a></li>
+                  	<li><a href="https://salepurchasecompany.co.in/itmStkRpt">ItemWise Stock Report</a></li>
                   	</ul>
                   </li>                                       
                  	</ul>

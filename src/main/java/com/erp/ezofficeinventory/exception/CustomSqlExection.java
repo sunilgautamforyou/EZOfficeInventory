@@ -9,8 +9,9 @@ public class CustomSqlExection  {
 
 	public String customSqlExection(Exception ex) {
 		String exceptionMsg = "";
-		if (ex.getCause() instanceof SQLException) {
-			return "" + ex.getCause();
+		if (ex.getClass().getName() == "SQLException" 
+			|| ex.getClass().getName() == "org.mybatis.spring.MyBatisSystemException") {
+			return "Error:" + ex.getCause();
 		} else {
 			exceptionMsg = extractDetailedMessage(ex);
 		}
