@@ -234,12 +234,13 @@
 				<div class=" w3-bar">
 					<Button ID="btnSave" class="common-btn" onclick="saveCustomerMasterData()">Save</Button>
 					<Button ID="btnRefresh" class="common-btn" onclick="refreshPage()">Refresh</Button>
+					<Button ID="btnShowDocs" class="common-btn" onclick="docsButtonClick()">Upload Documents</Button>
 					<Button ID="btnCloseAdd" onclick="exitToHomePage()" class="common-btn gray-btn">Exit</Button>
 
 				</div>
 			</div>
 		</div>
-    <div class="container">
+    <div class="container" id="docsDiv">
         <div class="form-group row">
         <table id="groupTable" class="table table-bordered table-hover"  style="width: 100%">
         	<tr>
@@ -314,6 +315,7 @@
         </table>
         </div>
     </div>
+    <input type="hidden" id="hdnCustomerId">
 	<div class="container">
 	</div>
           </div>
@@ -349,6 +351,78 @@
                 reader.readAsDataURL(file);
             }
         });
+        
+        jQuery(document).ready(function($){
+        	$('#docsDiv').attr('hidden', true);	
+        	$('#btnShowDocs').attr('hidden', true);	
+        	fillCustomerDataOnPG("1");
+        });
+        
+        function fillCustomerDataOnPG(customerId) {
+			var param = JSON.stringify({
+    			    "customerId":customerId
+    			});
+			   $.ajax({
+	               //url:"/EZOfficeInventory/getStockItemWiseReport",
+	               url:"/OfficeNet/customerMst/fillCustomerData",
+	               method:"POST",
+	               data: param,
+	               contentType: 'application/json',
+	               cache: false,
+	               processData: false,
+	               beforeSend:function(){
+	            	   //$('#btnShow').html(spinner);
+	               },
+	               success:function(data)
+	               {
+	              	if (data.cust_Name != "") {
+	         			$('#txtCustName').val(data.cust_Name);
+	        			//$('#lsGender').val();
+	        			$('#txtGuardian').val(data.cust_Father);
+	        			//$('#lsGurGender').val();
+	        			$('#txtMobileNo').val(data.cust_Mobile);
+	        			$('#txtProff').val(data.cust_Job);
+	        			$('#txtCurrentAdd').val(data.cust_CAdd);
+	        			$('#txtPermanentAdd').val(data.cust_PAdd);
+	        			$('#hdnCustomerId').val(data.cust_Id);
+	              	}
+	              }
+	               ,error: function(ts)
+	               {
+	              	 $("#msgId").addClass("alert alert-danger");
+	              	 alert("error:" + ts.responseText);
+	               }
+		 });	           	
+/*         	$.ajax({
+                 url:"/OfficeNet/customerMst/fillCustomerDataOnPG",
+                 method:"POST",
+                 data: param,
+                 contentType: 'application/json',
+                 cache: false,
+                 processData: false,
+                 beforeSend:function(){
+                     //$('#uploaded_image').html("<label class='text-success'>Image Uploading...</label>");
+                 },
+                 success:function(data)
+                 {
+         			$('#txtCustName').val(data.cust_Name);
+        			//$('#lsGender').val();
+        			$('#txtGuardian').val(data.cust_Father);
+        			//$('#lsGurGender').val();
+        			$('#txtMobileNo').val(data.cust_Mobile);
+        			$('#txtProff').val(data.cust_Job);
+        			$('#txtCurrentAdd').val(data.cust_CAdd);
+        			$('#txtPermanentAdd').val(data.cust_PAdd);
+        			$('#hdnCustomerId').val(data.cust_Id);
+                 }
+                 ,error: function(ts)
+                 {
+                	 $("#msgId").addClass("alert alert-danger");
+                	 alert("error:" + ts.responseText);
+                 }
+			 });         */	
+        }
+        
         function saveAttachmentData() {
         	var name = document.getElementById("fileInput").files[0].name;
         	var form_data = new FormData();
@@ -364,7 +438,16 @@
         			alert("Image File Size is very big");
         		} else {
         			 form_data.append("adsImages", document.getElementById('fileInput').files[0]);
-        			 $.ajax({
+        	//		 form_data.append('customer',data);
+/*               			 form_data.append('customer',new Blob([JSON.stringify(data)], {
+   	                    type: "application/json"
+     	                }));     */     
+             			 form_data.append('customer',new Blob([(data)], {
+        	                    type: "application/json"
+          	                }));         	                
+        			 var boundary = Math.random().toString().substr(2);
+
+         			 $.ajax({
                          url:"/OfficeNet/customerMst/saveDocs",
                          method:"POST",
                          enctype: 'multipart/form-data',
@@ -383,7 +466,7 @@
                          {
                              alert("error:" + ts.responseText);
                          }
-        			 });
+        			 }); 
         		}
         			
         	}
@@ -398,6 +481,7 @@
 			var cust_Job = $('#txtProff').val();
 			var cust_CAdd = $('#txtCurrentAdd').val();
 			var cust_PAdd = $('#txtPermanentAdd').val();
+			var cust_id = $('#hdnCustomerId').val();
 			
 			if (cust_name == "") {
 				alert("Cutomer Name Should not left blank");
@@ -419,6 +503,9 @@
 				$('#txtCurrentAdd').focus();
 				return false;
 			}
+			if (cust_id == "") {
+				cust_id = 0;
+			}
 			
 			 data = JSON.stringify({
        			    "cust_Name":cust_name,
@@ -428,7 +515,8 @@
        			    "cust_Mobile":cust_Mobile,
        			    "cust_Job":cust_Job,
        			    "cust_CAdd":cust_CAdd,
-       			    "cust_PAdd":cust_PAdd
+       			    "cust_PAdd":cust_PAdd,
+       			    "cust_Id":cust_id
        			});
 			
 			return true;
@@ -439,7 +527,7 @@
         	if (validateCustomerData()==true) {
         		if (confirm('Are you sure you want to save?')) {
        			 $.ajax({
-                     url:"/loanApp/customerMst/saveCustomerMstObj",
+                     url:"/OfficeNet/customerMst/saveCustomerMstObj",
                      method:"POST",
                      data: data,
                      contentType: 'application/json',
@@ -450,9 +538,12 @@
                      },
                      success:function(data)
                      {
-                         
                     	 $("#msgId").addClass("alert alert-success");
                     	 $('#alertMsg').html(data.strMessage);
+                    	 $('#btnShowDocs').attr('hidden', false);
+                    	 $('#btnSave').attr('hidden', true);
+                    	 $('#hdnCustomerId').val(data.recordNumber);
+                    	 disableControl();
                      }
                      ,error: function(ts)
                      {
@@ -463,6 +554,34 @@
 
         		}
         	}
+        }
+        function showHideDocsDiv(option) {
+        	if (option == "show") {
+        		$('#docsDiv').attr('hidden', false);
+        		$('#btnShowDocs').attr('hidden', false);
+        		$('#btnShowDocs').text('Hide Documents');
+        	}else {
+        		$('#docsDiv').attr('hidden', true);
+        		$('#btnShowDocs').text('Upload Documents');        		
+        	}
+        }
+        function docsButtonClick() {
+        	var showDocsText = $('#btnShowDocs').text();
+        	if (showDocsText == "Upload Documents") {
+        		showHideDocsDiv("show");
+        	}else{
+        		showHideDocsDiv("hide");
+        	}
+        }     
+        function disableControl() {
+			$('#txtCustName').attr('disabled', true);
+			$('#lsGender').attr('disabled', true);
+			$('#txtGuardian').attr('disabled', true);
+			$('#lsGurGender').attr('disabled', true);
+			$('#txtMobileNo').attr('disabled', true);
+			$('#txtProff').attr('disabled', true);
+			$('#txtCurrentAdd').attr('disabled', true);
+			$('#txtPermanentAdd').attr('disabled', true);
         }
     </script>    
     </body>

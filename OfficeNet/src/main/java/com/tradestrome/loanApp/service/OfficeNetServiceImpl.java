@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tradestrome.loanApp.Dao.OfficeNetDao;
+import com.tradestrome.loanApp.Entity.CustomerDocs;
 import com.tradestrome.loanApp.Entity.CustomerMasterDto;
 import com.tradestrome.loanApp.Entity.ResponseWrapper;
 import com.tradestrome.loanApp.Utility.CustomSqlExection;
@@ -23,21 +24,27 @@ public class OfficeNetServiceImpl implements OfficeNetService {
 	CustomSqlExection exceptionObj = new CustomSqlExection();
 	
 	@Override
-	public ResponseWrapper saveImageToStorage(String uploadDirectory, MultipartFile imageFile) throws IOException {
+	public ResponseWrapper saveImageToStorage(String uploadDirectory, MultipartFile imageFile,CustomerMasterDto customerDto) throws IOException {
 		// Save image in a local directory
 		ResponseWrapper wrapperObj = new ResponseWrapper();
+		CustomerDocs customerDocs = new CustomerDocs();
 		String uniqueFileName = "";
 		try {
 			uniqueFileName = //UUID.randomUUID().toString() + "_" +
-		imageFile.getOriginalFilename();
+		    imageFile.getOriginalFilename();
 			Path uploadPath = Path.of(uploadDirectory);
 			Path filePath = uploadPath.resolve(uniqueFileName);
 			if (!Files.exists(uploadPath)) {
 				Files.createDirectories(uploadPath);
 			}
 			Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-			wrapperObj.setErrorFlag(false);
-			wrapperObj.setStrMessage(uniqueFileName);
+			
+			//customerDocs.setCustomerId(customerMasterDto.getCust_Id());
+			customerDocs.setDocFileName(uniqueFileName);
+			customerDocs.setDocFilePath(uploadDirectory);
+			customerDocs.setCustomerId(uniqueFileName);
+			customerDocs.setCustomerId(customerDto.getCust_Id());
+			officeNetDao.iInsertCustomerAttach(customerDocs);
 		} catch (Exception ex) {
 			wrapperObj.setErrorFlag(true);
 			wrapperObj.setStrMessage(ex.getMessage());
@@ -57,6 +64,17 @@ public class OfficeNetServiceImpl implements OfficeNetService {
 			wrapperObj.setStrMessage(exceptionObj.customSqlExection(ex));
 		}
 		return wrapperObj;
+	}
+
+	@Override
+	public CustomerMasterDto fillCustomerDataOnPG(String customerId) {
+		CustomerMasterDto customerDtoObj = new CustomerMasterDto();
+		try {
+			customerDtoObj = officeNetDao.fillCustomerDataOnPG(customerId);
+		} catch (Exception ex) {
+			customerDtoObj.setStrErrorMsg(exceptionObj.customSqlExection(ex));
+		}
+		return customerDtoObj;
 	}
 
 }

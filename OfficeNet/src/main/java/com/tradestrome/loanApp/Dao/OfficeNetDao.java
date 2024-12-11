@@ -1,13 +1,14 @@
 package com.tradestrome.loanApp.Dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.tradestrome.loanApp.Entity.CustomerDocs;
 import com.tradestrome.loanApp.Entity.CustomerMasterDto;
-import com.tradestrome.loanApp.SqlMapper.MapperDAO;
 
 @Repository
 public interface OfficeNetDao {
 	
 	public int iInsertCustomerMasterData(CustomerMasterDto customerDatObj);
+	public boolean iInsertCustomerAttach(CustomerDocs customerDocs);
+	public CustomerMasterDto fillCustomerDataOnPG(String customerId);
 }

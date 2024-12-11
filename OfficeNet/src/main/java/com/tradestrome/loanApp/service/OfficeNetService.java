@@ -8,6 +8,7 @@ import com.tradestrome.loanApp.Entity.CustomerMasterDto;
 import com.tradestrome.loanApp.Entity.ResponseWrapper;
 
 public interface OfficeNetService {
-	public ResponseWrapper saveImageToStorage(String uploadDirectory, MultipartFile imageFile) throws IOException; 
+	public ResponseWrapper saveImageToStorage(String uploadDirectory, MultipartFile imageFile,CustomerMasterDto customerDto) throws IOException; 
 	public ResponseWrapper saveCustomerDate(CustomerMasterDto customerDto);
+	public CustomerMasterDto fillCustomerDataOnPG(String customerId);
 }

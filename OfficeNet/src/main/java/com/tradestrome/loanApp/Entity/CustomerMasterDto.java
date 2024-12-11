@@ -11,6 +11,9 @@ public class CustomerMasterDto {
 	private String cust_CAdd;
 	private String cust_PAdd;
 	private String cust_Id;
+	private String docType;
+	
+	private String strErrorMsg;
 	
 	public String getCust_Name() {
 		return cust_Name;
@@ -65,6 +68,18 @@ public class CustomerMasterDto {
 	}
 	public void setCust_Id(String cust_Id) {
 		this.cust_Id = cust_Id;
+	}
+	public String getDocType() {
+		return docType;
+	}
+	public void setDocType(String docType) {
+		this.docType = docType;
+	}
+	public String getStrErrorMsg() {
+		return strErrorMsg;
+	}
+	public void setStrErrorMsg(String strErrorMsg) {
+		this.strErrorMsg = strErrorMsg;
 	}
 	
 	

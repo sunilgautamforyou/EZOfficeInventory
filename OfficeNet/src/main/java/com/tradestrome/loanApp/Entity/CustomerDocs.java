@@ -5,6 +5,9 @@ public class CustomerDocs {
 	private String docType;
 	private String docFilePath;
 	private String docFileName;
+	private int attachMentId;
+	private String customerId;
+	
 	public String getDocType() {
 		return docType;
 	}
@@ -23,6 +26,19 @@ public class CustomerDocs {
 	public void setDocFileName(String docFileName) {
 		this.docFileName = docFileName;
 	}
+	public int getAttachMentId() {
+		return attachMentId;
+	}
+	public void setAttachMentId(int attachMentId) {
+		this.attachMentId = attachMentId;
+	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+	
 	
 	
 }
