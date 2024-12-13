@@ -31,6 +31,11 @@ public class OfficeNetDaoImpl implements OfficeNetDao {
 	public CustomerMasterDto fillCustomerDataOnPG(String customerId) {
 		return officeNetMapperObj.fillCustomerDataOnPG(customerId);
 	}
+
+	@Override
+	public int GetCustAttachId(String customerId) {
+		return officeNetMapperObj.GetCustAttachId(customerId);
+	}
 	
 	
 

@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
-    <!-- Bootstrap CSS-->
+   <!-- Bootstrap CSS-->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/dataTables.bootstrap4.min.css">
     <!-- Font Awesome CSS-->
@@ -22,8 +22,30 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
     <!-- Custom Scrollbar-->
     <link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <!-- Custom stylesheet - for your changes-->
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="img/favicon.ico">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> 
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css' rel='stylesheet'>
+      
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" ></script>
+ <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+ <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+ <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> 
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" ></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" ></script>
+ <script src="src/jquery.table2excel.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
@@ -249,7 +271,6 @@
             <table id="tableAttachment" class="table table-bordered table-hover" style="width: 100%">
                 <thead id="attchHead" class="thead-dark">
                     <tr>
-                        <th scope="col">Srl</th>
                         <th scope="col">Document Type</th>
                         <th scope="col">FileUploader</th>
                         <th scope="col">Action</th>
@@ -258,7 +279,6 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
                         <td>
                             <div class="col-sm-12 col-md-12 pl0">
                                 <select class="custom-select" id="lsIdType">
@@ -291,8 +311,8 @@
         		</td>
         		<td style="width: 40%; vertical-align: top;">
         		<div class="table-responsive style-12" style="width: !important;%">
-        			<table class="table table-bordered table-hover" id="tblCalc" style="width: 100%">
-					<thead id="PymntsHead" class="thead-dark">
+        			<table class="table table-bordered table-hover" id="tblDocs" style="width: 100%">
+					<thead id="docsHead" class="thead-dark">
 						<tr>
 							<th scope="col">Srl</th>
 							<th scope="col">Document Type</th>
@@ -300,24 +320,40 @@
 							<th scope="col">Action</th>
 						</tr>
 					</thead>
-					<tbody>
-					<tr>
+					<tbody id="docsBody">
+<!-- 					<tr>
 						<td></td>
 						<td></td>
 						<td></td>
 						<td></td>
-					</tr>
+					</tr> -->
 					</tbody>        				
         			</table>
+        			
         		</div>
         		</td>
         	</tr>
         </table>
         </div>
     </div>
+    <!--Modal Popup Area-->
+	<div class="modal" tabindex="-1" role="dialog" id="userDataModel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">View Document</h5>
+				</div>	
+				<div class="modal-body">
+					<img class="btn popup_image" style="width:100px; height:100px; border-radius:4px;" 
+					src="http://lorempixel.com/g/200/200/"></img>
+    			</div>
+				<div class="modal-footer">
+					<button type="button" class="common-secondary" data-dismiss="modal">Close</button>
+				</div>											
+			</div>
+		</div>
+	</div>    
     <input type="hidden" id="hdnCustomerId">
-	<div class="container">
-	</div>
           </div>
           </div>
         </div>
@@ -326,14 +362,23 @@
         <p>Copyright © 2024-2025, Designed & Developed by ABC</p>
       </footer>
     </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<%-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>   
     <script src="https://salepurchasecompany.co.in/js/jquery.min.js"></script>
     <script src="https://salepurchasecompany.co.in/js/popper.min.js"></script>
     <script src="https://salepurchasecompany.co.in/js/jquery.mCustomScrollbar.concat.min.js"></script>
     <!-- Main File-->
-    <script src="https://salepurchasecompany.co.in/js/custom.js"></script>          
+    <script src="https://salepurchasecompany.co.in/js/custom.js"></script>   --%>        
+    <!-- JavaScript files-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script> 
+    <script src="js/dataTables.bootstrap4.min.js"></script>
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <!-- Main File-->
+    <script src="js/custom.js"></script>    
     <script>
 		var data = "";
         // JavaScript to handle the image upload and preview
@@ -393,34 +438,7 @@
 	              	 alert("error:" + ts.responseText);
 	               }
 		 });	           	
-/*         	$.ajax({
-                 url:"/OfficeNet/customerMst/fillCustomerDataOnPG",
-                 method:"POST",
-                 data: param,
-                 contentType: 'application/json',
-                 cache: false,
-                 processData: false,
-                 beforeSend:function(){
-                     //$('#uploaded_image').html("<label class='text-success'>Image Uploading...</label>");
-                 },
-                 success:function(data)
-                 {
-         			$('#txtCustName').val(data.cust_Name);
-        			//$('#lsGender').val();
-        			$('#txtGuardian').val(data.cust_Father);
-        			//$('#lsGurGender').val();
-        			$('#txtMobileNo').val(data.cust_Mobile);
-        			$('#txtProff').val(data.cust_Job);
-        			$('#txtCurrentAdd').val(data.cust_CAdd);
-        			$('#txtPermanentAdd').val(data.cust_PAdd);
-        			$('#hdnCustomerId').val(data.cust_Id);
-                 }
-                 ,error: function(ts)
-                 {
-                	 $("#msgId").addClass("alert alert-danger");
-                	 alert("error:" + ts.responseText);
-                 }
-			 });         */	
+
         }
         
         function saveAttachmentData() {
@@ -438,13 +456,9 @@
         			alert("Image File Size is very big");
         		} else {
         			 form_data.append("adsImages", document.getElementById('fileInput').files[0]);
-        	//		 form_data.append('customer',data);
-/*               			 form_data.append('customer',new Blob([JSON.stringify(data)], {
-   	                    type: "application/json"
-     	                }));     */     
-             			 form_data.append('customer',new Blob([(data)], {
-        	                    type: "application/json"
-          	                }));         	                
+          			 form_data.append('customer',new Blob([(data)], {
+     	                    type: "application/json"
+       	                }));         	                
         			 var boundary = Math.random().toString().substr(2);
 
          			 $.ajax({
@@ -460,7 +474,17 @@
                          },
                          success:function(data)
                          {
-                             $('#uploaded_image').html(data);
+                        	 var rowCount = $('#tblDocs tr').length;
+                        	 $('#docsBody').append('<tr>'+
+                        	 '<td>'+ rowCount +'</td>'+
+                        	 '<td>'+ $("#lsIdType option:selected").text() +'</td>'+
+                        	 '<td>'+ data.strFileName +'</td>'+
+                        	 '<td><input type="button" id="btnVwImg" class="upload-btn" value="View" onclick="viewImage();"></td>'+
+                        	 '</tr>');   
+	                          $("#msgId").addClass("alert alert-success");
+	                          $('#alertMsg').html(data.strMessage);
+	                          $("#profileImagePreview").attr("src","https://via.placeholder.com/150");
+                        	 alert(data.strMessage);
                          }
                          ,error: function(ts)
                          {
@@ -472,6 +496,15 @@
         	}
         		
         }
+        function viewImage() {
+        	$('#userDataModel').modal('show');
+        	$(".popup_image").on('click', function() {
+       		    w2popup.open({
+       		      title: 'Image',
+       		      body: '<div class="w2ui-centered"><img src="' + $(this).attr('src') + '"></img></div>'
+       		    });
+       		  });        	
+        }
         function validateCustomerData() {
 			var cust_name = $('#txtCustName').val();
 			var cust_Title = $('#lsGender').val();
@@ -482,6 +515,8 @@
 			var cust_CAdd = $('#txtCurrentAdd').val();
 			var cust_PAdd = $('#txtPermanentAdd').val();
 			var cust_id = $('#hdnCustomerId').val();
+			var docType = $("#lsIdType option:selected").text();
+			
 			
 			if (cust_name == "") {
 				alert("Cutomer Name Should not left blank");
@@ -507,6 +542,8 @@
 				cust_id = 0;
 			}
 			
+			
+			
 			 data = JSON.stringify({
        			    "cust_Name":cust_name,
        			    "cust_Title":cust_Title,
@@ -516,7 +553,8 @@
        			    "cust_Job":cust_Job,
        			    "cust_CAdd":cust_CAdd,
        			    "cust_PAdd":cust_PAdd,
-       			    "cust_Id":cust_id
+       			    "cust_Id":cust_id,
+       			    "docType":docType
        			});
 			
 			return true;
@@ -567,6 +605,7 @@
         }
         function docsButtonClick() {
         	var showDocsText = $('#btnShowDocs').text();
+        	removeClassMsg();
         	if (showDocsText == "Upload Documents") {
         		showHideDocsDiv("show");
         	}else{
@@ -582,6 +621,10 @@
 			$('#txtProff').attr('disabled', true);
 			$('#txtCurrentAdd').attr('disabled', true);
 			$('#txtPermanentAdd').attr('disabled', true);
+        }
+        function removeClassMsg() {
+        	$("#msgId").removeClass("alert alert-success");
+        	$('#alertMsg').html('');
         }
     </script>    
     </body>

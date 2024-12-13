@@ -27,12 +27,11 @@ public class ActionController {
 	private OfficeNetService officeNetServiceObj;
 
 @PostMapping("customerMst/saveDocs")
-   // @RequestMapping(value = "customerMst/saveDocs", method = RequestMethod.POST, consumes = { "multipart/form-data" })
 	public ResponseWrapper saveDocumentObj(@RequestPart("adsImages") @Valid @NotNull MultipartFile[] adsImages,
 			@RequestPart("customer") @Valid CustomerMasterDto customerMasterDto
 			) throws IOException {
 		ResponseWrapper wrapper = new ResponseWrapper();
-		String uploadDirectory = "./OfficeNet/src/main/resources/static/images/ads"; //"C:\\OfficeNet\\CustomerMasterDocs\\";
+		String uploadDirectory = "/resources/static/images/ads"; //"C:\\OfficeNet\\CustomerMasterDocs\\";
 		
 		for (MultipartFile imageFile : adsImages) {
 			wrapper = officeNetServiceObj.saveImageToStorage(uploadDirectory, imageFile,customerMasterDto);

@@ -42,7 +42,7 @@ public interface MapperDAO {
 			+ "attach_path,\r\n"
 			+ "file_name)\r\n"
 			+ "VALUES\r\n"
-			+ "((select coalesce(Max(attachment_id)+1,1) from customer_master_attachment where customer_id=#{customerDocs.customerId}),\r\n"
+			+ "(#{customerDocs.attachMentId},\r\n"
 			+ "#{customerDocs.customerId},\r\n"
 			+ "#{customerDocs.docType},\r\n"
 			+ "#{customerDocs.docFilePath},\r\n"
@@ -63,4 +63,8 @@ public interface MapperDAO {
 		@Result(property = "cust_PAdd",column = "permant_address")
 	})
 	public CustomerMasterDto fillCustomerDataOnPG(@Param("customerId") String customerId);
+	
+	
+	@Select("select coalesce(Max(attachment_id)+1,1) from customer_master_attachment where customer_id=#{customerId}")
+	public int GetCustAttachId(@Param("customerId") String customerId);
 }

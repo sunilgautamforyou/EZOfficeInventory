@@ -3,10 +3,11 @@ package com.tradestrome.loanApp.Entity;
 public class ResponseWrapper {
 	
 	private int recordNumber;
-	
 	private String strMessage;
-	
 	private boolean errorFlag;
+	private String strFileName;
+	
+	
 
 	public String getStrMessage() {
 		return strMessage;
@@ -31,6 +32,15 @@ public class ResponseWrapper {
 	public void setRecordNumber(int recordNumber) {
 		this.recordNumber = recordNumber;
 	}
+
+	public String getStrFileName() {
+		return strFileName;
+	}
+
+	public void setStrFileName(String strFileName) {
+		this.strFileName = strFileName;
+	}
+	
 	
 	
 	
