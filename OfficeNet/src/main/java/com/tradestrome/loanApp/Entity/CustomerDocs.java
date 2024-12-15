@@ -7,6 +7,8 @@ public class CustomerDocs {
 	private String docFileName;
 	private int attachMentId;
 	private String customerId;
+	private String strMessage;
+	private String encodedString;
 	
 	public String getDocType() {
 		return docType;
@@ -38,6 +40,21 @@ public class CustomerDocs {
 	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
 	}
+
+	public String getStrMessage() {
+		return strMessage;
+	}
+	public void setStrMessage(String strMessage) {
+		this.strMessage = strMessage;
+	}
+	public String getEncodedString() {
+		return encodedString;
+	}
+	public void setEncodedString(String encodedString) {
+		this.encodedString = encodedString;
+	}
+
+	
 	
 	
 	

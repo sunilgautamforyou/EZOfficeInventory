@@ -6,6 +6,7 @@ public class ResponseWrapper {
 	private String strMessage;
 	private boolean errorFlag;
 	private String strFileName;
+	private String filePath;
 	
 	
 
@@ -39,6 +40,14 @@ public class ResponseWrapper {
 
 	public void setStrFileName(String strFileName) {
 		this.strFileName = strFileName;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 	
 	

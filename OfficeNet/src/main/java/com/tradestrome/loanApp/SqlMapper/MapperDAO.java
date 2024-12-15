@@ -1,5 +1,7 @@
 package com.tradestrome.loanApp.SqlMapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tradestrome.loanApp.Entity.CustomerDocs;
 import com.tradestrome.loanApp.Entity.CustomerMasterDto;
+import com.tradestrome.loanApp.Entity.ProjInputParam;
 
 @Mapper
 public interface MapperDAO {
@@ -67,4 +70,17 @@ public interface MapperDAO {
 	
 	@Select("select coalesce(Max(attachment_id)+1,1) from customer_master_attachment where customer_id=#{customerId}")
 	public int GetCustAttachId(@Param("customerId") String customerId);
+	
+	@Select("select attachment_id, customer_id, attach_type, attach_path, file_name, attach_file_data\r\n"
+			+ " from customer_master_attachment where customer_id=#{prjInputParam.customerId} "
+			+ "and attachment_id = coalesce(#{prjInputParam.fileAttachmentId},attachment_id)")
+	@Results({
+		@Result(property = "attachMentId",column = "attachment_id"),
+		@Result(property = "customerId",column = "customer_id"),
+		@Result(property = "docType",column = "attach_type"),
+		@Result(property = "docFilePath",column = "attach_path"),
+		@Result(property = "docFileName",column = "file_name")
+	})
+	public List<CustomerDocs> showCustomerDocs(@Param("prjInputParam") ProjInputParam prjInputParam);
+	
 }

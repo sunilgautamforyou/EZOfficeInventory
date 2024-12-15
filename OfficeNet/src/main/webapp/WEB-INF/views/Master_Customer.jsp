@@ -72,14 +72,25 @@
             justify-content: center;
             align-items: center;
         }
-
         /* Style for the image inside the container */
         .profile-image-container img {
             width: 100%;
             height: 100%;
             object-fit: cover; /* Ensures the image covers the area properly */
         }
-
+        .saved-image-container {
+            width: 450px; /* Fixed width */
+            height: 350px; /* Fixed height */
+            border: 2px solid #ddd; /* Border for the profile image container */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .saved-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the image covers the area properly */
+        }
         /* Style for the file input button */
         .file-input-wrapper {
             margin-top: 10px;
@@ -266,15 +277,15 @@
         <div class="form-group row">
         <table id="groupTable" class="table table-bordered table-hover"  style="width: 100%">
         	<tr>
-        		<td style="width: 40%">
+        		<td style="width: 75%">
         			<div id="billDtl" class="table-responsive style-12" style="width: !important;%">
             <table id="tableAttachment" class="table table-bordered table-hover" style="width: 100%">
                 <thead id="attchHead" class="thead-dark">
                     <tr>
-                        <th scope="col">Document Type</th>
-                        <th scope="col">FileUploader</th>
-                        <th scope="col">Action</th>
-                        <th scope="col">Submit</th>
+                        <th scope="col" style="width: 25%">Document Type</th>
+                        <th scope="col" style="width: 15%">FileUploader</th>
+                        <th scope="col" style="width: 10%">Action</th>
+                        <th scope="col" style="width: 5%">Submit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -309,15 +320,17 @@
             </table>        			
         			</div>
         		</td>
-        		<td style="width: 40%; vertical-align: top;">
+        		<td style="width: 25%; vertical-align: top;">
         		<div class="table-responsive style-12" style="width: !important;%">
         			<table class="table table-bordered table-hover" id="tblDocs" style="width: 100%">
 					<thead id="docsHead" class="thead-dark">
 						<tr>
 							<th scope="col">Srl</th>
 							<th scope="col">Document Type</th>
-							<th scope="col">Name</th>
+							<th scope="col" hidden="true">Name</th>
 							<th scope="col">Action</th>
+							<th scope="col" hidden="true">Id</th>
+							<th scope="col" hidden="true">FilePath</th>
 						</tr>
 					</thead>
 					<tbody id="docsBody">
@@ -344,8 +357,9 @@
 					<h5 class="modal-title">View Document</h5>
 				</div>	
 				<div class="modal-body">
-					<img class="btn popup_image" style="width:100px; height:100px; border-radius:4px;" 
-					src="http://lorempixel.com/g/200/200/"></img>
+                     <div class="saved-image-container">
+                         <img id="savedImagePreview" class="saved-image-container img" src="" alt="Profile Image" width="100%">
+                     </div>
     			</div>
 				<div class="modal-footer">
 					<button type="button" class="common-secondary" data-dismiss="modal">Close</button>
@@ -401,6 +415,7 @@
         	$('#docsDiv').attr('hidden', true);	
         	$('#btnShowDocs').attr('hidden', true);	
         	fillCustomerDataOnPG("1");
+        	loadDocsData("1");
         });
         
         function fillCustomerDataOnPG(customerId) {
@@ -442,6 +457,7 @@
         }
         
         function saveAttachmentData() {
+        	validateCustomerData("dataFill");
         	var name = document.getElementById("fileInput").files[0].name;
         	var form_data = new FormData();
         	var ext = name.split('.').pop().toLowerCase();
@@ -478,8 +494,10 @@
                         	 $('#docsBody').append('<tr>'+
                         	 '<td>'+ rowCount +'</td>'+
                         	 '<td>'+ $("#lsIdType option:selected").text() +'</td>'+
-                        	 '<td>'+ data.strFileName +'</td>'+
-                        	 '<td><input type="button" id="btnVwImg" class="upload-btn" value="View" onclick="viewImage();"></td>'+
+                        	 '<td hidden="true">'+ data.strFileName +'</td>'+
+                        	 '<td><input type="button" id="btnVwImg" class="upload-btn" value="View"></td>'+
+                        	 '<td hidden="true">'+ data.recordNumber +'</td>'+
+                        	 '<td hidden="true">'+ data.filePath +'</td>'+
                         	 '</tr>');   
 	                          $("#msgId").addClass("alert alert-success");
 	                          $('#alertMsg').html(data.strMessage);
@@ -496,16 +514,93 @@
         	}
         		
         }
-        function viewImage() {
+        
+        $("#tblDocs").on('click','#btnVwImg',function(){
+        	var attachId = $(this).closest('tr').find("td:eq(0)").text();
+			 viewImage(attachId);
+        	
+        });
+        
+        function loadDocsData(customerId) {
+			var rowCount = 1;	
+	       	 var attachDocsData = JSON.stringify({
+		 			"customerId":customerId,
+		 			 "fileAttachmentId":""
+					});			
+			   $.ajax({
+	               url:"/OfficeNet/customerMst/showCustomerDocs",
+	               method:"POST",
+	               data: attachDocsData,
+	               contentType: 'application/json',
+	               cache: false,
+	               processData: false,
+	               beforeSend:function(){
+	            	   //$('#btnShow').html(spinner);
+	               },
+	               success:function(data)
+	               {
+	            	   if (data.length > 0) {
+		            	   showHideDocsDiv("show");
+		            	   for(var i=0;i<data.length;i++){
+	                      	 $('#docsBody').append('<tr>'+
+	                        	 '<td>'+ rowCount +'</td>'+
+	                        	 '<td>'+ data[i].docType +'</td>'+
+	                        	 '<td hidden="true">'+ data[i].docFileName +'</td>'+
+	                        	 '<td><input type="button" id="btnVwImg" class="upload-btn" value="View"></td>'+
+	                        	 '<td hidden="true">'+ data[i].attachMentId +'</td>'+
+	                        	 '<td hidden="true">'+ data[i].docFilePath +'</td>'+
+	                        	 '</tr>');  
+	                      	rowCount++;
+		            	   }	            		   
+	            	   }
+   	               }
+	               ,error: function(ts)
+	               {
+	              	 $("#msgId").addClass("alert alert-danger");
+	              	 alert("error:" + ts.responseText);
+	               }
+			 });	           	
+        }
+        
+        function viewImage(data) {
         	$('#userDataModel').modal('show');
-        	$(".popup_image").on('click', function() {
+	       	 var attachDocsData = JSON.stringify({
+	 			"customerId":$('#hdnCustomerId').val(),
+	 			 "fileAttachmentId":data
+				});        	
+/*         	$(".popup_image").on('click', function() {
        		    w2popup.open({
        		      title: 'Image',
        		      body: '<div class="w2ui-centered"><img src="' + $(this).attr('src') + '"></img></div>'
        		    });
-       		  });        	
+       		  }); */  
+
+       		  
+			   $.ajax({
+	               url:"/OfficeNet/customerMst/showCustomerDocs",
+	               method:"POST",
+	               data: attachDocsData,
+	               contentType: 'application/json',
+	               cache: false,
+	               processData: false,
+	               beforeSend:function(){
+	            	   //$('#btnShow').html(spinner);
+	               },
+	               success:function(data)
+	               {
+	            	   $("#savedImagePreview").attr("src","data:image/gif;base64," + data[0].encodedString);
+	              }
+	               ,error: function(ts)
+	               {
+	              	 $("#msgId").addClass("alert alert-danger");
+	              	 alert("error:" + ts.responseText);
+	               }
+			 });	           	
         }
-        function validateCustomerData() {
+        
+        
+        
+        function validateCustomerData(type) {
 			var cust_name = $('#txtCustName').val();
 			var cust_Title = $('#lsGender').val();
 			var cust_Father = $('#txtGuardian').val();
@@ -517,33 +612,31 @@
 			var cust_id = $('#hdnCustomerId').val();
 			var docType = $("#lsIdType option:selected").text();
 			
-			
-			if (cust_name == "") {
-				alert("Cutomer Name Should not left blank");
-				$('#txtCustName').focus();
-				return false;
-			}
-			if (cust_Father == "") {
-				alert("Father Name Should not left blank");
-				$('#txtGuardian').focus();
-				return false;
-			}	
-			if (cust_Mobile == "") {
-				alert("MobileNo Should not left blank");
-				$('#txtMobileNo').focus();
-				return false;
-			}				
-			if (cust_CAdd == "" && cust_PAdd=="") {
-				alert("Current/Permanent Address  Should not left blank");
-				$('#txtCurrentAdd').focus();
-				return false;
+			if (type == "validate") {
+				if (cust_name == "") {
+					alert("Cutomer Name Should not left blank");
+					$('#txtCustName').focus();
+					return false;
+				}
+				if (cust_Father == "") {
+					alert("Father Name Should not left blank");
+					$('#txtGuardian').focus();
+					return false;
+				}	
+				if (cust_Mobile == "") {
+					alert("MobileNo Should not left blank");
+					$('#txtMobileNo').focus();
+					return false;
+				}				
+				if (cust_CAdd == "" && cust_PAdd=="") {
+					alert("Current/Permanent Address  Should not left blank");
+					$('#txtCurrentAdd').focus();
+					return false;
+				}
 			}
 			if (cust_id == "") {
 				cust_id = 0;
 			}
-			
-			
-			
 			 data = JSON.stringify({
        			    "cust_Name":cust_name,
        			    "cust_Title":cust_Title,
@@ -562,7 +655,7 @@
 			
         }
         function saveCustomerMasterData() {
-        	if (validateCustomerData()==true) {
+        	if (validateCustomerData("validate")==true) {
         		if (confirm('Are you sure you want to save?')) {
        			 $.ajax({
                      url:"/OfficeNet/customerMst/saveCustomerMstObj",
@@ -582,6 +675,7 @@
                     	 $('#btnSave').attr('hidden', true);
                     	 $('#hdnCustomerId').val(data.recordNumber);
                     	 disableControl();
+                    	 validateCustomerData("dataFill");
                      }
                      ,error: function(ts)
                      {
