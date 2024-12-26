@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.tradestrome.loanApp.Entity.CustomerDocs;
 import com.tradestrome.loanApp.Entity.CustomerMasterDto;
+import com.tradestrome.loanApp.Entity.DtoDayBookPayable;
 import com.tradestrome.loanApp.Entity.ProjInputParam;
 import com.tradestrome.loanApp.SqlMapper.MapperDAO;
 
@@ -43,6 +44,20 @@ public class OfficeNetDaoImpl implements OfficeNetDao {
 	@Override
 	public List<CustomerDocs> showCustomerDocs(ProjInputParam prjInputParams) {
 		return officeNetMapperObj.showCustomerDocs(prjInputParams);
+	}
+
+	@Override
+	public List<CustomerMasterDto> getDataCustomerHomePG() {
+		return officeNetMapperObj.getDataCustomerHomePG();
+	}
+
+	@Override
+	public List<CustomerMasterDto> fillCustomerData(ProjInputParam projInputParam) {
+		return officeNetMapperObj.fillCustomerData(projInputParam);
+	}
+	@Override
+	public int iInsertBillPayableData(DtoDayBookPayable billDto) {
+		return officeNetMapperObj.iInsertBillPayableData(billDto);
 	}
 	
 	

@@ -7,7 +7,7 @@ public class ResponseWrapper {
 	private boolean errorFlag;
 	private String strFileName;
 	private String filePath;
-	
+	private String billNumber;
 	
 
 	public String getStrMessage() {
@@ -48,6 +48,14 @@ public class ResponseWrapper {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	public String getBillNumber() {
+		return billNumber;
+	}
+
+	public void setBillNumber(String billNumber) {
+		this.billNumber = billNumber;
 	}
 	
 	

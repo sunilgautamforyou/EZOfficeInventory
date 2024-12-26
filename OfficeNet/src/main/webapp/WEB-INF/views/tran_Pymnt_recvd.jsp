@@ -50,7 +50,7 @@
                 <ul id="side-main-menu" class="side-menu list-unstyled">
                     <li class="active"><a href="#dashboard" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Master</a>
                         <ul id="dashboard" class="collapse list-unstyled show">
-                            <li><a href="/loanApp/dashBoard">Customer Master</a></li>
+                            <li><a href="/OfficeNet/CustomerHomePG">Customer Master</a></li>
                        </ul>
                     </li>
                     <li class="active"><a href="#purchase" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-bar-chart"></i>Transaction</a>

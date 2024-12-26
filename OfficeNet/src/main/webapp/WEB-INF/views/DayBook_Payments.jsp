@@ -63,7 +63,7 @@
 					data-toggle="collapse"> <i class="icon-interface-windows"></i>Master
 				</a>
 					<ul id="dashboard" class="collapse list-unstyled show">
-						<li><a href="/loanApp/dashBoard">Customer Master</a></li>
+						<li><a href="/OfficeNet/CustomerHomePG">Customer Master</a></li>
 					</ul></li>
 				<li class="active"><a href="#purchase" aria-expanded="false"
 					data-toggle="collapse"> <i class="fa fa-bar-chart"></i>Transaction
@@ -138,20 +138,32 @@
 	<div class="col-sm-6 col-md-3 pl0">
 		<select class="custom-select" id="lstCustNo">
 			<option value="0">Choose Any Customer...</option>
-			<option value="1">Ram [9810981010] [Area:Nangloi]</option>
-			<option value="2">Tara [9810981010] [Area:Madipur]</option>
-			<option value="2">Naresh [88855500] [Area:Nihal
-				Vihar]</option>
-		</select> <br> <a href="#">Search Customer</a>
-		&nbsp;<a href="#">View Guarantor</a>
+		</select> <br> <a href="#" onclick="showPopUp('Customer')">Search Customer</a>
 	</div>
-	<label class="col-sm-4 col-md-1 col-form-label pl15">Remarks:</label>
-	<div class="col-sm-6 col-md-3 pl0 cal-position">
-		<textarea type="text" class="form-control" id="txtRemarks"  placeholder="Remarks Here" rows="2"></textarea>
+	<label class="col-sm-4 col-md-1 col-form-label pl15">Guarantor:</label>
+	<div class="col-sm-6 col-md-3 pl0">
+		<select class="custom-select" id="lstGuarantor">
+			<option value="0">Choose Any Guarantor...</option>
+			<option value="0">Self</option>
+		</select> <br> <a href="#" onclick="showPopUp('Guarantor')">Search Guarantor</a>
 	</div>	
 </div> 
+<div class="form-group row">
+		<label class="col-sm-4 col-md-1 col-form-label">Office:</label>
+		<div class="col-sm-6 col-md-3 pl0">
+		<select class="custom-select" id="lstOffice">
+			<option value="0">Nihal Vihar</option>
+			<option value="1">Paschim Vihar</option>
+			<option value="2">Uttam Nagar</option>
+		</select>
+		</div>
+		<label class="col-sm-4 col-md-1 col-form-label pl15">Remarks:</label>
+		<div class="col-sm-6 col-md-3 pl0 cal-position">
+		<textarea type="text" class="form-control" id="txtRemarks"  placeholder="Remarks Here" rows="2"></textarea>
+	</div>
 </div>
-<div class="container">
+</div>
+<div class="container" id="dvEntry">
 	<div class="form-group row">
 		<table id="groupTable" class="table table-bordered table-hover"  style="width: 100%">
 	<tr>
@@ -267,66 +279,60 @@
 <div id="msgId">
 	<h5 id="alertMsg"></h5>
 </div>
-<div class="col-sm-6 text-center btn-spaceing mt15">
+<div class="col-sm-4 text-center btn-spaceing mt15">
 	<div class=" w3-bar">
-		<Button ID="btnSave" onclick="saveData()" class="common-btn">Save</Button>
-<Button ID="btnRefresh" class="common-btn"
-	onclick="exitToHomePage()">Refresh</Button>
-				</div>
-			</div>
+		<Button ID="btnSave" onclick="saveBillData()" class="common-btn">Save</Button>
+		<Button ID="btnRefresh" class="common-btn" onclick="exitToHomePage()">Refresh</Button>
+	</div>
+</div>
 		</div>
 	</div>
 </div>
+    <!--Modal Popup Area-->
+	<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true" aria-modal="true" role="dialog" id="userDataModel">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="SrchMoal"></h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>	
+				<div class="modal-body">
+					<div class="container">
+					  <div class="form-group row">
+						<label class="col-sm-4 col-md-2 col-form-label">Search:</label>		 
+						<div class="col-sm-6 col-md-8">
+						<input type="text" id="txtInputSrch" style="background-color: #FFFACD;" class="form-control" placeholder="Enter Search Text Here">
+						<button id="btnSrch" class="common-btn" onclick="loadCustomerData();">Search</button>
+						</div>						 
+					  </div>
+					  <div class="form-group row">
+					   <div class="col-md-12 commen-space" style="width: !important;%">
+					   	 <table class="table table-bordered table-hover" id="tblSrch" style="width: 100%">
+							<thead id="srchHead" class="thead-dark">
+								<tr>
+									<th scope="col" hidden="true">CustomerId</th>
+									<th scope="col" style="width: 35%">Customer Name</th>
+									<th scope="col" style="width: 55%">Address</th>
+									<th scope="col" style="width: 10%">Select One</th>
+								</tr>
+							</thead>
+							<tbody id="srchBody">
+							</tbody>					   	 	
+					   	 </table>
+					   </div>
+					  </div>
+					</div>
+    			</div>
+				<div class="modal-footer">
+					<button type="button" class="common-secondary" data-dismiss="modal">Close</button>
+				</div>											
+			</div>
+		</div>
+	</div>  
 </section>
 	<footer class="main-footer">
 		<p>Copyright Â© 2024-2025, Designed & Developed by ABC</p>
 	</footer>
-</div>
-<!--Modal Popup Area-->
-<div class="modal" tabindex="-1" role="dialog" id="userDataModel">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Search Item Data</h5>
-				<button type="button" class="common-close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-	</button>
-</div>
-<div class="modal-body">
-	<div id="optionData">
-		<table class="table" id="userTable">
-			<thead id='tHead'>
-				<tr>
-					<th hidden>id</th>
-					<!-- 0 -->
-	<th hidden>Uomid</th>
-	<!-- 1 -->
-	<th>Item Short Name</th>
-	<!-- 2 -->
-	<th>Description</th>
-	<!-- 3 -->
-	<th>UOM</th>
-	<!-- 4 -->
-	<th>GST</th>
-	<!-- 5 -->
-	<th>Rate</th>
-	<!-- 6 -->
-	<th>Select One</th>
-	<!-- 7 -->
-							</tr>
-						</thead>
-						<tbody id='tbodyLoan'>
-
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="common-secondary" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
 </div>
 <!-- JavaScript files-->
 <script src="js/jquery.min.js"></script>
@@ -357,6 +363,7 @@ jQuery(document).ready(function($){
 	$('#chkPctAmt').hide();
 	$('#lblChkPct').hide();
 	setCurrentDate();
+	$('#dvEntry').hide();
 });
 
 $('.input-group.date').datepicker({
@@ -724,6 +731,114 @@ function allowNumericWithDecimal(event) {
         event.preventDefault();
     }		
 }	
+
+function showPopUp(type) {
+	$('#srchBody').html('');
+	$('#txtInputSrch').val('');
+	if (type == "Customer") {
+		$('#SrchMoal').html('Search Customer');
+		$('#userDataModel').modal('show');
+	} else {
+		if ($("#lstCustNo").val() == "0") {
+			alert("Choose Customer First");
+			return false;
+		} 
+		$('#SrchMoal').html('Search Guarantor');
+		$('#userDataModel').modal('show');
+	}
+}
+
+function loadCustomerData() {
+	var inputTextSrch = $('#txtInputSrch').val();
+	if (inputTextSrch == "") {
+		alert("Please Enter Valid Text Search...");
+		$('#txtInputSrch').focus();
+		return false;
+	}
+  	 var searchData = JSON.stringify({
+		"searchText":inputTextSrch
+	});        	
+  	$('#srchBody').html('');
+	   $.ajax({
+           url:"/OfficeNet/dayBook_Pymnt/loadCustomerData",
+           method:"POST",
+           data: searchData,
+           contentType: 'application/json',
+           cache: false,
+           processData: false,
+           beforeSend:function(){
+        	   //$('#btnShow').html(spinner);
+           },
+           success:function(data)
+           {
+        	   if(data.length!=0) {
+        		   for(var i=0;i<data.length;i++){
+						$('#srchBody').append(
+							'<tr>'+
+							'<td hidden>'+data[i].cust_Id+'</td>'+
+							'<td>'+data[i].cust_Name+'</td>'+
+							'<td>'+data[i].cust_CAdd+'</td>'+
+							'<td><label class="radio-inline"> <input type="radio" class="radioUser" name="selectUser" value='+data[i].cust_Id+'>Select</label></td></tr>'
+						);        			   
+        		   }
+        	   } else {
+        		   alert("No customer found For this Input!!!!");
+        		   $('#txtInputSrch').focus();
+        	   }
+           }
+           ,error: function(ts)
+           {
+          	 $("#msgId").addClass("alert alert-danger");
+          	 alert("error:" + ts.responseText);
+           }
+	 });		
+}
+$("#tblSrch").on('click','.radioUser',function(){
+	var currentRow=$(this).closest("tr"); 
+	var customerId=currentRow.find("td:eq(0)").text();
+	var customerName=currentRow.find("td:eq(1)").text();
+	var searchType = $('#SrchMoal').html();
+	if (searchType == "Search Customer") {
+		$('#lstCustNo').append('<option value='+customerId+'>'+customerName+'</option>');
+		$("#lstCustNo").prop('selectedIndex',1);		
+		$("#lstGuarantor").prop('selectedIndex',1);
+		$('#dvEntry').show();
+	} else {
+		$('#lstGuarantor').append('<option value='+customerId+'>'+customerName+'</option>');
+		$("#lstGuarantor").prop('selectedIndex',2);		
+		$('#dvEntry').show();
+	}
+
+	
+	$('#userDataModel').modal('hide');
+
+});
+
+function validate() {
+	var customerId = $('#lstCustNo').val();
+	var billDate = $('#txtBillDate').val();
+	var guarantor = $("#lstGuarantor").val();
+	var office = $('#lstOffice').val();
+	var txtPayableAmt = $('#txtPayableAmt').val();
+	
+	if (customerId == "0") {
+		alert("Customer cannot left blank");
+		$('#lstCustNo').focus();
+		return false;
+	}
+	if (txtPayableAmt == "") {
+		alert("Bill Amount cannot be left blank");
+		$('#txtCaseAmount').focus();
+		return false;		
+	}
+	return true;
+}
+
+function saveBillData() {
+  if (validate() == true) {
+	  
+  }
+}
 
 </script>
 </body>

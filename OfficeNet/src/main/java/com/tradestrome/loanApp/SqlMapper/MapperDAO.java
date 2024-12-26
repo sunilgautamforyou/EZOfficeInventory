@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tradestrome.loanApp.Entity.CustomerDocs;
 import com.tradestrome.loanApp.Entity.CustomerMasterDto;
+import com.tradestrome.loanApp.Entity.DtoDayBookPayable;
 import com.tradestrome.loanApp.Entity.ProjInputParam;
 
 @Mapper
@@ -82,5 +83,67 @@ public interface MapperDAO {
 		@Result(property = "docFileName",column = "file_name")
 	})
 	public List<CustomerDocs> showCustomerDocs(@Param("prjInputParam") ProjInputParam prjInputParam);
+	
+	
+	@Select("select cutomer_id,customerName,father_name,Area,customer_mobileno from customer_master")
+	@Results({
+		@Result(property = "cust_Id",column = "cutomer_id"),
+		@Result(property = "cust_Name",column = "customerName"),
+		@Result(property = "cust_Father",column = "father_name"),
+		@Result(property = "area",column = "Area"),
+		@Result(property = "cust_Mobile",column = "customer_mobileno")
+	})
+	public List<CustomerMasterDto> getDataCustomerHomePG();
+	
+	@Select("Select cutomer_id,CONCAT(customerName,\" [\",customer_mobileno,\"]\") CustomerName,\r\n"
+			+ "coalesce(current_address,permant_address)Address \r\n"
+			+ "from customer_master where (customerName like '%' #{prjInputParam.searchText} '%'\r\n"
+			+ "OR customer_mobileno like '%' #{prjInputParam.searchText} '%')")
+	@Results({
+		@Result(property = "cust_Id",column = "cutomer_id"),
+		@Result(property = "cust_Name",column = "CustomerName"),
+		@Result(property = "cust_CAdd",column = "Address")
+	})
+	public List<CustomerMasterDto> fillCustomerData(@Param("prjInputParam") ProjInputParam prjInputParam);
+	
+	
+	@Insert("INSERT INTO dsndb.bill_pymnt\r\n"
+			+ "(bill_no,\r\n"
+			+ "bill_date,\r\n"
+			+ "customer_id,\r\n"
+			+ "guarantor_id,\r\n"
+			+ "issue_office,\r\n"
+			+ "remarks,\r\n"
+			+ "bill_type,\r\n"
+			+ "bill_value,\r\n"
+			+ "bill_tenaure,\r\n"
+			+ "bill_emi,\r\n"
+			+ "bill_file_charge,\r\n"
+			+ "bill_advance,\r\n"
+			+ "bill_pct_type,\r\n"
+			+ "total_bill_amt,\r\n"
+			+ "final_bill_amt,\r\n"
+			+ "created_by,\r\n"
+			+ "created_date)\r\n"
+			+ "VALUES\r\n"
+			+ "(bill.bill_no,\r\n"
+			+ "bill.bill_date,\r\n"
+			+ "bill.customer_id,\r\n"
+			+ "bill.guarantor_id,\r\n"
+			+ "bill.issue_office,\r\n"
+			+ "bill.remarks,\r\n"
+			+ "bill.bill_type,\r\n"
+			+ "bill.bill_value,\r\n"
+			+ "bill.bill_tenaure,\r\n"
+			+ "bill.bill_emi,\r\n"
+			+ "bill.bill_file_charge,\r\n"
+			+ "bill.bill_advance,\r\n"
+			+ "bill.bill_pct_type,\r\n"
+			+ "bill.total_bill_amt,\r\n"
+			+ "bill.final_bill_amt,\r\n"
+			+ "bill.created_by,\r\n"
+			+ "bill.created_date)")
+	@Options(useGeneratedKeys = true, keyProperty = "bill_id", keyColumn = "bill_id")
+	public int iInsertBillPayableData(@Param("bill") DtoDayBookPayable bill);
 	
 }

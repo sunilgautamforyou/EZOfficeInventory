@@ -12,6 +12,7 @@ public class CustomerMasterDto {
 	private String cust_PAdd;
 	private String cust_Id;
 	private String docType;
+	private String area;
 	
 	private String strErrorMsg;
 	
@@ -80,6 +81,12 @@ public class CustomerMasterDto {
 	}
 	public void setStrErrorMsg(String strErrorMsg) {
 		this.strErrorMsg = strErrorMsg;
+	}
+	public String getArea() {
+		return area;
+	}
+	public void setArea(String area) {
+		this.area = area;
 	}
 	
 	

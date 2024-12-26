@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tradestrome.loanApp.Entity.CustomerDocs;
 import com.tradestrome.loanApp.Entity.CustomerMasterDto;
+import com.tradestrome.loanApp.Entity.DtoDayBookPayable;
 import com.tradestrome.loanApp.Entity.ProjInputParam;
 import com.tradestrome.loanApp.Entity.ResponseWrapper;
 import com.tradestrome.loanApp.service.OfficeNetService;
@@ -65,6 +66,34 @@ public class ActionController {
 	@PostMapping("customerMst/showCustomerDocs")
 	public List<CustomerDocs> getCustomerImg(@RequestBody ProjInputParam prjData) {
 		return officeNetServiceObj.showCustomerDocs(prjData);
+	}
+	
+	@PostMapping("customerHomePG/loadAllData")
+	public List<CustomerMasterDto> getAllCustomerHomePGData(@RequestBody ProjInputParam prjInputParamObj) {
+		return officeNetServiceObj.getDataCustomerHomePG();
+	}
+	
+	@GetMapping("/OpenCustomerMaster")
+	public ModelAndView openCustomerHomePG(@RequestParam("sMode") String sMode,
+			@RequestParam("customerId") String customerId) {	
+		System.err.println("-----Open OpenCustomerMaster Master ---");
+		ModelAndView view = new ModelAndView();
+		ProjInputParam prjInputDat = new ProjInputParam();
+		prjInputDat.setCustomerId(customerId);
+		prjInputDat.setsMode(sMode);
+		view.setViewName("Master_Customer");
+		view.addObject("customer", prjInputDat);
+		return view;		
+	}
+	
+	@PostMapping("dayBook_Pymnt/loadCustomerData")
+	public List<CustomerMasterDto> fillCustomerData(@RequestBody ProjInputParam prjInputObj) {
+		return officeNetServiceObj.fillCustomerData(prjInputObj);
+	}
+	
+	@PostMapping("dayBook_Pymnt/saveBillData")
+	public ResponseWrapper iInsertBillPayableAmt(@RequestBody DtoDayBookPayable billPayableDto) {
+		return officeNetServiceObj.iInsertBillPayableData(billPayableDto);
 	}
 
 

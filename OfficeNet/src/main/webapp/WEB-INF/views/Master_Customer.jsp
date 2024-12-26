@@ -144,7 +144,7 @@
                 <i class="icon-interface-windows"></i>Master </a>
               <ul id="dashboard" class="collapse list-unstyled show">
                 <li>
-                  <a href="/loanApp/dashBoard">Customer Master</a>
+                  <a href="/OfficeNet/CustomerHomePG">Customer Master</a>
                 </li>
               </ul>
             </li>
@@ -152,7 +152,7 @@
               <a href="#purchase" aria-expanded="false" data-toggle="collapse">
                 <i class="fa fa-bar-chart"></i>Transaction </a>
               <ul id="purchase" class="collapse list-unstyled show">
-                <li class="active">
+                <li>
                   <a href="/loanApp/">Create Job Card</a>
                 </li>
                 <li>
@@ -412,10 +412,26 @@
         });
         
         jQuery(document).ready(function($){
-        	$('#docsDiv').attr('hidden', true);	
-        	$('#btnShowDocs').attr('hidden', true);	
-        	fillCustomerDataOnPG("1");
-        	loadDocsData("1");
+        	if ("${customer.getsMode()}" == "New") {
+            	$('#docsDiv').attr('hidden', true);	
+            	$('#btnShowDocs').attr('hidden', true);	
+        	} else {
+        		fillCustomerDataOnPG("${customer.getCustomerId()}");	
+        		loadDocsData("${customer.getCustomerId()}");
+        	}
+        	if ("${customer.getsMode()}" == "view") {
+/*     			$('#txtCustName').val();
+    			$('#lsGender').val();
+    			$('#txtGuardian').val();
+    			$('#lsGurGender').val();
+    			$('#txtMobileNo').val();
+    			$('#txtProff').val();
+    			$('#txtCurrentAdd').val();
+    			$('#txtPermanentAdd').val();
+    			$('#hdnCustomerId').val();
+    			$("#lsIdType option:selected").text(); */     
+        		disableControl();
+        	}
         });
         
         function fillCustomerDataOnPG(customerId) {
@@ -715,6 +731,12 @@
 			$('#txtProff').attr('disabled', true);
 			$('#txtCurrentAdd').attr('disabled', true);
 			$('#txtPermanentAdd').attr('disabled', true);
+			if ("${customer.getsMode()}" == "view") {
+	           	 $('#btnShowDocs').attr('hidden', false);
+	        	 $('#btnSave').attr('hidden', true);	
+	        	 $('#btnRefresh').attr('hidden', true);	
+	        	 $("#tableAttachment").find("input,button,textarea,select").attr("disabled", "disabled");
+			}
         }
         function removeClassMsg() {
         	$("#msgId").removeClass("alert alert-success");

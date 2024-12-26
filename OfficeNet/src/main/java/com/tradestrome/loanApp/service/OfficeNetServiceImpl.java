@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.rmi.server.UID;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -23,6 +22,7 @@ import com.tradestrome.loanApp.Dao.OfficeNetDao;
 import com.tradestrome.loanApp.Entity.AppConstrant;
 import com.tradestrome.loanApp.Entity.CustomerDocs;
 import com.tradestrome.loanApp.Entity.CustomerMasterDto;
+import com.tradestrome.loanApp.Entity.DtoDayBookPayable;
 import com.tradestrome.loanApp.Entity.ProjInputParam;
 import com.tradestrome.loanApp.Entity.ResponseWrapper;
 import com.tradestrome.loanApp.Utility.CustomSqlExection;
@@ -122,6 +122,37 @@ public class OfficeNetServiceImpl implements OfficeNetService {
 			customerDocsArray.get(0).setStrMessage(exceptionObj.customSqlExection(ex));
 		}
 		return customerDocsArray;
+	}
+
+	@Override
+	public List<CustomerMasterDto> getDataCustomerHomePG() {
+		return officeNetDao.getDataCustomerHomePG();
+	}
+
+	@Override
+	public List<CustomerMasterDto> fillCustomerData(ProjInputParam projInputParam) {
+		List<CustomerMasterDto> dtoCustomerListObj = new ArrayList<>();
+		try {
+			dtoCustomerListObj = officeNetDao.fillCustomerData(projInputParam);
+		} catch (Exception ex) {
+			dtoCustomerListObj.get(0).setStrErrorMsg(exceptionObj.customSqlExection(ex));
+		}
+		return dtoCustomerListObj;
+	}
+
+	@Override
+	public ResponseWrapper iInsertBillPayableData(DtoDayBookPayable billDto) {
+		ResponseWrapper wrapperObj = new ResponseWrapper();
+		try {
+			wrapperObj.setRecordNumber(officeNetDao.iInsertBillPayableData(billDto));
+			wrapperObj.setErrorFlag(false);
+			wrapperObj.setStrMessage(AppConstrant.errorMsg.SUCCESS_MESSAGE);
+			wrapperObj.setBillNumber(billDto.getBill_no() + "/" + wrapperObj.getRecordNumber());
+		} catch (Exception ex) {
+			wrapperObj.setErrorFlag(true);
+			wrapperObj.setStrMessage(exceptionObj.customSqlExection(ex));
+		}
+		return wrapperObj;
 	}
 
 }
