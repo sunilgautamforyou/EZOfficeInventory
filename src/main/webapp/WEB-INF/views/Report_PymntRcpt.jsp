@@ -341,8 +341,8 @@
     function fillSoNumber() {
 	$('#lstSoNo').html('');
 	 $.ajax({
-   		//url: '/EZOfficeInventory/fillSOInRecvdPymntPG',
-   		url: 'https://salepurchasecompany.co.in/fillSOInRecvdPymntPG',
+   		url: '/EZOfficeInventory/fillSOInRecvdPymntPG',
+   		//url: 'https://salepurchasecompany.co.in/fillSOInRecvdPymntPG',
         	type: 'POST',
    		contentType: 'application/json',	
    		   data: JSON.stringify(
@@ -371,8 +371,8 @@
 	   $('#lstSoNo').html('');
 	   $('#lstSoNo').append('<option value=0>Choose Sales Order</option>');
 	   $.ajax({
-	   		//url: '/EZOfficeInventory/get-tower-list',
-	   		url: 'https://salepurchasecompany.co.in/get-tower-list',
+	   		url: '/EZOfficeInventory/get-tower-list',
+	   	//	url: 'https://salepurchasecompany.co.in/get-tower-list',
 	        	type: 'POST',
 	   		contentType: 'application/json',	
 	   		   data: JSON.stringify(
@@ -431,8 +431,8 @@
 	   	$('#btnPrint').hide();
 	   	$('#pymntGridBody').html('');
 	   	$.ajax({
-	   		//url: '/EZOfficeInventory/getCustomerSOAStmtData',
-	   		url: 'https://salepurchasecompany.co.in/getCustomerSOAStmtData',
+	   		url: '/EZOfficeInventory/getCustomerSOAStmtData',
+	   		//url: 'https://salepurchasecompany.co.in/getCustomerSOAStmtData',
        	type: 'POST',
 	   		contentType: 'application/json',	
 	   		   data: JSON.stringify(
@@ -498,8 +498,8 @@
    	$('#btnPrint').hide();
    	$('#pymntGridBody').html('');
    	$.ajax({
-   		//url: '/EZOfficeInventory/getSOPymntRecvdData',
-   		url: 'https://salepurchasecompany.co.in/getSOPymntRecvdData',
+   		url: '/EZOfficeInventory/getSOPymntRecvdData',
+   		//url: 'https://salepurchasecompany.co.in/getSOPymntRecvdData',
         	type: 'POST',
    		contentType: 'application/json',	
    		   data: JSON.stringify(
@@ -573,8 +573,8 @@
    	if ((flatNumber != "") && (towerNumber != "0")) {
    		$('#lstCustomerNm').html('');
    		$.ajax({
-	    		//url: '/EZOfficeInventory/search-customer-by-flatNo',
-	    		url: 'https://salepurchasecompany.co.in/search-customer-by-flatNo',
+	    		url: '/EZOfficeInventory/search-customer-by-flatNo',
+	    		//url: 'https://salepurchasecompany.co.in/search-customer-by-flatNo',
 	         	type: 'POST',
 	    		contentType: 'application/json',	
 	    		   data: JSON.stringify(
@@ -783,8 +783,8 @@
 		   return false;
 	   }
 	   $.ajax({
-		 //url: '/EZOfficeInventory/searchCustomerData',
-		 url: 'https://salepurchasecompany.co.in/searchCustomerData',
+		 url: '/EZOfficeInventory/searchCustomerData',
+		 //url: 'https://salepurchasecompany.co.in/searchCustomerData',
 		   type: 'POST',
 		   contentType: 'application/json',
 		   data: JSON.stringify(
