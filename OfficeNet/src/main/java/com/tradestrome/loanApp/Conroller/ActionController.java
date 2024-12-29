@@ -95,6 +95,11 @@ public class ActionController {
 	public ResponseWrapper iInsertBillPayableAmt(@RequestBody DtoDayBookPayable billPayableDto) {
 		return officeNetServiceObj.iInsertBillPayableData(billPayableDto);
 	}
+	
+	@PostMapping("dayBook_Pymnt/loadAllBillType")
+	public List<DtoDayBookPayable> gettAllBillType(@RequestBody ProjInputParam projInputParam) {
+		return officeNetServiceObj.getAllBillType();
+	}
 
 
 }

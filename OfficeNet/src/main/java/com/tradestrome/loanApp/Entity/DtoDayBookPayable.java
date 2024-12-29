@@ -2,7 +2,7 @@ package com.tradestrome.loanApp.Entity;
 
 public class DtoDayBookPayable {
 	
-	private int bill_id;
+	private int billid;
 	private String bill_no;
 	private String bill_date;
 	private String customer_id;
@@ -15,17 +15,21 @@ public class DtoDayBookPayable {
 	private String bill_emi;
 	private String bill_file_charge;
 	private String bill_advance;
-	private String bill_pct_type;
+	private boolean bill_pct_type;
 	private String total_bill_amt;
 	private String final_bill_amt;
 	private String created_by;
 	private String created_date;
+	private String billType_id;
+	private String billType_shrt_nm;
+	private String customerName;
+	private String customerMobileNo;
 
 	public int getBill_id() {
-		return bill_id;
+		return billid;
 	}
 	public void setBill_id(int bill_id) {
-		this.bill_id = bill_id;
+		this.billid = bill_id;
 	}
 	public String getBill_no() {
 		return bill_no;
@@ -99,10 +103,13 @@ public class DtoDayBookPayable {
 	public void setBill_advance(String bill_advance) {
 		this.bill_advance = bill_advance;
 	}
-	public String getBill_pct_type() {
+
+	
+	
+	public boolean isBill_pct_type() {
 		return bill_pct_type;
 	}
-	public void setBill_pct_type(String bill_pct_type) {
+	public void setBill_pct_type(boolean bill_pct_type) {
 		this.bill_pct_type = bill_pct_type;
 	}
 	public String getTotal_bill_amt() {
@@ -129,9 +136,39 @@ public class DtoDayBookPayable {
 	public void setCreated_date(String created_date) {
 		this.created_date = created_date;
 	}
+	
+	
+	
+	public String getBillType_id() {
+		return billType_id;
+	}
+	public void setBillType_id(String billType_id) {
+		this.billType_id = billType_id;
+	}
+	public String getBillType_shrt_nm() {
+		return billType_shrt_nm;
+	}
+	public void setBillType_shrt_nm(String billType_shrt_nm) {
+		this.billType_shrt_nm = billType_shrt_nm;
+	}
+	
+	
+	
+	public String getCustomerMobileNo() {
+		return customerMobileNo;
+	}
+	public void setCustomerMobileNo(String customerMobileNo) {
+		this.customerMobileNo = customerMobileNo;
+	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 	@Override
 	public String toString() {
-		return "DtoDayBookPayable [bill_id=" + bill_id + ", bill_no=" + bill_no + ", bill_date=" + bill_date
+		return "DtoDayBookPayable [bill_id=" + billid + ", bill_no=" + bill_no + ", bill_date=" + bill_date
 				+ ", customer_id=" + customer_id + ", guarantor_id=" + guarantor_id + ", issue_office=" + issue_office
 				+ ", remarks=" + remarks + ", bill_type=" + bill_type + ", bill_value=" + bill_value + ", bill_tenaure="
 				+ bill_tenaure + ", bill_emi=" + bill_emi + ", bill_file_charge=" + bill_file_charge + ", bill_advance="

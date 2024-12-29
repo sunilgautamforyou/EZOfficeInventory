@@ -9,7 +9,10 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.tomcat.jakartaee.commons.io.FilenameUtils;
@@ -144,15 +147,48 @@ public class OfficeNetServiceImpl implements OfficeNetService {
 	public ResponseWrapper iInsertBillPayableData(DtoDayBookPayable billDto) {
 		ResponseWrapper wrapperObj = new ResponseWrapper();
 		try {
-			wrapperObj.setRecordNumber(officeNetDao.iInsertBillPayableData(billDto));
+			officeNetDao.iInsertBillPayableData(billDto);
+			wrapperObj.setRecordNumber(billDto.getBill_id());
+			
+			@SuppressWarnings("deprecation")
+			
+			Date billDate = new Date(billDto.getBill_date());
+			
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(billDate);
+			int year = calendar.get(Calendar.YEAR);
+			int month = calendar.get(Calendar.MONTH) + 1;
+			
+			String monthName = month + "-" + year;
+			
+			String paddedString  = org.apache.commons.lang.StringUtils.leftPad(String.valueOf(wrapperObj.getRecordNumber()), 2, "0");
+			
+			String customerName = billDto.getCustomerName().substring(0,billDto.getCustomerName().indexOf(" "));
+			
+			String mobileNo = billDto.getCustomerName()
+					.substring(billDto.getCustomerName().indexOf("[")+1,billDto.getCustomerName().indexOf("]"));
+			
+			String billNo = "DSN/"+ billDto.getBillType_shrt_nm() +"/"+ monthName + 
+			"/"+customerName+"-"+ mobileNo.substring(5, mobileNo.length()) +"/"+paddedString;	
+			
+			officeNetDao.iUpdateBillNo(billNo, wrapperObj.getRecordNumber());
+			
 			wrapperObj.setErrorFlag(false);
-			wrapperObj.setStrMessage(AppConstrant.errorMsg.SUCCESS_MESSAGE);
-			wrapperObj.setBillNumber(billDto.getBill_no() + "/" + wrapperObj.getRecordNumber());
+			wrapperObj.setStrMessage(AppConstrant.errorMsg.SUCCESS_MESSAGE + "[" + billNo + "]");
+			wrapperObj.setBillNumber(billNo);
+			
+			
 		} catch (Exception ex) {
 			wrapperObj.setErrorFlag(true);
 			wrapperObj.setStrMessage(exceptionObj.customSqlExection(ex));
 		}
 		return wrapperObj;
+	}
+	
+
+	@Override
+	public List<DtoDayBookPayable> getAllBillType() {
+		return officeNetDao.getAllBillType();
 	}
 
 }

@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tradestrome.loanApp.Entity.CustomerDocs;
@@ -108,8 +109,7 @@ public interface MapperDAO {
 	
 	
 	@Insert("INSERT INTO dsndb.bill_pymnt\r\n"
-			+ "(bill_no,\r\n"
-			+ "bill_date,\r\n"
+			+ "(bill_date,\r\n"
 			+ "customer_id,\r\n"
 			+ "guarantor_id,\r\n"
 			+ "issue_office,\r\n"
@@ -124,26 +124,36 @@ public interface MapperDAO {
 			+ "total_bill_amt,\r\n"
 			+ "final_bill_amt,\r\n"
 			+ "created_by,\r\n"
-			+ "created_date)\r\n"
+			+ "created_date,bill_no)\r\n"
 			+ "VALUES\r\n"
-			+ "(bill.bill_no,\r\n"
-			+ "bill.bill_date,\r\n"
-			+ "bill.customer_id,\r\n"
-			+ "bill.guarantor_id,\r\n"
-			+ "bill.issue_office,\r\n"
-			+ "bill.remarks,\r\n"
-			+ "bill.bill_type,\r\n"
-			+ "bill.bill_value,\r\n"
-			+ "bill.bill_tenaure,\r\n"
-			+ "bill.bill_emi,\r\n"
-			+ "bill.bill_file_charge,\r\n"
-			+ "bill.bill_advance,\r\n"
-			+ "bill.bill_pct_type,\r\n"
-			+ "bill.total_bill_amt,\r\n"
-			+ "bill.final_bill_amt,\r\n"
-			+ "bill.created_by,\r\n"
-			+ "bill.created_date)")
-	@Options(useGeneratedKeys = true, keyProperty = "bill_id", keyColumn = "bill_id")
+			+ "(STR_TO_DATE(#{bill.bill_date}, '%d-%b-%y'),\r\n"
+			+ "#{bill.customer_id},\r\n"
+			+ "#{bill.guarantor_id},\r\n"
+			+ "#{bill.issue_office},\r\n"
+			+ "#{bill.remarks},\r\n"
+			+ "#{bill.bill_type},\r\n"
+			+ "#{bill.bill_value},\r\n"
+			+ "#{bill.bill_tenaure},\r\n"
+			+ "#{bill.bill_emi},\r\n"
+			+ "#{bill.bill_file_charge},\r\n"
+			+ "#{bill.bill_advance},\r\n"
+			+ "#{bill.bill_pct_type},\r\n"
+			+ "#{bill.total_bill_amt},\r\n"
+			+ "#{bill.final_bill_amt},\r\n"
+			+ "#{bill.created_by},\r\n"
+			+ "now(),'')")
+	@Options(useGeneratedKeys = true, keyProperty = "billid", keyColumn = "bill_id")
 	public int iInsertBillPayableData(@Param("bill") DtoDayBookPayable bill);
+	
+	@Select("SELECT bill_type_id,bill_type_name,bill_shrt_name FROM dsndb.master_bill_type WHERE Active=0")
+	@Results({
+		@Result(property = "billType_id",column = "bill_type_id"),
+		@Result(property = "billType_shrt_nm",column = "bill_shrt_name"),
+		@Result(property = "bill_type",column = "bill_type_name")
+	})
+	public List<DtoDayBookPayable> getAllBillType();
+	
+	@Update("Update bill_pymnt Set bill_no = #{billNo} where bill_id=#{billId}")
+	public void iUpdateBillNo(@Param("billNo") String billNo,@Param("billId") Integer billId);
 	
 }

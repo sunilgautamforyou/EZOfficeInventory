@@ -19,4 +19,5 @@ public interface OfficeNetService {
 	public List<CustomerMasterDto> getDataCustomerHomePG();
 	public List<CustomerMasterDto> fillCustomerData(ProjInputParam projInputParam);
 	public ResponseWrapper iInsertBillPayableData(DtoDayBookPayable billDto);
+	public List<DtoDayBookPayable> getAllBillType();
 }

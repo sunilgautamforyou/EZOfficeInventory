@@ -20,4 +20,6 @@ public interface OfficeNetDao {
 	public List<CustomerMasterDto> getDataCustomerHomePG();
 	public List<CustomerMasterDto> fillCustomerData(ProjInputParam projInputParam);
 	public int iInsertBillPayableData(DtoDayBookPayable billDto);
+	public List<DtoDayBookPayable> getAllBillType();
+	public void iUpdateBillNo(String billNo,Integer billId);
 }

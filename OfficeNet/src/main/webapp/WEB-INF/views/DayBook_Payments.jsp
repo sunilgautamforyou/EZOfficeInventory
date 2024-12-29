@@ -138,14 +138,14 @@
 	<div class="col-sm-6 col-md-3 pl0">
 		<select class="custom-select" id="lstCustNo">
 			<option value="0">Choose Any Customer...</option>
-		</select> <br> <a href="#" onclick="showPopUp('Customer')">Search Customer</a>
+		</select> <br> <a href="#" id="lnkCustomer" onclick="showPopUp('Customer')">Search Customer</a>
 	</div>
 	<label class="col-sm-4 col-md-1 col-form-label pl15">Guarantor:</label>
 	<div class="col-sm-6 col-md-3 pl0">
 		<select class="custom-select" id="lstGuarantor">
 			<option value="0">Choose Any Guarantor...</option>
 			<option value="0">Self</option>
-		</select> <br> <a href="#" onclick="showPopUp('Guarantor')">Search Guarantor</a>
+		</select> <br> <a href="#" id="lnkGuarantor" onclick="showPopUp('Guarantor')">Search Guarantor</a>
 	</div>	
 </div> 
 <div class="form-group row">
@@ -158,7 +158,7 @@
 		</select>
 		</div>
 		<label class="col-sm-4 col-md-1 col-form-label pl15">Remarks:</label>
-		<div class="col-sm-6 col-md-3 pl0 cal-position">
+		<div class="col-sm-6 col-md-3 pl0">
 		<textarea type="text" class="form-control" id="txtRemarks"  placeholder="Remarks Here" rows="2"></textarea>
 	</div>
 </div>
@@ -182,12 +182,12 @@
 							<td><label>1</label></td>
 							<td><div class="col-sm-12 col-md-12 pl0">
 									<select class="custom-select" id="ddlCaseType">
-										<option value="1">Daily</option>
+<!-- 										<option value="1">Daily</option>
 										<option value="2">Meter</option>
 										<option value="2">Monthly</option>
 										<option value="3">Gold</option>
-										<!-- <option value="4">Group</option> -->
-										<option value="5">Mortgage</option>
+										<option value="4">Group</option>
+										<option value="5">Mortgage</option> -->
 									</select>
 								</div></td>
 							<td style="text-align: left;">
@@ -364,6 +364,9 @@ jQuery(document).ready(function($){
 	$('#lblChkPct').hide();
 	setCurrentDate();
 	$('#dvEntry').hide();
+	var data;
+	var billTypeArray;
+	loadAllBillType();
 });
 
 $('.input-group.date').datepicker({
@@ -818,8 +821,34 @@ function validate() {
 	var customerId = $('#lstCustNo').val();
 	var billDate = $('#txtBillDate').val();
 	var guarantor = $("#lstGuarantor").val();
-	var office = $('#lstOffice').val();
-	var txtPayableAmt = $('#txtPayableAmt').val();
+	var office = $('#lstOffice').val();	  
+	var textRemarks = $('#txtRemarks').val();	
+	var billType = $('#ddlCaseType').val();
+	var billValue = convertStringToFloat($('#txtCaseAmount').val());
+	var billTenure = convertStringToFloat($('#txtTenure').val());
+	var billEmi = convertStringToFloat($('#txtRate').val());
+	var billAdvEmiAmt = $('#txtAdvEmiAmt').val();
+	var billFileCharge = $('#txtFileCharge').val();
+	var billTotalAmt = convertStringToFloat($('#txtTotalAmt').val());
+	var billPayableAmt = convertStringToFloat($('#txtPayableAmt').val());
+	var chkPctAmt = 0;
+	var billTypeShtNm;
+	var customerName = $("#lstCustNo option:selected").text();
+
+	if($('#chkPctAmt').is(":checked")) {
+		chkPctAmt = true;
+	} else {
+		chkPctAmt = false;
+	}
+	
+	if (billFileCharge != "") {
+		billFileCharge = convertStringToFloat(billFileCharge);
+	} else {
+		billFileCharge = null;
+	}
+	if (billAdvEmiAmt != null) {
+		billAdvEmiAmt = convertStringToFloat(billAdvEmiAmt);
+	}
 	
 	if (customerId == "0") {
 		alert("Customer cannot left blank");
@@ -831,15 +860,133 @@ function validate() {
 		$('#txtCaseAmount').focus();
 		return false;		
 	}
+	
+	let filter = 
+ 			billTypeArray.filter(d => 
+ 			    d.billTypeId == billType) 	
+ 			    
+ 	if (filter.length > 0) {
+ 		billTypeShtNm = filter[0]["billShrtNm"];
+ 	}
+	
+	data = JSON.stringify({
+		    "customer_id":customerId,
+		    "bill_date":billDate,
+		    "guarantor_id":guarantor,
+		    "issue_office":office,
+		    "remarks":textRemarks,
+		    "bill_type":billType,
+		    "bill_value":billValue,
+		    "bill_tenaure":billTenure,
+		    "bill_emi":billEmi,
+		    "bill_advance":billAdvEmiAmt,
+		    "bill_file_charge":billFileCharge,
+		    "bill_pct_type":chkPctAmt,
+		    "total_bill_amt":billTotalAmt,
+		    "final_bill_amt":billPayableAmt,
+		    "billType_shrt_nm":billTypeShtNm,
+		     "customerName":customerName,
+		     "created_by":"1"
+		    
+	});
 	return true;
 }
-
+function loadAllBillType() {
+	billTypeArray = [];
+	data = JSON.stringify({
+		"sMode":""
+	});
+	$.ajax({
+         url:"/OfficeNet/dayBook_Pymnt/loadAllBillType",
+         method:"POST",
+         data: data,
+         contentType: 'application/json',
+         cache: false,
+         processData: false,
+         beforeSend:function(){
+         },
+         success:function(data)
+         {
+        	 if (data.length > 0) {
+        		 for(var i=0;i<data.length;i++){
+        			 $('#ddlCaseType').append('<option value='+data[i].billType_id+'>'+data[i].bill_type+'</option>');
+        			 var obj={};
+        			 obj["billTypeId"] = data[i].billType_id;
+        			 obj["billShrtNm"] = data[i].billType_shrt_nm;
+        			 billTypeArray.push(obj);
+        		 }
+        	 }
+         }
+         ,error: function(ts)
+         {
+        	 $("#msgId").addClass("alert alert-danger");
+        	 alert("error:" + ts.responseText);
+         }
+	 });			
+}
 function saveBillData() {
   if (validate() == true) {
-	  
+	  if (confirm('Are you sure you want to save?')) {
+		 $.ajax({
+                url:"/OfficeNet/dayBook_Pymnt/saveBillData",
+                method:"POST",
+                data: data,
+                contentType: 'application/json',
+                cache: false,
+                processData: false,
+                beforeSend:function(){
+                    $('#uploaded_image').html("<label class='text-success'>Image Uploading...</label>");
+                },
+                success:function(data)
+                {
+               	 $("#msgId").addClass("alert alert-success");
+               	 $('#alertMsg').html(data.strMessage);
+               	 $('#btnShowDocs').attr('hidden', false);
+               	 $('#btnSave').attr('hidden', true);
+               	 $('#hdnCustomerId').val(data.recordNumber);
+               	 disablePage();
+               	 $('#btnSave').attr('disabled', true);
+               	 $('#txtBillNumber').val(data.billNumber);
+                }
+                ,error: function(ts)
+                {
+               	 $("#msgId").addClass("alert alert-danger");
+               	 alert("error:" + ts.responseText);
+                }
+		 });		  
+	  }
   }
 }
+function disablePage() {
+	$('#lstCustNo').attr('readonly', true);
+	$('#lstCustNo').addClass('input-disabled');
+	$('#txtBillDate').attr('disabled', true);
+	$("#lstGuarantor").attr('readonly', true);
+	$("#lstGuarantor").addClass('input-disabled');
+	$('#lstOffice').attr('readonly', true);	  
+	$('#lstOffice').addClass('input-disabled');
+	$('#txtRemarks').attr('readonly', true);	
+	$('#txtRemarks').addClass('input-disabled');
+	$('#ddlCaseType').attr('readonly', true);
+	$('#ddlCaseType').addClass('input-disabled');
+	$('#txtCaseAmount').attr('readonly', true);
+	$('#txtCaseAmount').addClass('input-disabled');
+	$('#txtTenure').attr('readonly', true);
+	$('#txtTenure').addClass('input-disabled');
+	$('#txtRate').attr('readonly', true);
+	$('#txtRate').addClass('input-disabled');
+	$('#txtAdvEmiAmt').attr('readonly', true);
+	$('#txtAdvEmiAmt').addClass('input-disabled');
+	$('#txtFileCharge').attr('readonly', true);
+	$('#txtFileCharge').addClass('input-disabled');
+	$('#txtTotalAmt').attr('readonly', true);
+	$('#txtTotalAmt').addClass('input-disabled');
+	$('#txtPayableAmt').attr('readonly', true);	
+	$('#txtPayableAmt').addClass('input-disabled');
+	$('#lnkCustomer').attr('hidden', true);
+	$('#lnkGuarantor').attr('hidden', true);
 
+}
 </script>
 </body>
 </html>

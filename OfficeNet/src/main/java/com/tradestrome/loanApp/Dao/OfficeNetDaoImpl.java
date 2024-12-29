@@ -59,6 +59,16 @@ public class OfficeNetDaoImpl implements OfficeNetDao {
 	public int iInsertBillPayableData(DtoDayBookPayable billDto) {
 		return officeNetMapperObj.iInsertBillPayableData(billDto);
 	}
+
+	@Override
+	public List<DtoDayBookPayable> getAllBillType() {
+		return officeNetMapperObj.getAllBillType();
+	}
+
+	@Override
+	public void iUpdateBillNo(String billNo, Integer billId) {
+	  officeNetMapperObj.iUpdateBillNo(billNo, billId);
+	}
 	
 	
 
