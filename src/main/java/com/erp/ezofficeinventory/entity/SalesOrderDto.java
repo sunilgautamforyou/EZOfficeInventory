@@ -24,7 +24,7 @@ public class SalesOrderDto {
 	private String soDtlDate;
 	private String towerDescription;
 	private String towerId;
-	private int gstPct;
+	private float gstPct;
 	private int rfQId;
 	private String rfQNumber;
 	private String rfQDate;
@@ -174,10 +174,10 @@ public class SalesOrderDto {
 	public void setTowerId(String towerId) {
 		this.towerId = towerId;
 	}
-	public int getGstPct() {
+	public float getGstPct() {
 		return gstPct;
 	}
-	public void setGstPct(int gstPct) {
+	public void setGstPct(float gstPct) {
 		this.gstPct = gstPct;
 	}
 	public int getRfQId() {

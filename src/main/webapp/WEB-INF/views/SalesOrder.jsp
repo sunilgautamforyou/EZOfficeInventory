@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="css/responsive.css">
     <!-- Custom stylesheet - for your changes-->
     <!-- Favicon-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="shortcut icon" href="img/favicon.ico">
 </head>
 <body>
@@ -208,11 +209,20 @@
                                             <td></td>
                                             <td></td>
                                             <td class="border-left"><b>Total Amount</b></td>
-                                            <td class="border-left"> 
+<%--                                             <td class="border-left"> 
                                                 <span><b><label id="lblTotal"></label></b>
                                                 <i class="fa fa-rupee-sign"></i>
                                                 </span>
-                                              </td>
+                                              </td> --%>
+											<td style="text-align: left;">
+												<div class="input-group">
+													<div class="input-group-prepend">
+														<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>
+														<input type="text" class="form-control" id="txtNetTotalAmt" 
+														placeholder="Calculating Bill Amount....." disabled="disabled" style="width: 100%;color: white;background-color: black;font: bold;">
+													</div>
+												</div>
+											</td>                                              
  											<td></td>                                            
                                            
                                         </tr>
@@ -422,10 +432,25 @@
   				            		'<td>'+ data[i].itemDesc +'</td>'+
   				            		'<td>'+ data[i].uomDesc +'</td>'+
   				            		'<td>'+ data[i].soDtlDate +'</td>'+
-  				            		'<td>'+ data[i].gstPct +'</td>'+
+  				            		/* '<td>'+ data[i].gstPct +'</td>'+ */
+									'<td><input type="text" class="form-control" id="txtGst" value="'+ data[i].gstPct +'" placeholder="Gst"></td>'+				            		
   				            		'<td><input type="text" class="form-control" id="txtQty" placeholder="Qty" value="'+ data[i].soQty +'"></td>'+
-  				            		'<td><input type="text" class="form-control" id="txtRate" placeholder="Rate" value="'+ data[i].soRate +'"></td>'+
-  				            		'<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount" value="'+ data[i].soAmount +'"></td>'+
+  				            		/* '<td><input type="text" class="form-control" id="txtRate" placeholder="Rate" value="'+ data[i].soRate +'"></td>'+ */
+										'<td style="text-align: left;">'+
+										'<div class="input-group">'+
+										'<div class="input-group-prepend">'+
+										 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+										  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+										'id="txtRate" value="'+ data[i].soRate +'" style="width: 100%;">'+
+										'</div></div></td>'+     				            		
+  				            		/* '<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount" value="'+ data[i].soAmount +'"></td>'+ */
+										'<td style="text-align: left;">'+
+										'<div class="input-group">'+
+										'<div class="input-group-prepend">'+
+										 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+										  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+										'id="txtAmt" value="'+ data[i].soAmount +'" style="width: 100%;" disabled="disabled">'+
+										'</div></div></td>'+      				            		
   				            		'<td>'+delBtn+'</td>'+
   				            		+'</tr>');
   				         }
@@ -479,10 +504,25 @@
   	  				            		'<td>'+ data[i].itemDesc +'</td>'+
   	  				            		'<td>'+ data[i].uomDesc +'</td>'+
   	  				            		'<td>'+ data[i].rfqDtlDate +'</td>'+
-  	  				            		'<td>'+ data[i].gstPct +'</td>'+
+  	  				            		/* '<td>'+ data[i].gstPct +'</td>'+ */
+  	  				            		'<td><input type="text" class="form-control" id="txtGst" value="'+ data[i].gstPct +'" placeholder="Gst"></td>'+
   	  				            		'<td><input type="text" class="form-control" id="txtQty"  placeholder="Qty" value="'+ data[i].rfqQty +'"></td>'+
-  	  				            		'<td><input type="text" class="form-control" id="txtRate"  placeholder="Rate" value="'+ data[i].rfqRate +'"></td>'+
-  	  				            		'<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount" value="'+ data[i].rfqAmount +'"></td>'+
+  	  				            		/* '<td><input type="text" class="form-control" id="txtRate"  placeholder="Rate" value="'+ data[i].rfqRate +'"></td>'+ */
+										'<td style="text-align: left;">'+
+										'<div class="input-group">'+
+										'<div class="input-group-prepend">'+
+										 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+										  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+										'id="txtRate" value="'+ data[i].rfqRate +'" style="width: 100%;">'+
+										'</div></div></td>'+        	  				            		
+  	  				            		/* '<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount" value="'+ data[i].rfqAmount +'"></td>'+ */
+										'<td style="text-align: left;">'+
+										'<div class="input-group">'+
+										'<div class="input-group-prepend">'+
+										 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+										  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+										'id="txtAmt" value="'+ data[i].rfqAmount +'" style="width: 100%;" disabled="disabled">'+
+										'</div></div></td>'+    	  				            		
   	  				            		'<td>'+delBtn+'</td>'+
   	  				            		+'</tr>');  				  				
   				  			}
@@ -766,10 +806,25 @@
             		'<td>'+ itemName +'</td>'+
             		'<td>'+ col3 +'</td>'+
             		'<td>'+ today +'</td>'+
-            		'<td>'+ gst +'</td>'+
+            		/* '<td>'+ gst +'</td>'+ */
+            		'<td><input type="text" class="form-control" id="txtGst" value="'+ gst +'" placeholder="Gst"></td>'+
             		'<td><input type="text" class="form-control" id="txtQty" placeholder="Qty"></td>'+
-            		'<td><input type="text" class="form-control" id="txtRate" placeholder="Rate"></td>'+
-            		'<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount"></td>'+
+            		/* '<td><input type="text" class="form-control" id="txtRate" placeholder="Rate"></td>'+ */
+					'<td style="text-align: left;">'+
+					'<div class="input-group">'+
+					'<div class="input-group-prepend">'+
+					 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+					  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+					'id="txtRate" placeholder="Rate" style="width: 100%;">'+
+					'</div></div></td>'+              		
+            		/* '<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount"></td>'+ */
+					'<td style="text-align: left;">'+
+					'<div class="input-group">'+
+					'<div class="input-group-prepend">'+
+					 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+					  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+					'id="txtAmt" placeholder="Amount" style="width: 100%;" disabled="disabled">'+
+					'</div></div></td>'+            		
             		'<td>'+delBtn+'</td>'+
             		+'</tr>');
            // $('#txtAmt').attr('disabled', true);
@@ -792,15 +847,26 @@
   			     }
   			  });    		
   			  //alert(txtTotalAmount);
-  			  $("#lblTotal").html(txtTotalAmount);
+  			  $("#txtNetTotalAmt").val(formatNumber(txtTotalAmount));
   	}
   	function roundToTwo(num) {
   	    return +(Math.round(num + "e+2")  + "e-2");
   	}
+  	$("#sotable").on('keyup','#txtGst',function(){
+		var qty= $(this).closest('tr').find('#txtQty').val();
+		var rate= $(this).closest('tr').find('#txtRate').val();
+		var gstPct = $(this).closest('tr').find('#txtGst').val();
+		if (rate == 0) {
+			rate = 1;
+		}
+		var soItemAmount = calculateSOItemAmt(parseFloat(qty),parseFloat(rate),parseFloat(gstPct));
+		$(this).closest('tr').find('#txtAmt').val(soItemAmount.toFixed(2));
+		calculateNetAmount();
+	});  	
   	$("#sotable").on('keyup','#txtQty',function(){
 		var qty= $(this).closest('tr').find('#txtQty').val();
 		var rate= $(this).closest('tr').find('#txtRate').val();
-		var gstPct = $(this).closest('tr').find("td:eq(6)").text();
+		var gstPct = $(this).closest('tr').find('#txtGst').val();
 		if (rate == 0) {
 			rate = 1;
 		}
@@ -811,7 +877,7 @@
   	$("#sotable").on('keyup','#txtRate',function(){
 		var qty= $(this).closest('tr').find('#txtQty').val();
 		var rate= $(this).closest('tr').find('#txtRate').val();
-		var gstPct = $(this).closest('tr').find("td:eq(6)").text();
+		var gstPct = $(this).closest('tr').find('#txtGst').val();
 		if (rate == 0) {
 			rate = 1;
 		}
@@ -849,7 +915,7 @@
  	 			}
  	 			rowCount++;
  	 		});
- 	 		$('#lblTotal').html('');
+ 	 		$('#txtNetTotalAmt').val('');
  	 		tabRowLen = 0;
  		}
  	}
@@ -926,7 +992,7 @@
 				      } else if (i == 5) {
 				    	  obj["soDtlDate"]=$(this).html(); 
 				      } else if (i == 6) {
-				    	  obj["gstPct"]=$(this).html(); 
+				    	  obj["gstPct"]=$(this).closest('tr').find('#txtGst').val();
 				      }
 				      i++;					
 				})
@@ -1033,7 +1099,16 @@
 		newwindow=window.open(url,'name','height=600,width=900');
 		if (window.focus) {newwindow.focus()}
 		return false;
-		} 	
+	} 	
+	function allowNumericWithDecimal(event) {
+	    if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
+	            $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+	        event.preventDefault();
+	    }		
+	}
+  	function formatNumber(n) {
+    	  return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+    	}  	
 	</script>
 </body>
 </html>

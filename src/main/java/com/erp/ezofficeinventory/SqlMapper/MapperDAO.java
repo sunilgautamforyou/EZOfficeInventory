@@ -932,8 +932,8 @@ public interface MapperDAO {
 				+ "INNER JOIN CUSTOMERMASTER CM ON SH.CUSTOMERID=CM.CUSTOMERID\r\n"
 				+ "where 1=1  and RM.CUSTOMERID=coalesce(#{prjSrch.customerId},SH.CUSTOMERID)\r\n"
 				+ "and SH.SALEID = coalesce(#{prjSrch.salesOrderId},SH.SALEID) "
-				+ "AND SH.FLATNO = COALESCE(#{prjSrch.flatNo},SH.FLATNO) and TM.TOWERID = coalesce(#{prjSrch.towerNo},TM.TOWERID) "
-				+ "and date_format(SH.SALEDATE,'%Y-%m-%d') between #{prjSrch.fromDate} AND #{prjSrch.toDate}) A order by  A.CUSTOMERNAME,A.SALEID,A.SEQ,A.PYMNTID")
+				+ "AND SH.FLATNO = COALESCE(#{prjSrch.flatNo},SH.FLATNO) and TM.TOWERID = coalesce(#{prjSrch.towerNo},TM.TOWERID) and RM.CUSTOMERID = SH.CUSTOMERID "
+				+ "and date_format(SH.SALEDATE,'%Y-%m-%d') between #{prjSrch.fromDate} AND #{prjSrch.toDate} And ROUND(RM.PYMNTAMOUNT,2) > 0) A order by  A.CUSTOMERNAME,A.SALEID,A.SEQ,A.PYMNTID")
 		@Results({
 			@Result(property = "salesOrderNumber",column = "SALENUMBER"),
 			@Result(property = "salesDate",column = "SALEDATE"),
@@ -1075,8 +1075,8 @@ public interface MapperDAO {
 				+ "        WHERE  1 = 1 \r\n"
 				+ "        AND COALESCE(CM.CUSTOMERID) = COALESCE(#{prjSrchDat.customerId},CM.CUSTOMERID)\r\n"
 				+ "        AND TM.TOWERID = COALESCE(#{prjSrchDat.towerName},TM.TOWERID)\r\n"
-				+ "        AND SH.FLATNO = COALESCE(#{prjSrchDat.flatNo},SH.FLATNO) "
-				+ "and date_format(SH.SALEDATE,'%Y-%m-%d') between #{prjSrchDat.fromDate} AND #{prjSrchDat.toDate}) A\r\n"
+				+ "        AND SH.FLATNO = COALESCE(#{prjSrchDat.flatNo},SH.FLATNO) and RM.CUSTOMERID = SH.CUSTOMERID "
+				+ "and date_format(SH.SALEDATE,'%Y-%m-%d') between #{prjSrchDat.fromDate} AND #{prjSrchDat.toDate} And ROUND(RM.PYMNTAMOUNT,2) > 0) A\r\n"
 				+ "       INNER JOIN CUSTOMERMASTER CM ON A.CUSTOMERID = CM.CUSTOMERID\r\n"
 				+ "GROUP  BY A.FLATNO,\r\n"
 				+ "          A.TOWERDESC,\r\n"
