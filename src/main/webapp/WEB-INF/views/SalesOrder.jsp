@@ -345,6 +345,7 @@
 	    	if ("${sMode}" == "edit" || "${sMode}" == "view") {
 	    		$("#txtSoNumber").val("${so.getSalesOrderNumber()}");
 	    		salesOrderId = "${so.getSaleId()}";
+	    		fillPymntDetailForSO(salesOrderId);
 	    		$('#btnPrint').show();
 	    		$('#txtSoDate').val("${so.getSalesDate()}");
 	    		if ("${so.getTowerNo()}" != "") {
@@ -383,16 +384,7 @@
 	    			$('#lstQuotNo').attr('disabled', true);
 	    		}	    		
 	    		if ("${sMode}" == "view") {
-	    			$('#txtCustomerNm').attr('disabled', true);
-	    			$('#txtCustomerMobile').attr('disabled', true);
-	    			$('#lstTowerNo').attr('disabled', true);
-	    			$('#txtFlatNumber').attr('disabled', true);
-	    			$('#txtRemarks').attr('disabled', true);
-					$("#divSearchItem").hide();
-				    $('#btnSave').attr('disabled', true); 
-				    $('#btnRefresh').attr('disabled', true); 	
-				    $('#lstContractor').attr('disabled', true); 
-				    $("#txtSoDate").attr('disabled', true);
+	    			disableAll();
 	    		}
 	    		fillSoDtlDataGrid("${so.getSaleId()}");
 	    	}
@@ -406,6 +398,19 @@
 		    }
 		    return true;
 		}	    
+	    function disableAll() {
+			$('#txtCustomerNm').attr('disabled', true);
+			$('#txtCustomerMobile').attr('disabled', true);
+			$('#lstTowerNo').attr('disabled', true);
+			$('#txtFlatNumber').attr('disabled', true);
+			$('#txtRemarks').attr('disabled', true);
+			$("#divSearchItem").hide();
+		    $('#btnSave').attr('disabled', true); 
+		    $('#btnRefresh').attr('disabled', true); 	
+		    $('#lstContractor').attr('disabled', true); 
+		    $("#txtSoDate").attr('disabled', true);	    	
+		    $("#sotable").find("input,button,textarea,select").attr("disabled", "disabled");		    
+	    }
 	    function fillSoDtlDataGrid(soId) {
 			$.ajax({
 				//url: '/EZOfficeInventory/Fill-SO-DTL-GRID-DATA',
@@ -456,7 +461,7 @@
   				         }
   				     	 calculateNetAmount();
 	  				      if ("${sMode}" == "view") {
-	  				    		$("#sotable").find("input,button,textarea,select").attr("disabled", "disabled");
+	  				    	disableAll();
 	  				      }  				     	 
 				   	},
 				    error: function (error) {
@@ -464,7 +469,33 @@
 				    }
 			});
 		}	    
-	    
+	    function fillPymntDetailForSO(soId) {
+	    	$.ajax({
+	    		//url: '/EZOfficeInventory/getSaleOrderPymntDtls',
+	    		url: 'https://salepurchasecompany.co.in/getSaleOrderPymntDtls',
+	         	type: 'POST',
+	    		contentType: 'application/json',	
+	    		   data: JSON.stringify(
+	    		   	{
+	    		   		"searchVarData":soId
+		   		   	}),
+	    		   	dataType: 'json',
+	    		   	success: function (data) {
+	    		   		console.log(data);
+	    		   		if (data != null) {
+	    		   			if (parseFloat(data.recvdBillAmount) > 0) {
+	    		   				alert("Payment Against This Sales Order is Already Received,No Changes are allowed");
+	    		   				disableAll();
+	    				         $("#msgId").addClass("alert alert-success");
+	    				    	 $("#alertMsg").append("Payment Against This Sales Order is Already Received,No Changes are allowed"); 	    		   				
+	    		   			}
+	    		   		} 
+		   		   	},
+	    		    error: function (error) {
+	    		        console.log(`Error ${error}`);
+	    		    }
+	    	});    	
+	    }     	    
 	    function fillSoDtlDataGridFromRFQ(rfqId) {
 			$.ajax({
 				//url: '/EZOfficeInventory/bindQuotationDataGrid',
