@@ -195,6 +195,7 @@ To Date
 <tr>
 <th style="width: 40px;">Sr No.</th>
 <th>Item Description</th>
+<th>Category</th>
 <th>Uom</th>
 <th>PO Qty</th>
  <th>PO Amount</th>		                                          
@@ -202,8 +203,10 @@ To Date
  <th>Mrn Amount</th>
  <th>SO Qty</th>
 <th>SO Amount</th>	
-<th>Bal Qty</th>
-<th>Bal Amount</th>
+<th  scope="col">P&L Amount</th>
+<th  scope="col">Bal Qty</th>
+<th  scope="col">Last Purchase Rate</th>
+<th  scope="col">Approx Stock Amt</th>
 </tr>
 </thead>
 <tbody id="tbodyLoan">
@@ -235,6 +238,7 @@ function getStkReportData() {
 	 var mrnAmount = 0;
 	 var soAmount = 0;
 	 var balAmount = 0;
+	 var approxStkBalAmt = 0;
 	 var data = JSON.stringify({
 		    "fromDate":$('#hdnTxtFromDate').val(),
 		    "toDate":$('#hdnTxtToDate').val()
@@ -256,29 +260,34 @@ function getStkReportData() {
              			//console.log("Record:"+data[i].itemName)
              			$('#tbodyLoan').append(
              				 '<tr><td>'+ tabRowLen +'</td>'+ 
-             				'<td>'+ data[i].itemName +'</td>'+
+            				'<td>'+ data[i].itemName +'</td>'+
+            				'<td>'+ data[i].categeory +'</td>'+
              				'<td>'+ data[i].uomName +'</td>'+
-             				'<td>'+ formatNumber(parseFloat(data[i].poQty)) +'</td>'+
-             				'<td>'+ formatNumber(parseFloat(data[i].poAmt)) +'</td>'+
-             				'<td>'+ formatNumber(parseFloat(data[i].mrnQty)) +'</td>'+
-             				'<td>'+ formatNumber(parseFloat(data[i].mrnAmt)) +'</td>'+
-             				'<td>'+ formatNumber(parseFloat(data[i].soQty)) +'</td>'+
-             				'<td>'+ formatNumber(parseFloat(data[i].soAmt)) +'</td>'+
-             				'<td>'+ formatNumber(parseFloat(data[i].balQty)) +'</td>'+
-             				'<td>'+ formatNumber(parseFloat(data[i].balAmt)) +'</td></tr>'
+              				'<td>'+ formatNumber(parseFloat(data[i].poQty)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].poAmt)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].mrnQty)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].mrnAmt)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].soQty)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].soAmt)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].balAmt)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].balQty)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].lastPurchaseRate)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].approxBalStkAmt)) +'</td></tr>'
              			);
              			poAmount = poAmount + parseFloat(data[i].poAmt);
              			mrnAmount = mrnAmount + parseFloat(data[i].mrnAmt);
              			soAmount = soAmount + parseFloat(data[i].soAmt);
              			balAmount = balAmount + parseFloat(data[i].balAmt);
+             			approxStkBalAmt = approxStkBalAmt + parseFloat(data[i].approxBalStkAmt);
              			tabRowLen++;
              		}
              		$('#tbodyLoan').append(
-             		  '<tr><td colspan=3><b style="font-size: 22px;">TOTAL BALANCE:</b></td><td></td>'+
+             		  '<tr><td colspan=4><b style="font-size: 22px;">TOTAL BALANCE:</b></td><td></td>'+
              		 '<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netPoAmt">'+formatNumber(poAmount)+'</label></td><td></td>'+
              		'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netMrnAmt">'+formatNumber(mrnAmount)+'</label></td><td></td>'+
-             		'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netSoAmt">'+formatNumber(soAmount)+'</label></td><td></td>'+
-             		'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netBalAmt">'+formatNumber(balAmount)+'</label></td>'+
+             		'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netSoAmt">'+formatNumber(soAmount)+'</label></td>'+
+             		'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netBalAmt">'+formatNumber(balAmount)+'</label></td><td></td><td></td>'+
+             		'<td style="color: #333; background-color: #ccc;align-items: center;"><label id="netAproxStkAmt">'+formatNumber(approxStkBalAmt)+'</label></td>'+
              		'</tr>'
              		);
              		getPDF();

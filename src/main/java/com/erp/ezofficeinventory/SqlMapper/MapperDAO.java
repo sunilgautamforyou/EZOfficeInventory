@@ -205,9 +205,64 @@ public interface MapperDAO {
 			+ "CREATEDDATE=NOW() Where CUSTOMERID=#{customerDto.customerId}")
 	public int iUpdateCustomerMaster(@Param("customerDto") CustomerDto customerDto);
 	
-	@Select("SELECT C.CATEGORYNAME,C.CATEGORYID,ITEMID,ITEMNAME,DESCRIPTION,B.UOM_ID,UOM_SHRT_NAME,coalesce(A.GSTPCT,0)GSTPCT,coalesce(A.ITEMRATE,0)ITEMRATE \r\n"
-			+ "FROM ITEMMASTER A,UOMMASTER B,CATEGORYMASTER C WHERE A.UOMID = B.UOM_ID AND C.CATEGORYID = A.CATEGORYID and\r\n"
-			+ "(ITEMNAME Like '%' #{prjSearch.searchVarData} '%' Or DESCRIPTION Like '%' #{prjSearch.searchVarData} '%')")
+//	@Select("SELECT C.CATEGORYNAME,C.CATEGORYID,ITEMID,ITEMNAME,DESCRIPTION,B.UOM_ID,UOM_SHRT_NAME,coalesce(A.GSTPCT,0)GSTPCT,coalesce(A.ITEMRATE,0)ITEMRATE \r\n"
+//			+ "FROM ITEMMASTER A,UOMMASTER B,CATEGORYMASTER C WHERE A.UOMID = B.UOM_ID AND C.CATEGORYID = A.CATEGORYID and\r\n"
+//			+ "(ITEMNAME Like '%' #{prjSearch.searchVarData} '%' Or DESCRIPTION Like '%' #{prjSearch.searchVarData} '%')")
+	@Select("select\r\n"
+			+ "	C.CATEGORYNAME,\r\n"
+			+ "	C.CATEGORYID,\r\n"
+			+ "	A.ITEMID,\r\n"
+			+ "	ITEMNAME,\r\n"
+			+ "	DESCRIPTION,\r\n"
+			+ "	B.UOM_ID,\r\n"
+			+ "	UOM_SHRT_NAME,\r\n"
+			+ "	coalesce(A.GSTPCT, 0)GSTPCT,\r\n"
+			+ "	coalesce(A.ITEMRATE, 0)ITEMRATE,\r\n"
+			+ "	X.BalStkQty\r\n"
+			+ "from\r\n"
+			+ "	ITEMMASTER A,\r\n"
+			+ "	UOMMASTER B,\r\n"
+			+ "	CATEGORYMASTER C,\r\n"
+			+ "	(\r\n"
+			+ "	select\r\n"
+			+ "		X.ITEMID,\r\n"
+			+ "		X.UOMID,\r\n"
+			+ "		(X.MRNQTY-Y.SOQty)BalStkQty\r\n"
+			+ "	from\r\n"
+			+ "		(\r\n"
+			+ "		select\r\n"
+			+ "			m.ITEMID,\r\n"
+			+ "			m.UOMID,\r\n"
+			+ "			Round(Sum(coalesce(m.MRNQTY, 0)), 2)MRNQTY\r\n"
+			+ "		from\r\n"
+			+ "			MRNDTL m\r\n"
+			+ "		where\r\n"
+			+ "			m.DEL_FLAG = 0\r\n"
+			+ "		group by\r\n"
+			+ "			m.ITEMID,\r\n"
+			+ "			m.UOMID)X\r\n"
+			+ "	left outer join \r\n"
+			+ "   (\r\n"
+			+ "		select\r\n"
+			+ "			s.ITEMID,\r\n"
+			+ "			s.UOMID,\r\n"
+			+ "			Round(Sum(coalesce(s.QUANTITY, 0)), 2)SOQty\r\n"
+			+ "		from\r\n"
+			+ "			SALEDETAILS s\r\n"
+			+ "		where\r\n"
+			+ "			s.DELFLAG = 0\r\n"
+			+ "		group by\r\n"
+			+ "			s.ITEMID,\r\n"
+			+ "			s.UOMID)Y on\r\n"
+			+ "		X.ITEMID = Y.ITEMID\r\n"
+			+ "		and X.UOMID = Y.UOMID)X\r\n"
+			+ "where\r\n"
+			+ "	A.UOMID = B.UOM_ID\r\n"
+			+ "	and C.CATEGORYID = A.CATEGORYID\r\n"
+			+ "	and X.ITEMID = A.ITEMID\r\n"
+			+ "	and X.UOMID = A.UOMID\r\n"
+			+ "	and (A.ITEMNAME like '%' #{prjSearch.searchVarData} '%'\r\n"
+			+ "		or DESCRIPTION like '%' #{prjSearch.searchVarData} '%')")
 	@Results({
 		@Result(property = "itemId",column = "ItemID"),
 		@Result(property = "itemShortNm",column = "ItemName"),
@@ -217,6 +272,7 @@ public interface MapperDAO {
 		@Result(property = "gstNo",column = "GSTPCT"),
 		@Result(property = "categoryDesc",column = "CategoryName"),
 		@Result(property = "categoryId",column = "CategoryID"),
+		@Result(property = "itemStkBalQty",column = "BalStkQty"),
 		@Result(property = "itemRate",column = "itemRate")
 	})
 	public List<ItemMasterDto> searchItemMasterData(@Param("prjSearch") PrjSearch prjSearch);
@@ -295,11 +351,11 @@ public interface MapperDAO {
 	@Update("UPDATE SALEHEADER SET SALENUMBER=#{soNumber} WHERE SALEID=#{soId}")
 	public int iUpdateSalesOrderNo(@Param("soNumber") String soNumber,@Param("soId") String soId);	
 	
-	@Insert("INSERT INTO SALEDETAILS (SALEID,SALEDATE,ITEMID,QUANTITY,RATE,AMOUNT,UOMID,DELFLAG,GSTPCT) \r\n"
+	@Insert("INSERT INTO SALEDETAILS (SALEID,SALEDATE,ITEMID,QUANTITY,RATE,AMOUNT,UOMID,DELFLAG,GSTPCT,STOCKBAL) \r\n"
 			+ "VALUES (#{soDtl.saleId},STR_TO_DATE(#{soDtl.soDtlDate}, '%d/%m/%y'),#{soDtl.itemId},#{soDtl.soQty}"
-			+ ",#{soDtl.soRate},#{soDtl.soAmount},#{soDtl.uomId},0,#{soDtl.gstPct})\r\n"
+			+ ",#{soDtl.soRate},#{soDtl.soAmount},#{soDtl.uomId},0,#{soDtl.gstPct},#{soDtl.stkBal})\r\n"
 			+ "  ON DUPLICATE KEY \r\n"
-			+ "UPDATE QUANTITY=#{soDtl.soQty},RATE=#{soDtl.soRate},AMOUNT=#{soDtl.soAmount},UOMID=#{soDtl.uomId},DELFLAG=0,GSTPCT=#{soDtl.gstPct}")
+			+ "UPDATE QUANTITY=#{soDtl.soQty},RATE=#{soDtl.soRate},AMOUNT=#{soDtl.soAmount},UOMID=#{soDtl.uomId},DELFLAG=0,GSTPCT=#{soDtl.gstPct},STOCKBAL=#{soDtl.stkBal}")
 	public int iInsertSODtlData(@Param("soDtl") SalesOrderDto soDtl);	
 	
 	@Update("UPDATE SALEDETAILS SET DELFLAG = 1 WHERE SALEID = #{soId}")
@@ -339,7 +395,7 @@ public interface MapperDAO {
 	public List<SalesOrderDto> getAllSalesOrderData(@Param("salesid") String salesid);
 	
 	@Select("SELECT a.SALEID,DATE_FORMAT(a.SALEDATE, '%d/%m/%y')SALEDATE,a.ITEMID,a.UOMID,\r\n"
-			+ "b.ITEMNAME,c.UOM_SHRT_NAME,a.QUANTITY,a.RATE,ROUND(a.AMOUNT,2)AMOUNT,a.GSTPCT\r\n"
+			+ "b.ITEMNAME,c.UOM_SHRT_NAME,a.QUANTITY,a.RATE,ROUND(a.AMOUNT,2)AMOUNT,a.GSTPCT,Round(coalesce(a.STOCKBAL,0),2)STOCKBAL\r\n"
 			+ "from SALEDETAILS a,ITEMMASTER b,UOMMASTER c\r\n"
 			+ " where a.ITEMID = b.ITEMID and a.UOMID = c.UOM_ID and coalesce(DELFLAG,0) = 0 and SALEID=#{salesOrderId}")
 	@Results({
@@ -352,6 +408,7 @@ public interface MapperDAO {
 		@Result(property = "soQty",column = "Quantity"),
 		@Result(property = "soRate",column = "Rate"),
 		@Result(property = "gstPct",column = "gstPct"),
+		@Result(property = "stkBal",column = "STOCKBAL"),
 		@Result(property = "soAmount",column = "Amount")
 	})
 	public List<SalesOrderDto> getAllSalesOrderDetailsItem(@Param("salesOrderId") String salesOrderId);
@@ -597,11 +654,68 @@ public interface MapperDAO {
 	public List<RFQDto> getAllQuotationHomePGData(@Param("rfQId") String rfQId);
 	
 	
-	@Select("SELECT A.RFQID,DATE_FORMAT(A.RFQDATE, '%d/%m/%y')RFQDTLITEMDATE,A.ITEMID,A.UOMID,\r\n"
-			+ "B.ITEMNAME,C.UOM_SHRT_NAME,A.QUANTITY,A.RATE,A.AMOUNT,A.GSTPCT \r\n"
-			+ "FROM RFQDETAILS A,ITEMMASTER B,UOMMASTER C\r\n"
-			+ "WHERE A.ITEMID = B.ITEMID AND A.UOMID = C.UOM_ID AND COALESCE(DELFLAG,0) = 0 \r\n"
-			+ "AND RFQID=#{rfQId}")
+//	@Select("SELECT A.RFQID,DATE_FORMAT(A.RFQDATE, '%d/%m/%y')RFQDTLITEMDATE,A.ITEMID,A.UOMID,\r\n"
+//			+ "B.ITEMNAME,C.UOM_SHRT_NAME,A.QUANTITY,A.RATE,A.AMOUNT,A.GSTPCT \r\n"
+//			+ "FROM RFQDETAILS A,ITEMMASTER B,UOMMASTER C\r\n"
+//			+ "WHERE A.ITEMID = B.ITEMID AND A.UOMID = C.UOM_ID AND COALESCE(DELFLAG,0) = 0 \r\n"
+//			+ "AND RFQID=#{rfQId}")
+	@Select("select\r\n"
+			+ "	A.RFQID,\r\n"
+			+ "	DATE_FORMAT(A.RFQDATE, '%d/%m/%y')RFQDTLITEMDATE,\r\n"
+			+ "	A.ITEMID,\r\n"
+			+ "	A.UOMID,\r\n"
+			+ "	B.ITEMNAME,\r\n"
+			+ "	C.UOM_SHRT_NAME,\r\n"
+			+ "	A.QUANTITY,\r\n"
+			+ "	A.RATE,\r\n"
+			+ "	A.AMOUNT,\r\n"
+			+ "	A.GSTPCT,\r\n"
+			+ "	X.BalStkQty\r\n"
+			+ "from\r\n"
+			+ "	RFQDETAILS A\r\n"
+			+ "inner join\r\n"
+			+ "   ITEMMASTER B on\r\n"
+			+ "	A.ITEMID = B.ITEMID\r\n"
+			+ "inner join UOMMASTER C on\r\n"
+			+ "	A.UOMID = C.UOM_ID\r\n"
+			+ "left outer join (\r\n"
+			+ "	select\r\n"
+			+ "		X.ITEMID,\r\n"
+			+ "		X.UOMID,\r\n"
+			+ "		(X.MRNQTY-Y.SOQty)BalStkQty\r\n"
+			+ "	from\r\n"
+			+ "		(\r\n"
+			+ "		select\r\n"
+			+ "			m.ITEMID,\r\n"
+			+ "			m.UOMID,\r\n"
+			+ "			Round(Sum(coalesce(m.MRNQTY, 0)), 2)MRNQTY\r\n"
+			+ "		from\r\n"
+			+ "			MRNDTL m\r\n"
+			+ "		where\r\n"
+			+ "			m.DEL_FLAG = 0\r\n"
+			+ "		group by\r\n"
+			+ "			m.ITEMID,\r\n"
+			+ "			m.UOMID)X\r\n"
+			+ "	left outer join \r\n"
+			+ "   (\r\n"
+			+ "		select\r\n"
+			+ "			s.ITEMID,\r\n"
+			+ "			s.UOMID,\r\n"
+			+ "			Round(Sum(coalesce(s.QUANTITY, 0)), 2)SOQty\r\n"
+			+ "		from\r\n"
+			+ "			SALEDETAILS s\r\n"
+			+ "		where\r\n"
+			+ "			s.DELFLAG = 0\r\n"
+			+ "		group by\r\n"
+			+ "			s.ITEMID,\r\n"
+			+ "			s.UOMID)Y on\r\n"
+			+ "		X.ITEMID = Y.ITEMID\r\n"
+			+ "		and X.UOMID = Y.UOMID)X on\r\n"
+			+ "	X.ITEMID = A.ITEMID\r\n"
+			+ "	and A.UOMID = X.UOMID\r\n"
+			+ "where\r\n"
+			+ "	 coalesce(A.DELFLAG, 0) = 0\r\n"
+			+ "	and RFQID = #{rfQId}")
 	@Results({
 		@Result(property = "rfqId",column = "RFQID"),
 		@Result(property = "rfqDtlDate",column = "RFQDtlItemDate"),
@@ -612,6 +726,7 @@ public interface MapperDAO {
 		@Result(property = "rfqQty",column = "Quantity"),
 		@Result(property = "rfqRate",column = "Rate"),
 		@Result(property = "rfqAmount",column = "Amount"),
+		@Result(property = "stockBalQty",column = "BalStkQty"),
 		@Result(property = "gstPct",column = "gstPct")
 	})
 	public List<RFQDto> bindQuotationDataGrid(@Param("rfQId") String rfQId);
@@ -1120,38 +1235,163 @@ public interface MapperDAO {
 				+ "AND UPPER(BILLNO) = UPPER(#{prjSrch.billNumber})")
 		public String validateMrnBillNo(@Param("prjSrch") PrjSearch prjSrch);
 		
-		@Select("Select ITEMID,ITEMNAME, UOM_DESCRIPTION, PO_QTY, PO_AMOUNT, MRN_QTY, Mrn_Amount, SO_QTY, So_Amount,\r\n"
-				+ " ROUND((MRN_QTY-SO_QTY),2)Bal_Qty,ROUND((Mrn_Amount-So_Amount),2)Bal_Amt\r\n"
-				+ "from (\r\n"
-				+ "Select item.ITEMID,item.ITEMNAME,uom.UOM_DESCRIPTION,\r\n"
-				+ "coalesce(PO.PO_QTY,0)PO_QTY,coalesce(PO.PO_AMOUNT,0)PO_AMOUNT, \r\n"
-				+ "coalesce(mrn.MRNQTY,0)MRN_QTY,coalesce(mrn.ITEMMRNAMOUNT,0)Mrn_Amount,\r\n"
-				+ "coalesce(So.SO_QTY,0)SO_QTY,coalesce(So.SO_Amount,0)So_Amount\r\n"
-				+ "from ITEMMASTER item \r\n"
-				+ "Inner Join UOMMASTER uom On item.UOMID = uom.UOM_ID\r\n"
-				+ "left outer join \r\n"
-				+ "(Select pod.ITEMID,pod.UOMID,ROUND(Sum(pod.QTY),2)PO_QTY,ROUND(Sum(pod.AMOUNT),2)PO_AMOUNT \r\n"
-				+ "from POMASTER po inner join PODETAILS pod \r\n"
-				+ "where po.POID = pod.POID \r\n"
-				+ "and date_format(po.PODATE,'%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
-				+ "and coalesce(pod.DELFLAG,0)=0\r\n"
-				+ "Group by pod.ITEMID,pod.UOMID)PO ON item.ITEMID = PO.ITEMID\r\n"
-				+ "AND item.UOMID = PO.UOMID Left Outer Join \r\n"
-				+ "(Select mrnDtl.ITEMID,mrnDtl.UOMID,Round(Sum(mrnDtl.MRNQTY),2)MRNQTY,\r\n"
-				+ "Round(Sum(mrnDtl.ITEMMRNAMOUNT),2)ITEMMRNAMOUNT \r\n"
-				+ "from MRNHEAD mrn inner join MRNDTL mrnDtl On \r\n"
-				+ "mrn.MRN_ID = mrnDtl.MRN_ID \r\n"
-				+ "and date_format(mrn.MRN_DATE,'%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
-				+ "and coalesce(mrnDtl.DEL_FLAG,0)=0\r\n"
-				+ "Group by mrnDtl.ITEMID,mrnDtl.UOMID)mrn On \r\n"
-				+ "mrn.ITEMID = item.ITEMID and mrn.UOMID = item.UOMID Left Outer Join\r\n"
-				+ "(Select sd.ITEMID,sd.UOMID,ROUND(Sum(sd.QUANTITY),2)SO_QTY,\r\n"
-				+ " ROUND(Sum(sd.AMOUNT),2)SO_Amount\r\n"
-				+ "from SALEDETAILS sd inner join SALEHEADER sh on sd.SALEID = sh.SALEID\r\n"
-				+ "and date_format(sh.SALEDATE,'%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
-				+ "and coalesce(sd.DELFLAG,0)=0\r\n"
-				+ "Group by sd.ITEMID,sd.UOMID)So on So.ITEMID = item.ITEMID\r\n"
-				+ "and So.UOMID = item.UOMID)X Where (X.PO_QTY > 0 OR X.MRN_QTY > 0 OR X.SO_QTY > 0) Order by ITEMNAME")
+//		@Select("Select ITEMID,ITEMNAME, UOM_DESCRIPTION, PO_QTY, PO_AMOUNT, MRN_QTY, Mrn_Amount, SO_QTY, So_Amount,\r\n"
+//				+ " ROUND((MRN_QTY-SO_QTY),2)Bal_Qty,ABS(ROUND((Mrn_Amount-So_Amount),2))Bal_Amt\r\n"
+//				+ "from (\r\n"
+//				+ "Select item.ITEMID,item.ITEMNAME,uom.UOM_DESCRIPTION,\r\n"
+//				+ "coalesce(PO.PO_QTY,0)PO_QTY,coalesce(PO.PO_AMOUNT,0)PO_AMOUNT, \r\n"
+//				+ "coalesce(mrn.MRNQTY,0)MRN_QTY,coalesce(mrn.ITEMMRNAMOUNT,0)Mrn_Amount,\r\n"
+//				+ "coalesce(So.SO_QTY,0)SO_QTY,coalesce(So.SO_Amount,0)So_Amount\r\n"
+//				+ "from ITEMMASTER item \r\n"
+//				+ "Inner Join UOMMASTER uom On item.UOMID = uom.UOM_ID\r\n"
+//				+ "left outer join \r\n"
+//				+ "(Select pod.ITEMID,pod.UOMID,ROUND(Sum(pod.QTY),2)PO_QTY,ROUND(Sum(pod.AMOUNT),2)PO_AMOUNT \r\n"
+//				+ "from POMASTER po inner join PODETAILS pod \r\n"
+//				+ "where po.POID = pod.POID \r\n"
+//				+ "and date_format(po.PODATE,'%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
+//				+ "and coalesce(pod.DELFLAG,0)=0\r\n"
+//				+ "Group by pod.ITEMID,pod.UOMID)PO ON item.ITEMID = PO.ITEMID\r\n"
+//				+ "AND item.UOMID = PO.UOMID Left Outer Join \r\n"
+//				+ "(Select mrnDtl.ITEMID,mrnDtl.UOMID,Round(Sum(mrnDtl.MRNQTY),2)MRNQTY,\r\n"
+//				+ "Round(Sum(mrnDtl.ITEMMRNAMOUNT),2)ITEMMRNAMOUNT \r\n"
+//				+ "from MRNHEAD mrn inner join MRNDTL mrnDtl On \r\n"
+//				+ "mrn.MRN_ID = mrnDtl.MRN_ID \r\n"
+//				+ "and date_format(mrn.MRN_DATE,'%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
+//				+ "and coalesce(mrnDtl.DEL_FLAG,0)=0\r\n"
+//				+ "Group by mrnDtl.ITEMID,mrnDtl.UOMID)mrn On \r\n"
+//				+ "mrn.ITEMID = item.ITEMID and mrn.UOMID = item.UOMID Left Outer Join\r\n"
+//				+ "(Select sd.ITEMID,sd.UOMID,ROUND(Sum(sd.QUANTITY),2)SO_QTY,\r\n"
+//				+ " ROUND(Sum(sd.AMOUNT),2)SO_Amount\r\n"
+//				+ "from SALEDETAILS sd inner join SALEHEADER sh on sd.SALEID = sh.SALEID\r\n"
+//				+ "and date_format(sh.SALEDATE,'%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
+//				+ "and coalesce(sd.DELFLAG,0)=0\r\n"
+//				+ "Group by sd.ITEMID,sd.UOMID)So on So.ITEMID = item.ITEMID\r\n"
+//				+ "and So.UOMID = item.UOMID)X Where (X.PO_QTY > 0 OR X.MRN_QTY > 0 OR X.SO_QTY > 0) Order by ITEMNAME")
+		@Select("select\r\n"
+				+ "distinct	CATEGORYCODE,\r\n"
+				+ "	CATEGORYNAME,"
+				+ " ITEMID,\r\n"
+				+ "	ITEMNAME,\r\n"
+				+ "	UOM_DESCRIPTION,\r\n"
+				+ "	PO_QTY,\r\n"
+				+ "	PO_AMOUNT,\r\n"
+				+ "	MRN_QTY,\r\n"
+				+ "	Mrn_Amount,\r\n"
+				+ "	SO_QTY,\r\n"
+				+ "	So_Amount,\r\n"
+				+ "	ROUND((MRN_QTY-SO_QTY), 2)Bal_Qty,\r\n"
+				+ "	ABS(ROUND((Mrn_Amount-So_Amount), 2))Bal_Amt,\r\n"
+				+ "	LAST_PURCHASE_RATE,\r\n"
+				+ "	LAST_PURCHASE_DATE,ROUND(ROUND((MRN_QTY-SO_QTY), 2) * LAST_PURCHASE_RATE,2) APPROX_BAL_AMT\r\n"
+				+ "from\r\n"
+				+ "	(\r\n"
+				+ "	select\r\n"
+				+ "		item.ITEMID,\r\n"
+				+ "		CONCAT(trim(item.ITEMNAME),' Gst-',coalesce(item.GSTPCT,0),'%')ITEMNAME,\r\n"
+				+ "		uom.UOM_DESCRIPTION,\r\n"
+				+ "		coalesce(PO.PO_QTY, 0)PO_QTY,\r\n"
+				+ "		coalesce(PO.PO_AMOUNT, 0)PO_AMOUNT,\r\n"
+				+ "		coalesce(mrn.MRNQTY, 0)MRN_QTY,\r\n"
+				+ "		coalesce(mrn.ITEMMRNAMOUNT, 0)Mrn_Amount,\r\n"
+				+ "		coalesce(So.SO_QTY, 0)SO_QTY,\r\n"
+				+ "		coalesce(So.SO_Amount, 0)So_Amount,\r\n"
+				+ "		coalesce(itemrate.LAST_PURCHASE_RATE, 0)LAST_PURCHASE_RATE,\r\n"
+				+ "		date_format(itemrate.LAST_PURCHASE_DATE,'%d-%b-%y')LAST_PURCHASE_DATE,cat.CATEGORYNAME,cat.CATEGORYCODE \r\n"
+				+ "	from\r\n"
+				+ "		ITEMMASTER item\r\n"
+				+ "	inner join UOMMASTER uom on\r\n"
+				+ "		item.UOMID = uom.UOM_ID "
+				+ "  inner join CATEGORYMASTER cat on\r\n"
+				+ "		  cat.CATEGORYID = item.CATEGORYID\r\n"
+				+ "	left outer join (\r\n"
+				+ "		select\r\n"
+				+ "			pod.ITEMID,\r\n"
+				+ "			pod.UOMID,\r\n"
+				+ "			ROUND(Sum(pod.QTY), 2)PO_QTY,\r\n"
+				+ "			ROUND(Sum(pod.AMOUNT), 2)PO_AMOUNT\r\n"
+				+ "		from\r\n"
+				+ "			POMASTER po\r\n"
+				+ "		inner join PODETAILS pod\r\n"
+				+ "		where\r\n"
+				+ "			po.POID = pod.POID\r\n"
+				+ "			and date_format(po.PODATE, '%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
+				+ "				and coalesce(pod.DELFLAG, 0)= 0\r\n"
+				+ "			group by\r\n"
+				+ "				pod.ITEMID,\r\n"
+				+ "				pod.UOMID)PO on\r\n"
+				+ "		item.ITEMID = PO.ITEMID\r\n"
+				+ "		and item.UOMID = PO.UOMID\r\n"
+				+ "	left outer join (\r\n"
+				+ "		select\r\n"
+				+ "			mrnDtl.ITEMID,\r\n"
+				+ "			mrnDtl.UOMID,\r\n"
+				+ "			Round(Sum(mrnDtl.MRNQTY), 2)MRNQTY,\r\n"
+				+ "			Round(Sum(mrnDtl.ITEMMRNAMOUNT), 2)ITEMMRNAMOUNT\r\n"
+				+ "		from\r\n"
+				+ "			MRNHEAD mrn\r\n"
+				+ "		inner join MRNDTL mrnDtl on\r\n"
+				+ "			mrn.MRN_ID = mrnDtl.MRN_ID\r\n"
+				+ "			and date_format(mrn.MRN_DATE, '%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
+				+ "				and coalesce(mrnDtl.DEL_FLAG, 0)= 0\r\n"
+				+ "			group by\r\n"
+				+ "				mrnDtl.ITEMID,\r\n"
+				+ "				mrnDtl.UOMID)mrn on\r\n"
+				+ "		mrn.ITEMID = item.ITEMID\r\n"
+				+ "		and mrn.UOMID = item.UOMID\r\n"
+				+ "	left outer join (\r\n"
+				+ "		select\r\n"
+				+ "			sd.ITEMID,\r\n"
+				+ "			sd.UOMID,\r\n"
+				+ "			ROUND(Sum(sd.QUANTITY), 2)SO_QTY,\r\n"
+				+ "			ROUND(Sum(sd.AMOUNT), 2)SO_Amount\r\n"
+				+ "		from\r\n"
+				+ "			SALEDETAILS sd\r\n"
+				+ "		inner join SALEHEADER sh on\r\n"
+				+ "			sd.SALEID = sh.SALEID\r\n"
+				+ "			and date_format(sh.SALEDATE, '%y-%m-%d') between #{prjSrch.fromDate} and #{prjSrch.toDate}\r\n"
+				+ "				and coalesce(sd.DELFLAG, 0)= 0\r\n"
+				+ "			group by\r\n"
+				+ "				sd.ITEMID,\r\n"
+				+ "				sd.UOMID)So on\r\n"
+				+ "		So.ITEMID = item.ITEMID\r\n"
+				+ "		and So.UOMID = item.UOMID\r\n"
+				+ "	left outer join (\r\n"
+				+ "		select\r\n"
+				+ "			X.LAST_PURCHASE_DATE,\r\n"
+				+ "			POD.ITEMID,\r\n"
+				+ "			POD.UOMID,\r\n"
+				+ "			ROUND(POD.RATE +(POD.RATE * POD.GSTPCT / 100), 2)LAST_PURCHASE_RATE\r\n"
+				+ "		from\r\n"
+				+ "			POMASTER PO\r\n"
+				+ "		inner join PODETAILS POD on\r\n"
+				+ "			PO.POID = POD.POID\r\n"
+				+ "		inner join (\r\n"
+				+ "			select\r\n"
+				+ "				max(p.PODATE) LAST_PURCHASE_DATE,\r\n"
+				+ "				p2.ITEMID,\r\n"
+				+ "				p2.UOMID\r\n"
+				+ "			from\r\n"
+				+ "				POMASTER p\r\n"
+				+ "			inner join PODETAILS p2 on\r\n"
+				+ "				p.POID = p2.POID\r\n"
+				+ "			where\r\n"
+				+ "				DELFLAG = 0\r\n"
+				+ "			group by\r\n"
+				+ "				p2.ITEMID,\r\n"
+				+ "				p2.GSTPCT,\r\n"
+				+ "				p2.UOMID)X on\r\n"
+				+ "			POD.ITEMID = X.ITEMID\r\n"
+				+ "			and POD.UOMID = X.UOMID\r\n"
+				+ "			and PO.PODATE = X.LAST_PURCHASE_DATE)itemrate on\r\n"
+				+ "		itemrate.ITEMID = item.ITEMID\r\n"
+				+ "		and itemrate.UOMID = item.UOMID\r\n"
+				+ "		)X\r\n"
+				+ "where\r\n"
+				+ "	(X.PO_QTY > 0\r\n"
+				+ "		or X.MRN_QTY > 0\r\n"
+				+ "		or X.SO_QTY > 0)\r\n"
+				+ "order by\r\n"
+				+ "	CATEGORYCODE,ITEMNAME")
 		@Results({
 			@Result(property = "itemId",column = "ITEMID"),
 			@Result(property = "itemName",column = "ITEMNAME"),
@@ -1163,6 +1403,10 @@ public interface MapperDAO {
 			@Result(property = "soQty",column = "SO_QTY"),
 			@Result(property = "soAmt",column = "So_Amount"),
 			@Result(property = "balQty",column = "Bal_Qty"),
+			@Result(property = "lastPurchaseRate",column = "LAST_PURCHASE_RATE"),
+			@Result(property = "lastPurchaseDate",column = "LAST_PURCHASE_DATE"),
+			@Result(property = "approxBalStkAmt",column = "APPROX_BAL_AMT"),
+			@Result(property = "categeory",column = "CATEGORYNAME"),
 			@Result(property = "balAmt",column = "Bal_Amt")			
 		})
 		public List<StockRptDto> stockItemReport (@Param("prjSrch") PrjSearch prjSrch);

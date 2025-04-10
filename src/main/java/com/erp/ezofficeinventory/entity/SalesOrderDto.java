@@ -42,6 +42,8 @@ public class SalesOrderDto {
 	private String strMessage;
 	private boolean blnTranStatus;
 	
+	private double stkBal;
+	
 	public String getsMode() {
 		return sMode;
 	}
@@ -257,6 +259,12 @@ public class SalesOrderDto {
 	}
 	public void setBlnTranStatus(boolean blnTranStatus) {
 		this.blnTranStatus = blnTranStatus;
+	}
+	public double getStkBal() {
+		return stkBal;
+	}
+	public void setStkBal(double stkBal) {
+		this.stkBal = stkBal;
 	}
 	
 	

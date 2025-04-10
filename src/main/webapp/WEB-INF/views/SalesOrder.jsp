@@ -191,11 +191,12 @@
                                           <th scope="col">Item Description</th> <!-- 3 -->
                                           <th scope="col">UOM</th> <!-- 4 -->
                                           <th scope="col">Issue Date</th> <!-- 5 -->
-                                          <th scope="col">GST%</th> <!-- 6 -->
-                                          <th scope="col">Quantity</th> <!-- 7 -->
-                                          <th  scope="col">Rate</th> <!-- 8 -->
-                                          <th  scope="col">Amount</th> <!-- 9 -->
-                                          <th  scope="col">Action</th> <!-- 10 -->
+                                          <th scope="col">Bal Stock Qty</th> <!-- 6 -->
+                                          <th scope="col">GST%</th> <!-- 7 -->
+                                          <th scope="col">Quantity</th> <!-- 8 -->
+                                          <th  scope="col">Rate</th> <!-- 9 -->
+                                          <th  scope="col">Amount</th> <!-- 10 -->
+                                          <th  scope="col">Action</th> <!-- 11 -->
                                        </tr> 
                                       </thead>
                                       <tbody id="reportDtltdata"></tbody>
@@ -208,12 +209,8 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
+                                            <td></td>
                                             <td class="border-left"><b>Total Amount</b></td>
-<%--                                             <td class="border-left"> 
-                                                <span><b><label id="lblTotal"></label></b>
-                                                <i class="fa fa-rupee-sign"></i>
-                                                </span>
-                                              </td> --%>
 											<td style="text-align: left;">
 												<div class="input-group">
 													<div class="input-group-prepend">
@@ -273,7 +270,8 @@
 									<th>Description</th> <!-- 3 -->
 									<th>UOM</th> <!-- 4 -->
 									<th>GST</th> <!-- 5 -->
-									<th>Select One</th> <!-- 6 -->
+									<th>Stock Balance</th> <!-- 6 -->
+									<th>Select One</th> <!-- 7 -->
 								</tr>
 							</thead>
 							<tbody id='tbodyLoan'>
@@ -437,9 +435,9 @@
   				            		'<td>'+ data[i].itemDesc +'</td>'+
   				            		'<td>'+ data[i].uomDesc +'</td>'+
   				            		'<td>'+ data[i].soDtlDate +'</td>'+
-  				            		/* '<td>'+ data[i].gstPct +'</td>'+ */
-									'<td><input type="text" class="form-control" id="txtGst" value="'+ data[i].gstPct +'" placeholder="Gst"></td>'+				            		
-  				            		'<td><input type="text" class="form-control" id="txtQty" placeholder="Qty" value="'+ data[i].soQty +'"></td>'+
+  				            		 '<td>'+ data[i].stkBal +'</td>'+ 
+									'<td><input type="text" class="form-control" id="txtGst" onkeypress="return allowNumericWithDecimal(event)" value="'+ data[i].gstPct +'" placeholder="Gst"></td>'+				            		
+  				            		'<td><input type="text" class="form-control" id="txtQty" onkeypress="return allowNumericWithDecimal(event)" placeholder="Qty" value="'+ data[i].soQty +'"></td>'+
   				            		/* '<td><input type="text" class="form-control" id="txtRate" placeholder="Rate" value="'+ data[i].soRate +'"></td>'+ */
 										'<td style="text-align: left;">'+
 										'<div class="input-group">'+
@@ -535,9 +533,9 @@
   	  				            		'<td>'+ data[i].itemDesc +'</td>'+
   	  				            		'<td>'+ data[i].uomDesc +'</td>'+
   	  				            		'<td>'+ data[i].rfqDtlDate +'</td>'+
-  	  				            		/* '<td>'+ data[i].gstPct +'</td>'+ */
-  	  				            		'<td><input type="text" class="form-control" id="txtGst" value="'+ data[i].gstPct +'" placeholder="Gst"></td>'+
-  	  				            		'<td><input type="text" class="form-control" id="txtQty"  placeholder="Qty" value="'+ data[i].rfqQty +'"></td>'+
+  	  				            		 '<td>'+ data[i].stockBalQty +'</td>'+ 
+  	  				            		'<td><input type="text" class="form-control" id="txtGst" onkeypress="return allowNumericWithDecimal(event)" value="'+ data[i].gstPct +'" placeholder="Gst"></td>'+
+  	  				            		'<td><input type="text" class="form-control" id="txtQty" onkeypress="return allowNumericWithDecimal(event)" placeholder="Qty" value="'+ data[i].rfqQty +'"></td>'+
   	  				            		/* '<td><input type="text" class="form-control" id="txtRate"  placeholder="Rate" value="'+ data[i].rfqRate +'"></td>'+ */
 										'<td style="text-align: left;">'+
 										'<div class="input-group">'+
@@ -777,6 +775,7 @@
   									'<td>'+data[i].itemDescription+'</td>'+
   									'<td>'+data[i].uomName+'</td>'+
   									'<td>'+data[i].gstNo+'</td>'+
+  									'<td>'+data[i].itemStkBalQty+'</td>'+
   									'<td><label class="radio-inline"> <input type="radio" class="radioUser" name="selectUser" value='+data[i].itemId+'>Select</label></td></tr>'
   								);
   							}
@@ -806,6 +805,7 @@
             var col2=currentRow.find("td:eq(2)").text(); 
             var col3=currentRow.find("td:eq(4)").text(); 
             var gst=currentRow.find("td:eq(5)").text();
+            var stkBalQty=currentRow.find("td:eq(6)").text();
 	   		gridDataArray=[];
 	   		$("#reportDtltdata tr").each(function(){
 	   			i=0;var gridItemobj={};
@@ -837,9 +837,9 @@
             		'<td>'+ itemName +'</td>'+
             		'<td>'+ col3 +'</td>'+
             		'<td>'+ today +'</td>'+
-            		/* '<td>'+ gst +'</td>'+ */
-            		'<td><input type="text" class="form-control" id="txtGst" value="'+ gst +'" placeholder="Gst"></td>'+
-            		'<td><input type="text" class="form-control" id="txtQty" placeholder="Qty"></td>'+
+            		 '<td>'+ stkBalQty +'</td>'+ 
+            		'<td><input type="text" class="form-control" id="txtGst" onkeypress="return allowNumericWithDecimal(event)" value="'+ gst +'" placeholder="Gst"></td>'+
+            		'<td><input type="text" class="form-control" id="txtQty" onkeypress="return allowNumericWithDecimal(event)" placeholder="Qty"></td>'+
             		/* '<td><input type="text" class="form-control" id="txtRate" placeholder="Rate"></td>'+ */
 					'<td style="text-align: left;">'+
 					'<div class="input-group">'+
@@ -895,11 +895,18 @@
 		calculateNetAmount();
 	});  	
   	$("#sotable").on('keyup','#txtQty',function(){
-		var qty= $(this).closest('tr').find('#txtQty').val();
+  		var currentRow=$(this).closest("tr");
+  		var stkBalQty=currentRow.find("td:eq(6)").text();
+  		var qty= $(this).closest('tr').find('#txtQty').val();
 		var rate= $(this).closest('tr').find('#txtRate').val();
 		var gstPct = $(this).closest('tr').find('#txtGst').val();
 		if (rate == 0) {
 			rate = 1;
+		}
+		if (parseFloat(qty) > parseFloat(stkBalQty)) {
+			alert("Sale Order Qty Cannot be Greator Than Stock Qty["+ stkBalQty +"]");
+			$(this).closest('tr').find('#txtQty').val('');
+			return false;
 		}
 		var soItemAmount = calculateSOItemAmt(parseFloat(qty),parseFloat(rate),parseFloat(gstPct));
 		$(this).closest('tr').find('#txtAmt').val(soItemAmount.toFixed(2));
@@ -977,7 +984,7 @@
 					itemDesc = $(this).html();
 				} else if (i == 4) {
 					uomDesc = $(this).html();
-				} else if (i == 7) {
+				} else if (i == 8) {
 				  if ($(this).closest('tr').find('#txtQty').val() == "") {
 					alert("Qty At Item:[" + itemDesc + "] With UOM :[" + uomDesc + "]\nCannot be left blank")
 					$(this).closest('tr').find('#txtQty').focus();
@@ -985,13 +992,24 @@
 					$(this).prop('disabled', false);
 					return false;
 				  }
-				} else if (i == 8) {
+				} else if (i == 9) {
 					if ($(this).closest('tr').find('#txtRate').val() == "") {
 						alert("Rate At Item:[" + itemDesc + "] With UOM :[" + uomDesc + "]\nCannot be left blank")
 						$(this).closest('tr').find('#txtRate').focus();
 						isVldFail = false;
 						$(this).prop('disabled', false);
 						return false;
+					}
+				} else if (i == 6) {
+					var stockBalQty;
+					stockBalQty = $(this).html();
+					if (parseFloat($(this).closest('tr').find('#txtQty').val()) > parseFloat(stockBalQty)) {
+						alert("Sale Order Qty At Item:[" + itemDesc + "] With UOM :[" + uomDesc + "] Cannot be Greator Than Stock Qty["+ stockBalQty +"]");
+						$(this).closest('tr').find('#txtQty').val('');
+						$(this).closest('tr').find('#txtQty').focus();
+						isVldFail = false;
+						$(this).prop('disabled', false);						
+						return false;						
 					}
 				}
 				i++;
@@ -1014,16 +1032,18 @@
 				    	  obj["itemId"]=$(this).html();  
 				      } else if (i == 1) {
 				    	  obj["uomId"]=$(this).html();
-				      } else if (i == 7) {
+				      } else if (i == 8) {
 				    	  obj["soQty"]=$(this).closest('tr').find('#txtQty').val();
-				      }  else if (i == 8) {
+				      }  else if (i == 9) {
 				    	  obj["soRate"]=$(this).closest('tr').find('#txtRate').val();
-				      } else if (i == 9) {
+				      } else if (i == 10) {
 				    	  obj["soAmount"]=$(this).closest('tr').find('#txtAmt').val();
 				      } else if (i == 5) {
 				    	  obj["soDtlDate"]=$(this).html(); 
-				      } else if (i == 6) {
+				      } else if (i == 7) {
 				    	  obj["gstPct"]=$(this).closest('tr').find('#txtGst').val();
+				      } else if (i == 6) {
+				    	  obj["stkBal"]=$(this).html();
 				      }
 				      i++;					
 				})

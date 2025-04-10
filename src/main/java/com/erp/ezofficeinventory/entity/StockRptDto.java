@@ -13,6 +13,10 @@ public class StockRptDto {
 	private String soAmt;
 	private String balQty;
 	private String balAmt;
+	private String lastPurchaseRate;
+	private String lastPurchaseDate;
+	private String approxBalStkAmt;
+	private String categeory;
 	
 	private String strErrMessage;
 	
@@ -87,6 +91,30 @@ public class StockRptDto {
 	}
 	public void setStrErrMessage(String strErrMessage) {
 		this.strErrMessage = strErrMessage;
+	}
+	public String getLastPurchaseRate() {
+		return lastPurchaseRate;
+	}
+	public void setLastPurchaseRate(String lastPurchaseRate) {
+		this.lastPurchaseRate = lastPurchaseRate;
+	}
+	public String getLastPurchaseDate() {
+		return lastPurchaseDate;
+	}
+	public void setLastPurchaseDate(String lastPurchaseDate) {
+		this.lastPurchaseDate = lastPurchaseDate;
+	}
+	public String getApproxBalStkAmt() {
+		return approxBalStkAmt;
+	}
+	public void setApproxBalStkAmt(String approxBalStkAmt) {
+		this.approxBalStkAmt = approxBalStkAmt;
+	}
+	public String getCategeory() {
+		return categeory;
+	}
+	public void setCategeory(String categeory) {
+		this.categeory = categeory;
 	}
 	
 	

@@ -164,13 +164,15 @@
 						                    <th scope="col">Item Description</th>
 						                    <th scope="col">Uom</th>
 						                    <th scope="col">PO Qty</th>
-						                    <th scope="col">PO Amount</th>		                                          
+						                    <th scope="col">PO Amt</th>		                                          
 						                    <th  scope="col">Mrn Qty</th>
-						                    <th  scope="col">Mrn Amount</th>
+						                    <th  scope="col">Mrn Amt</th>
 						                    <th  scope="col">SO Qty</th>
-						                 	<th  scope="col">SO Amount</th>	
+						                 	<th  scope="col">SO Amt</th>	
+						                 	<th  scope="col">P&L Amt</th>
 						                 	<th  scope="col">Bal Qty</th>
-						                 	<th  scope="col">Bal Amount</th>
+						                 	<th  scope="col">Last Pur Rate</th>
+						                 	<th  scope="col">Approx Stk Amt</th>
   		                                   </tr>
                                       </thead>
                                       <tbody id="reportDtltdata"></tbody>
@@ -196,8 +198,8 @@
        todayHighlight: true,
        autoclose: true,
        showMeridian: true,
-       startDate: "-365d",
-       endDate: "+30d",
+       //startDate: "-365d",
+       //endDate: "+30d",
    }).on('changeDate', function (ev) {
        $(this).datepicker('hide');
    });
@@ -256,8 +258,10 @@
               				'<td>'+ formatNumber(parseFloat(data[i].mrnAmt)) +'</td>'+
               				'<td>'+ formatNumber(parseFloat(data[i].soQty)) +'</td>'+
               				'<td>'+ formatNumber(parseFloat(data[i].soAmt)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].balAmt)) +'</td>'+
               				'<td>'+ formatNumber(parseFloat(data[i].balQty)) +'</td>'+
-              				'<td>'+ formatNumber(parseFloat(data[i].balAmt)) +'</td></tr>'
+              				'<td>'+ formatNumber(parseFloat(data[i].lastPurchaseRate)) +'</td>'+
+              				'<td>'+ formatNumber(parseFloat(data[i].approxBalStkAmt)) +'</td></tr>'
               			);
               			tabRowLen++;
               		}
@@ -284,7 +288,8 @@
 		table = new DataTable('#stlTable', {
 			"ordering" : true,
 			fixedHeader : true,
-			"pageLength" : 10
+			"pageLength" : 10,
+			scrollX: true		
 		});
 	}  	
 	function refreshData() {

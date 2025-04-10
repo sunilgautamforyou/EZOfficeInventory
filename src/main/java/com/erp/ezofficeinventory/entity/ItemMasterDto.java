@@ -20,6 +20,7 @@ public class ItemMasterDto {
 	private String subCategoryName;
 	private String subcategoryCode;
 	private double itemRate;
+	private double itemStkBalQty;
 	
 	public int getItemId() {
 		return itemId;
@@ -128,6 +129,12 @@ public class ItemMasterDto {
 	}
 	public void setItemRate(double itemRate) {
 		this.itemRate = itemRate;
+	}
+	public double getItemStkBalQty() {
+		return itemStkBalQty;
+	}
+	public void setItemStkBalQty(double itemStkBalQty) {
+		this.itemStkBalQty = itemStkBalQty;
 	}
 	
 	

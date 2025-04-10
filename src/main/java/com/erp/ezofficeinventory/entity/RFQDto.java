@@ -28,6 +28,7 @@ public class RFQDto {
 	private String categoryName;
 	private double taxAmount;
 	private double withOutTaxAmount;
+	private double stockBalQty;
 	
 	public String getsMode() {
 		return sMode;
@@ -184,6 +185,12 @@ public class RFQDto {
 	}
 	public void setWithOutTaxAmount(double withOutTaxAmount) {
 		this.withOutTaxAmount = withOutTaxAmount;
+	}
+	public double getStockBalQty() {
+		return stockBalQty;
+	}
+	public void setStockBalQty(double stockBalQty) {
+		this.stockBalQty = stockBalQty;
 	}
 	
 	
