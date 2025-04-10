@@ -52,7 +52,7 @@ public interface EZDao {
 	public int iUpdateSalesOrderNo(String soNumber,String soId);
 	public int updateDelFlagInSoDtl(String soId);
 	public int iInsertSODtlData(SalesOrderDto salesOrderDto);
-	public List<SalesOrderDto> getAllSalesOrderData(String salesOrderId);
+	public List<SalesOrderDto> getAllSalesOrderData(PrjSearch prjSrch);
 	public List<SalesOrderDto> getAllSalesOrderDetailsItem(String salesOrderId);
 	public int iUpdateSalesMasterHead(SalesOrderDto salesOrderDt0);
 	public List<CategoryMasterDto> getAllCategoryMaster();
@@ -111,4 +111,5 @@ public interface EZDao {
 	public List<PODto> fillPOInPymntRpt(PrjSearch prjSrch);
 	public String validateMrnBillNo(PrjSearch prjSrch);
 	public List<StockRptDto> stockItemReport(PrjSearch prjSrch);
+	public List<SalesOrderDto> getSOCustomerByName(PrjSearch prjSrch);
 }

@@ -234,9 +234,9 @@
          format: "dd-M-yy",
          todayHighlight: true,
          autoclose: true,
-         showMeridian: true,
-         startDate: "-90d",
-         endDate: "+30d",
+         showMeridian: true
+/*          startDate: "-90d",
+         endDate: "+30d", */
      }).on('changeDate', function (ev) {
          $(this).datepicker('hide');
      });  

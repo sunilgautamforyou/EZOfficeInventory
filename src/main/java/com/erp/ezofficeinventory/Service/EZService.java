@@ -2,6 +2,8 @@ package com.erp.ezofficeinventory.Service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.erp.ezofficeinventory.entity.CategoryMasterDto;
 import com.erp.ezofficeinventory.entity.CustomerDto;
 import com.erp.ezofficeinventory.entity.ItemMasterDto;
@@ -43,7 +45,7 @@ public interface EZService {
 	public List<PODto> getAllPoDetailData(String poId);
 	public List<SalesOrderDto> getCustomerDataByFlatNo(PrjSearch prjSrch);
 	public ResponseWrapper iInsertSalesOrderHead(List<SalesOrderDto> salesDto);
-	public List<SalesOrderDto> getAllSalesOrderData(String salesOrderId);
+	public List<SalesOrderDto> getAllSalesOrderData(PrjSearch prjSrch);
 	public List<SalesOrderDto> getAllSalesOrderDetailsItem(String salesOrderId);
 	public List<CategoryMasterDto> getAllCategoryMaster();
 	public List<PODto> fillPOInMKPymntPG(String partyId);
@@ -90,4 +92,5 @@ public interface EZService {
 	public List<PODto> fillPOInPymntRpt(PrjSearch prjSrch);
 	public String validateMrnBillNo(PrjSearch prjSrch);
 	public List<StockRptDto> stockItemReport(PrjSearch prjSrch);
+	public List<SalesOrderDto> getSOCustomerByName(PrjSearch prjSrch);
 }

@@ -1,5 +1,6 @@
 package com.erp.ezofficeinventory.Service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.erp.ezofficeinventory.Constrant.AppConstant;
 import com.erp.ezofficeinventory.Utility.Utility;
@@ -315,8 +317,32 @@ public class EZServiceImpl implements EZService {
 		return responseWrapper;
 	}
 	@Override
-	public List<SalesOrderDto> getAllSalesOrderData(String salesOrderId) {
-		return ezDaoObj.getAllSalesOrderData(salesOrderId);
+	public List<SalesOrderDto> getAllSalesOrderData(PrjSearch prjSrch) {
+		List<SalesOrderDto> lsSalesOrderDto = new ArrayList<>();
+		try {
+			if (prjSrch.getSalesOrderId() == "") {
+				prjSrch.setSalesOrderId(null);
+			}			
+			if (prjSrch.getCustomerId().equalsIgnoreCase("0")) {
+				Date dtFrom = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getFromDate());
+				Date dtToDate = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getToDate());
+				
+				prjSrch.setFromDate(new SimpleDateFormat("yy-MM-dd").format(dtFrom));
+				prjSrch.setToDate(new SimpleDateFormat("yy-MM-dd").format(dtToDate));
+				prjSrch.setCustomerId(null);
+			} else {
+				prjSrch.setFromDate(null);
+				prjSrch.setToDate(null);
+				if (prjSrch.getCustomerId() == "") {
+					prjSrch.setCustomerId(null);
+				}
+			}
+	
+			lsSalesOrderDto = ezDaoObj.getAllSalesOrderData(prjSrch);
+		} catch (Exception ex) {
+			lsSalesOrderDto.get(0).setStrMessage(Utility.getStackTrace(ex));
+		}
+		return lsSalesOrderDto;
 	}
 	@Override
 	public List<SalesOrderDto> getAllSalesOrderDetailsItem(String salesOrderId) {
@@ -843,6 +869,13 @@ public class EZServiceImpl implements EZService {
 			stockItemReport.get(0).setStrErrMessage(Utility.getStackTrace(ex));
 		}		
 		return stockItemReport;
+	}
+
+
+
+	@Override
+	public List<SalesOrderDto> getSOCustomerByName(PrjSearch prjSrch) {
+		return ezDaoObj.getSOCustomerByName(prjSrch);
 	}
 
 

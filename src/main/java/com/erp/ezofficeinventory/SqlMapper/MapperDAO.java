@@ -375,7 +375,9 @@ public interface MapperDAO {
 			+ "LEFT OUTER JOIN RFQHEADER d "
 			+ "on a.RFQID = d.RFQID "
 			+ "LEFT OUTER JOIN PARTYMASTER e on e.PARTYID = a.CONTID\r\n"
-			+ " WHERE a.SALEID=coalesce(#{salesid},SALEID)")
+			+ " WHERE a.SALEID=coalesce(#{prjSrch.salesOrderId},SALEID) "
+			+ " and date_format(a.SALEDATE, '%y-%m-%d') between coalesce(#{prjSrch.fromDate},date_format(a.SaleDate, '%y-%m-%d')) and coalesce(#{prjSrch.toDate},date_format(a.SALEDATE, '%y-%m-%d')) "
+			+ " and a.CUSTOMERID = coalesce(#{prjSrch.customerId},a.CUSTOMERID) order by a.SALEID desc")
 	@Results({
 		@Result(property = "saleId",column = "SaleID"),
 		@Result(property = "salesOrderNumber",column = "SaleNumber"),
@@ -392,7 +394,7 @@ public interface MapperDAO {
 		@Result(property = "remarks",column = "Remarks"),
 		@Result(property = "contId",column = "PartyID")
 	})
-	public List<SalesOrderDto> getAllSalesOrderData(@Param("salesid") String salesid);
+	public List<SalesOrderDto> getAllSalesOrderData(@Param("prjSrch") PrjSearch prjSrch);
 	
 	@Select("SELECT a.SALEID,DATE_FORMAT(a.SALEDATE, '%d/%m/%y')SALEDATE,a.ITEMID,a.UOMID,\r\n"
 			+ "b.ITEMNAME,c.UOM_SHRT_NAME,a.QUANTITY,a.RATE,ROUND(a.AMOUNT,2)AMOUNT,a.GSTPCT,Round(coalesce(a.STOCKBAL,0),2)STOCKBAL\r\n"
@@ -1410,6 +1412,20 @@ public interface MapperDAO {
 			@Result(property = "balAmt",column = "Bal_Amt")			
 		})
 		public List<StockRptDto> stockItemReport (@Param("prjSrch") PrjSearch prjSrch);
+		
+		@Select("select distinct c.CUSTOMERID,c.CUSTOMERNAME,t.TOWERDESC,c.MOBILENO,s.FLATNO\r\n"
+				+ "from SALEHEADER s inner join CUSTOMERMASTER c on s.CUSTOMERID = c.CUSTOMERID \r\n"
+				+ "inner join TOWERMASTER t on t.TOWERID = s.TOWERID\r\n"
+				+ "	and (c.CUSTOMERNAME like '%' #{prjSrch.searchVarData} '%'\r\n"
+				+ "		or c.MOBILENO like '%' #{prjSrch.searchVarData} '%')")
+		@Results({
+			@Result(property = "customerId",column = "CUSTOMERID"),
+			@Result(property = "customerName",column = "CUSTOMERNAME"),
+			@Result(property = "towerDescription",column = "TOWERDESC"),
+			@Result(property = "cutomerMobileNo",column = "MOBILENO"),
+			@Result(property = "flatNo",column = "FLATNO")	
+		})		
+		public List<SalesOrderDto> getSOCustomerByName(@Param("prjSrch") PrjSearch prjSrch);
 }
 
 

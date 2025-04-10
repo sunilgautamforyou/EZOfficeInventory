@@ -217,17 +217,20 @@ public class ActionController {
 	@PostMapping("/get-All-SO-HomePG-Data")
 	public List<SalesOrderDto> getAllSaleOrderHomePGData(@RequestBody PrjSearch prjSrch) {
 		System.err.println("-----Open getAllSaleOrderHomePGData Master ---");
-		return ezServiceObj.getAllSalesOrderData(null);
+		return ezServiceObj.getAllSalesOrderData(prjSrch);
 	}
 	
 	@GetMapping("/OpenSalesOrder")
 	public ModelAndView getOpenSalesOrderEntryPage(@RequestParam("searchVarData") String searchVarData,
 			@RequestParam("salesOrderId") String salesOrderId) {	
 		System.err.println("-----Open getOpenSalesOrderEntryPage Master ---");
+		PrjSearch prjSrch = new PrjSearch();
+		prjSrch.setSalesOrderId(salesOrderId);
+		prjSrch.setCustomerId("");
 		ModelAndView view = new ModelAndView();
 		view.setViewName("SalesOrder");
 		view.addObject("sMode", searchVarData);
-		view.addObject("so", ezServiceObj.getAllSalesOrderData(salesOrderId).get(0));
+		view.addObject("so", ezServiceObj.getAllSalesOrderData(prjSrch).get(0));
 		return view;
 	}	
 	
@@ -533,6 +536,11 @@ public class ActionController {
 	@PostMapping("/getStockItemWiseReport")
 	public List<StockRptDto> getStockItemReport(@RequestBody PrjSearch prjSrch) {
 		return ezServiceObj.stockItemReport(prjSrch);
+	}
+	
+	@PostMapping("/getSaleOrderCustomerData")
+	public List<SalesOrderDto> getSOCustomerByName(@RequestBody PrjSearch prjSrch) {
+		return ezServiceObj.getSOCustomerByName(prjSrch);
 	}
 
 }

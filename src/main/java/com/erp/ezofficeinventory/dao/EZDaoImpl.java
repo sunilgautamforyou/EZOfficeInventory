@@ -175,8 +175,8 @@ public class EZDaoImpl implements EZDao {
 	}
 
 	@Override
-	public List<SalesOrderDto> getAllSalesOrderData(String salesOrderId) {
-		return sqlMapperDaoObj.getAllSalesOrderData(salesOrderId);
+	public List<SalesOrderDto> getAllSalesOrderData(PrjSearch prjSrch) {
+		return sqlMapperDaoObj.getAllSalesOrderData(prjSrch);
 	}
 
 	@Override
@@ -487,6 +487,11 @@ public class EZDaoImpl implements EZDao {
 			stockItemReport.get(0).setStrErrMessage(Utility.getStackTrace(ex));
 		}
 		return stockItemReport;
+	}
+
+	@Override
+	public List<SalesOrderDto> getSOCustomerByName(PrjSearch prjSrch) {
+		return sqlMapperDaoObj.getSOCustomerByName(prjSrch);
 	}
 
 }

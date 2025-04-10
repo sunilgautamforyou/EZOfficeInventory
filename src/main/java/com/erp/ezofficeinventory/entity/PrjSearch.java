@@ -21,6 +21,7 @@ public class PrjSearch {
 	private String supplierName;
 	private String poId;
 	private String billNumber;
+	private String errorMessage;
 	
 	public String getSearchVarData() {
 		return searchVarData;
@@ -172,6 +173,14 @@ public class PrjSearch {
 
 	public void setBillNumber(String billNumber) {
 		this.billNumber = billNumber;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 	
 	

@@ -482,9 +482,9 @@
 	    		   		console.log(data);
 	    		   		if (data != null) {
 	    		   			if (parseFloat(data.recvdBillAmount) > 0) {
-	    		   				alert("Payment Against This Sales Order is Already Received,No Changes are allowed");
-	    		   				disableAll();
-	    				         $("#msgId").addClass("alert alert-success");
+	    		   				 disableAll();
+	    		   				 alert("Payment Against This Sales Order is Already Received,No Changes are allowed");
+	    		   				 $("#msgId").addClass("alert alert-success");
 	    				    	 $("#alertMsg").append("Payment Against This Sales Order is Already Received,No Changes are allowed"); 	    		   				
 	    		   			}
 	    		   		} 

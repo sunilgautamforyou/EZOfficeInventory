@@ -132,6 +132,35 @@
 							<div class="form-group row">
 								<a href="https://salepurchasecompany.co.in/AddNewSalesOrder">Add New Sales Order</a>
 							</div>
+							<div class="form-group row">
+								<label class="col-sm-4 col-md-1 col-form-label">Date From</label>
+								<div class="col-sm-6 col-md-3 pl0 cal-position">
+									<input type="text" id="txtFromDate" class="form-control input-group date" placeholder="Date From">
+									<i class="fa fa-calendar"></i>
+								</div>
+								<label class="col-sm-4 col-md-1 col-form-label pl15">Date To</label>
+								<div class="col-sm-6 col-md-3 pl0 cal-position">
+									<input type="text" id="txtToDate" class="form-control input-group date" placeholder="Date To">
+									<i class="fa fa-calendar"></i>
+								</div>
+							</div>
+                            <div class="form-group row" id="divSearchItem">
+							<div class="input-group">
+							<label class="col-sm-4 col-md-1 col-form-label">Search Bar</label>
+							<div class="input-group-prepend col-sm-6 col-md-3 pl0">
+								<span class="input-group-text"><i class="fa fa-search"></i></span>
+								<input type="text" class="form-control" id="searchData" 
+								placeholder="Enter Customer Name Here"">
+							</div>
+							<label class="col-sm-4 col-md-1 col-form-label pl15"></label>
+                            <div class="col-sm-6 col-md-3 pl0">
+                            	<Button ID="btnSrch" class="common-btn button-dark" onclick="openSearchBox()" >Search</Button>
+                            	<Button ID="btnView" class="common-btn button-dark" onclick="loadCustomerHomePGData('0')" >Show</Button>
+                            </div>									
+							</div>  
+
+                                                            	
+                            </div>							
 							<div class="table-responsive style-8">
 								<table id="example" class="table table-bordered table-hover no-footer" style="width:100%">
 									 <thead id="mainHead" class="thead-dark"></thead>
@@ -149,25 +178,148 @@
         </footer>		        
     </div>
     <!--Modal Popup Area-->
+	<div class="modal" tabindex="-1" role="dialog" id="userDataModel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Search Customer Data</h5>
+					<button type="button" class="common-close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div id="optionData">
+						<table class="table" id="userTable">
+							<thead id='tHead'>
+								<tr>
+									<th hidden>id</th>	<!-- 0 -->
+									<th>Tower</th> <!-- 1 -->
+									<th>Flat No</th> <!-- 2 -->
+									<th>Customer Name</th> <!-- 3 -->
+									<th>Mobile Number</th> <!-- 4 -->
+									<th>Select One</th> <!-- 7 -->
+								</tr>
+							</thead>
+							<tbody id='tbodyLoan'>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="common-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
     <!-- JavaScript files-->
-    <script src="js/jquery.min.js"></script>
+ 	<script src="js/jquery.min.js"></script>
     <script src="js/popper.min.js"></script>
-<%--    <script src="js/bootstrap.min.js"></script>
-     <script src="js/jquery.dataTables.min.js"></script> 
-    <script src="js/dataTables.bootstrap4.min.js"></script> --%>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/dataTables.bootstrap4.min.js"></script>
     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <!-- Main File-->
-    <script src="js/custom.js"></script>      
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>     
 </body>
 <script type="text/javascript">
+$('.input-group.date').datepicker({
+    format: "dd-M-yy",
+    todayHighlight: true,
+    autoclose: true,
+    showMeridian: true,
+}).on('changeDate', function (ev) {
+    $(this).datepicker('hide');
+    return validate();
+});
+function setCurrentDate() {
+   	var today = new Date();
+   	var dd = String(today.getDate()).padStart(2, '0');
+   	//var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+   	var month = today.toLocaleString('default', { month: 'short' });
+
+   	var yyyy = today.getFullYear().toString().substr(-2);
+
+   	today = dd + '-' + month + '-' + yyyy;
+   		
+   	$("#txtFromDate").val('01' + '-' + month + '-' + yyyy);
+   	$("#txtToDate").val(today);
+   }
 jQuery(document).ready(function($){
 	var viewBtn;
 	var editBtn;
 	var printBtn;
 	var table ;
-	loadCustomerHomePGData();
+  	setCurrentDate();
+ 	$('#txtFromDate').attr('readonly', true);
+ 	$('#txtFromDate').addClass('input-disabled');	
+ 	$('#txtToDate').attr('readonly', true);
+ 	$('#txtToDate').addClass('input-disabled');		
+	loadCustomerHomePGData("0");
 });
-function loadCustomerHomePGData() {
+function validate() {
+	var fromDate = $('#txtFromDate').val();
+	var todate = $('#txtToDate').val();
+   	if (Date.parse(fromDate) > Date.parse(todate)) {
+   		alert("From Date Cannot Greator then ToDate");
+   		setCurrentDate();
+   		return false;
+   	}
+	 return true;
+}
+function openSearchBox() {
+	var searchDataVal=$('#searchData').val(); 
+	$('#tbodyLoan').html('');
+	if (searchDataVal == "") {
+		alert('Input Some Text to Search the Item Data');
+		$('#searchData').focus();
+		return false;
+	} else {
+		 $.ajax({
+			 //url: '/EZOfficeInventory/getSaleOrderCustomerData',
+			 url: 'https://salepurchasecompany.co.in/getSaleOrderCustomerData',
+			 type: 'Post',
+			 contentType: 'application/json',
+			   	 data: JSON.stringify(
+				 {
+				    "searchVarData":searchDataVal
+				 }),  
+				success: function (data) {
+					console.log(data);
+					if(data.length!=0) {
+						$('#optionData').show();
+						for(var i=0;i<data.length;i++){
+							$('#tbodyLoan').append(
+								'<tr>'+
+								'<td hidden>'+data[i].customerId+'</td>'+
+								'<td>'+data[i].towerDescription+'</td>'+
+								'<td>'+data[i].flatNo+'</td>'+
+								'<td>'+data[i].customerName+'</td>'+
+								'<td>'+data[i].cutomerMobileNo+'</td>'+
+								'<td><label class="radio-inline"> <input type="radio" class="radioUser" name="selectUser" value='+data[i].itemId+'>Select</label></td></tr>'
+							);
+						}
+						$('#userDataModel').modal('show');
+					} else{
+			  		alert("No details are available on given input.");
+			  		$('#searchData').focus();
+		        }
+				},
+		    error: function (error) {
+		        console.log(error);
+		    }
+		 });
+	}
+} 
+$("#userTable").on('click','.radioUser',function(){
+	var currentRow=$(this).closest("tr"); 
+    var customerId=currentRow.find("td:eq(0)").text();
+    $('#example').DataTable().clear().destroy();
+    loadCustomerHomePGData(customerId);
+    $('#searchData').val('');
+    $('#userDataModel').modal('hide');
+    $('#tbodyLoan').html('');    
+});
+function loadCustomerHomePGData(customerId) {
 	$.ajax({
 		//url: '/EZOfficeInventory/get-All-SO-HomePG-Data',
 		url: 'https://salepurchasecompany.co.in/get-All-SO-HomePG-Data',
@@ -175,8 +327,10 @@ function loadCustomerHomePGData() {
 		contentType: 'application/json',	
 		   data: JSON.stringify(
 		   	{
-		   		"searchVarData":""
-		   		
+				"fromDate":$('#txtFromDate').val(),
+				"toDate":$('#txtToDate').val(),
+				"salesOrderId":"",
+				"customerId":customerId
 		   	}),
 		   	dataType: 'json',
 		   	success: function (data) {
@@ -218,11 +372,18 @@ function loadCustomerHomePGData() {
 	});	
 }
 function createNewDataTable() {
-	table = new DataTable('#example', {
+/* 	table = new DataTable('#example', {
 		"ordering" : true,
 		fixedHeader : true,
 		"pageLength" : 5
-	});
+	}); */
+	if (!$.fn.DataTable.isDataTable('#example')) {
+	    $('#example').DataTable({
+			"ordering" : true,
+			fixedHeader : true,
+			"pageLength" : 5
+		});
+	}	
 }
 function OpenEntryPG(sMode, salesOrderId) {
 	srchData = {
