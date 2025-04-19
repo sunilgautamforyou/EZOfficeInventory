@@ -209,9 +209,8 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td></td>
                                             <td class="border-left"><b>Total Amount</b></td>
-											<td style="text-align: left;">
+											<td style="text-align: center;" colspan="3">
 												<div class="input-group">
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>
@@ -220,7 +219,6 @@
 													</div>
 												</div>
 											</td>                                              
- 											<td></td>                                            
                                            
                                         </tr>
                                        
@@ -228,8 +226,8 @@
                                     </table>
                                     </div>
                                </div>	
-                        		<div id="msgId">
-					          		<h5 id="alertMsg"></h5>
+                        		<div id="msgId" role="alert">
+					          		<h5 id="alertMsg" align="center" style="text-align: center;font: bold;color: blue;"></h5>
 					          	</div>
                                <div class="col-sm-6 text-center btn-spaceing mt15">
                                 <div class=" w3-bar">
@@ -311,6 +309,8 @@
 	    }).on('changeDate', function (ev) {
 	        $(this).datepicker('hide');
 	    });	
+	 	$('#txtSoDate').attr('readonly', true);
+	 	$('#txtSoDate').addClass('input-disabled');		    
 	    function setCurrentDate() {
 	    	var today = new Date();
 	    	var dd = String(today.getDate()).padStart(2, '0');
@@ -906,11 +906,13 @@
 		if (parseFloat(qty) > parseFloat(stkBalQty)) {
 			alert("Sale Order Qty Cannot be Greator Than Stock Qty["+ stkBalQty +"]");
 			$(this).closest('tr').find('#txtQty').val('');
+			$('#btnSave').attr('disabled', true);
 			return false;
 		}
 		var soItemAmount = calculateSOItemAmt(parseFloat(qty),parseFloat(rate),parseFloat(gstPct));
 		$(this).closest('tr').find('#txtAmt').val(soItemAmount.toFixed(2));
 		calculateNetAmount();
+		$('#btnSave').attr('disabled', false);
 	});
   	$("#sotable").on('keyup','#txtRate',function(){
 		var qty= $(this).closest('tr').find('#txtQty').val();
@@ -1064,6 +1066,8 @@
 			});
 			console.log(arrayObj);
 			var xhr = new XMLHttpRequest();
+         	$('#btnSave').prop('disabled', true);
+           	$('#btnSave').html('<i class="fas fa-spinner fa-spin"></i> Processing...');			
 			//xhr.open("POST", "/EZOfficeInventory/Save-SO-Data", true);
 			xhr.open("POST", "https://salepurchasecompany.co.in/Save-SO-Data", true);
 			xhr.setRequestHeader("Content-Type", "application/json");
@@ -1072,7 +1076,7 @@
 				  var responseData = JSON.parse(xhr.responseText);
 				  console.log(responseData);
 				  if (responseData.errorFlag == false) {
-			           $("#msgId").addClass("alert alert-success");
+			           $("#msgId").addClass("alert alert-primary");
 			    	   $("#alertMsg").append(responseData.strMessage.substring(0,responseData.strMessage.indexOf(":"))); 
 			    	   $("#txtSoNumber").val(responseData.strMessage.substring(responseData.strMessage.indexOf(":")+1,responseData.strMessage.length));
 			    	   $("#txtSoDate").attr('disabled', true);
@@ -1088,13 +1092,15 @@
 			    	   alert(responseData.strMessage);	
 			    	   $('#btnPrint').show();
 				  } else {
-		           	  $("#msgId").addClass("alert alert-success");
+		           	  $("#msgId").addClass("alert alert-danger");
 		           		alert(responseData.strMessage);
 		    	   	  $("#alertMsg").append(responseData.strMessage); 
 		    	   	$(this).prop('disabled', false);
 				}
 			  }				
 			};
+        	$('#btnSave i').removeClass('fas fa-spinner fa-spin');
+        	$('#btnSave').html('Show');			
 			xhr.send(JSON.stringify(arrayObj)); 
 		}
 	}
