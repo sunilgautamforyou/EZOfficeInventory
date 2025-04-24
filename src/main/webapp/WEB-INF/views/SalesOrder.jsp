@@ -1100,7 +1100,7 @@
 			  }				
 			};
         	$('#btnSave i').removeClass('fas fa-spinner fa-spin');
-        	$('#btnSave').html('Show');			
+        	$('#btnSave').html('Save');			
 			xhr.send(JSON.stringify(arrayObj)); 
 		}
 	}

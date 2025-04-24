@@ -33,6 +33,8 @@ import com.erp.ezofficeinventory.entity.UomDto;
 import com.erp.ezofficeinventory.entity.UserInputParam;
 import com.erp.ezofficeinventory.entity.stockMasterDto;
 
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 
 
@@ -43,6 +45,12 @@ public class ActionController {
 
 	@Autowired
 	EZService ezServiceObj;
+	
+	@Autowired  
+	HttpSession httpSession;
+	
+	@Autowired
+	HttpServletResponse httpServletresponse;	
 
 	@PostMapping("/login")
 	public Object loginIntoSystem(@RequestBody LoginDto loginDato) {
@@ -50,6 +58,8 @@ public class ActionController {
 		LoginDto loginDetails = ezServiceObj.loginValidate(loginDato);
 		if (loginDetails != null) {
 			System.err.println("Login Success");
+			httpSession.setAttribute("Name", loginDetails.getUserId());
+			httpSession.setAttribute("pkey", loginDetails.getLoginId());			
 		}
 		return loginDetails;
 	}

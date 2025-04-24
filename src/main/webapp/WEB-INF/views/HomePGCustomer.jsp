@@ -118,7 +118,7 @@
         <div class="breadcrumb-holder">
             <div class="container-fluid">
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item active">UOM Master</li>
+                    <li class="breadcrumb-item active">Customer Master Home Page</li>
                 </ul>
             </div>
         </div>
@@ -159,6 +159,12 @@ jQuery(document).ready(function($){
 	var viewBtn;
 	var editBtn;
 	var table ;
+/* 	var userName =  ${sessionScope.username};
+	if (userName == "") {
+		alert("You are not logged in";)
+	} else {
+		
+	} */
 	loadCustomerHomePGData();
 });
 function loadCustomerHomePGData() {

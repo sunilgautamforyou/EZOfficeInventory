@@ -28,6 +28,7 @@
     <!-- Custom stylesheet - for your changes-->
     <!-- Favicon-->
     <link rel="shortcut icon" href="img/favicon.ico">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <div class="page login-page">
@@ -61,8 +62,8 @@
                       </div>
                         <div class="form-group text-center"><a id="show" onclick="login()" class="btn login-btn">Login</a>
                         </div>
-		               <div id="msgId">
-			          	<h5 id="alertMsg"></h5>
+		               <div id="msgId" role="alert">
+			          	<h5 id="alertMsg" align="center" style="text-align: center;font: bold;color: blue;"></h5>
 			          	</div>
                       </form>
                   
@@ -74,62 +75,68 @@
               </div>
 </div>
     <!-- JavaScript files-->
-    <script src="js/jquery.min.js"></script>
+ 	<script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.dataTables.min.js"></script>
     <script src="js/dataTables.bootstrap4.min.js"></script>
     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <!-- Main File-->
-    <script src="js/custom.js"></script> 
+    <script src="js/custom.js"></script>
  
 </body>
 <script type="text/javascript">
-	function login() {
-		var username = $("#login-password").val();
-		var password = $("#login-password").val();
+function login() {
+    var username = $("#login-password").val();
+    var password = $("#login-password").val();
 
-		var validation = 0;
-		if (username == 0 || username == null || username == "") {
-			$("#msgId").addClass("alert alert-danger");
-			$("#alertMsg").append(" Please enter username. ");
-			return false;
-		}
-		if (password == 0 || password == null || password == "") {
- 			$("#msgId").addClass("alert alert-danger");
-			$("#alertMsg").append(" Please enter password. "); 
-			return false;
-		}
-		if (validation == 0) {
-			//  alert("login")
-			$.ajax({
-						//url : '/EZOfficeInventory/login',
-						url : 'https://salepurchasecompany.co.in/login',
-						type : 'POST',
-						contentType : 'application/json',
-						data : JSON.stringify({
-							"loginUserName" : username,
-							"password" : password
-						}),
-						success : function(data) {
-							console.log(data);
-							if ((data.loginUserName != null)) {
+    var validation = 0;
+    if (username == 0 || username == null || username == "") {
+        $("#msgId").addClass("alert alert-warning");
+        $("#alertMsg").append(" Please enter username. ");
+        return false;
+    }
+    if (password == 0 || password == null || password == "") {
+        $("#msgId").addClass("alert alert-warning");
+        $("#alertMsg").append(" Please enter password. ");
+        return false;
+    }
+    if (validation == 0) {
+        //  alert("login")
+        var data = JSON.stringify({
+            "loginUserName": username,
+            "password": password
+        });
+        $.ajax({
+                //url: '/EZOfficeInventory/login',
+                url: 'https://salepurchasecompany.co.in/login',
+                method: "POST",
+                data: data,
+                contentType: 'application/json',
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    $('#show').prop('disabled', true);
+                    $('#show').html('<i class="fas fa-spinner fa-spin"></i> Processing...');
+                },
+                success: function(data) {
+                    if (data.loginUserName != null) {
+                    	$("#msgId").addClass("alert alert-warning");
+                    	$("#alertMsg").append("Login Success");
+                    	//location.href = "/EZOfficeInventory/dashBoard";
+                        location.href = "https://salepurchasecompany.co.in/dashBoard";            		
+                    }
+                },
+                error: function(ts) {
+                    console.log(error)
+                    $("#msgId").addClass("alert alert-warning");
+                    $("#alertMsg").append(data.errorMesage);
+                }             
+            });
 
-								//location.href = "/EZOfficeInventory/dashBoard";
-								location.href = "https://salepurchasecompany.co.in/dashBoard";
-							} else {
-								$("#msgId").addClass("alert alert-success");
-								$("#alertMsg").append(data.errorMesage)								
-							}
-						},
-						error : function(error) {
-							console.log(error)
-							$("#msgId").addClass("alert alert-success");
-							$("#alertMsg").append(data.errorMesage);
-						}
-					});
-		}
+    }
 
-	};
+};
 </script>
 </html>
