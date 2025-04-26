@@ -283,7 +283,7 @@ public interface MapperDAO {
 			+ "	select\r\n"
 			+ "		X.ITEMID,\r\n"
 			+ "		X.UOMID,\r\n"
-			+ "		(X.MRNQTY-Y.SOQty)BalStkQty\r\n"
+			+ "		(X.MRNQTY-coalesce(Y.SOQty,0))BalStkQty\r\n"
 			+ "	from\r\n"
 			+ "		(\r\n"
 			+ "		select\r\n"

@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Material Receipt Note</title>
+    <title>Sales Order</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
@@ -27,47 +27,8 @@
     <link rel="stylesheet" href="css/responsive.css">
     <!-- Custom stylesheet - for your changes-->
     <!-- Favicon-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="shortcut icon" href="img/favicon.ico">
-    <style type="text/css">
-body {
-  margin: 0
-}
-
-table {
-  width: 100%
-}
-
-thead th,
-tfoot tr {
-  position: sticky;
-  background: white;
-}
-
-thead th {
-  top: 0
-}
-
-tfoot tr {
-  bottom: 0
-}
-
-th,
-td {
-  font-size: 12px;
-  text-align: center
-}
-
-
-/*give some space between thead and tfoot*/
-
-tbody tr:first-of-type td {
-  padding-top:  10px;
-}
-
-tbody tr:last-of-type td {
-  padding-bottom: 10px;
-}    
-    </style>
 </head>
 <body>
       <!-- Side Navbar -->
@@ -223,19 +184,27 @@ tbody tr:last-of-type td {
 									<td></td>
 									<td></td>
 									<td class="border-left"><b>Total Amount</b></td>
-                                     <td class="border-left"> 
+<%--                                      <td class="border-left"> 
                                          <span><b><label id="lblTotal"></label></b></span>
                                            <i class="fa fa-rupee-sign"></i>
-                                       </td>
-									<td></td>
+                                       </td> --%>
+										<td style="text-align: center;" colspan="2">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>
+													<input type="text" class="form-control" id="txtNetTotalAmt" 
+													placeholder="Calculating Bill Amount....." disabled="disabled" style="width: 100%;color: white;background-color: black;font: bold;">
+												</div>
+											</div>
+										</td>                                        
 								</tr>
 								</tfoot>
 							</table>
 						</div>
 					</div>	
-               		<div id="msgId">
-		          		<h5 id="alertMsg"></h5>
-		          	</div> 
+                 	<div id="msgId" role="alert">
+		          	   <h5 id="alertMsg" align="center" style="text-align: center;font: bold;color: blue;"></h5>
+		          	</div>
                      <div class="col-sm-6 text-center btn-spaceing mt15">
                         <div class=" w3-bar">
                             <Button ID="btnSave" onclick="saveData()" class="common-btn">Save</Button>
@@ -266,8 +235,8 @@ tbody tr:last-of-type td {
 						<table class="table" id="userTable">
 							<thead id='tHead'>
 								<tr>
-									<th hidden>id</th>
-									<th hidden>Uomid</th>
+									<th hidden="true">id</th>
+									<th hidden="true">Uomid</th>
 									<th>Description</th>
 									<th>UOM</th>
 									<th>Qty</th>
@@ -408,7 +377,7 @@ tbody tr:last-of-type td {
     $('#lstPartyNo').on('change', function() {
     	var partyNo = $('#lstPartyNo').val();
     	$('#lstPoNo').html('');
-    	$('#lblTotal').html('');
+    	$('#txtNetTotalAmt').val('');
     	$('#reportDtltdata').html('');
     	$('#lstPoNo').append('<option value="0">Choose PO No...</option>');
     	if (partyNo != 0) {
@@ -417,7 +386,7 @@ tbody tr:last-of-type td {
     });
     $('#lstPoNo').on('change', function() {
     	$('#reportDtltdata').html('');
-    	$('#lblTotal').html('');
+    	$('#txtNetTotalAmt').val('');
     	$('#txtBillNumber').focus();
     });    
     function openSearchBox() {
@@ -440,12 +409,12 @@ tbody tr:last-of-type td {
 						 var obj={};
 						 $('#tbodyLoan').append(
 						'<tr>'+
-						'<td hidden>'+data[i].itemId+'</td>'+
-						'<td hidden>'+data[i].uomId+'</td>'+
-						'<td>'+data[i].itemDesc+'</td>'+
-						'<td>'+data[i].uomDesc+'</td>'+
-						'<td>'+data[i].poQty+'</td>'+
-						'<td><label class="radio-inline"><input type="checkbox" id="chkItem" name="selectUser" value='+data[i].itemId+'>Select</label></td></tr>'
+						'<td hidden="true">'+data[i].itemId+'</td>'+ // 1
+						'<td hidden="true">'+data[i].uomId+'</td>'+ // 2
+						'<td>'+data[i].itemDesc+'</td>'+ // 3
+						'<td>'+data[i].uomDesc+'</td>'+ // 4
+						'<td>'+data[i].poQty+'</td>'+ // 5
+						'<td><label class="radio-inline"><input type="checkbox" id="chkItem" name="selectUser" value='+data[i].itemId+'>Select</label></td></tr>' // 4
 						);			
 						obj["itemId"]=data[i].itemId; 
 						obj["uomId"]=data[i].uomId; 
@@ -524,10 +493,11 @@ tbody tr:last-of-type td {
     				gridItemobj["uomId"] = $(this).html();
     			}
     		}); */
-    		gridItemobj["itemId"] =$(this).closest('tr').find("td:eq(0)").text();
-    		gridItemobj["uomId"] = $(this).closest('tr').find("td:eq(1)").text();
-    		gridItemobj["itemDesc"] = $(this).closest('tr').find("td:eq(3)").text();
-    		gridItemobj["UomDesc"] = $(this).closest('tr').find("td:eq(4)").text();
+    		gridItemobj["itemId"] =$(this).closest('tr').find("td:eq(1)").text();
+    		gridItemobj["uomId"] = $(this).closest('tr').find("td:eq(2)").text();
+    		gridItemobj["itemDesc"] = $(this).closest('tr').find("td:eq(4)").text();
+    		gridItemobj["UomDesc"] = $(this).closest('tr').find("td:eq(5)").text();
+    		gridItemobj["rowNo"] = $(this).closest('tr').find("td:eq(3)").text();
     		gridDataArray.push(gridItemobj);
     	});
     	
@@ -551,7 +521,7 @@ tbody tr:last-of-type td {
   				var data = JSON.stringify(filter);
   	    		var stringify = JSON.parse(data); 
   	    		for (var k = 0; k < stringify.length; k++) {
-  	    			alert("Duplicate Item Not Allowed. \nItem ["+ stringify[k]['itemDesc'] +" With UOM "+ stringify[k]['UomDesc'] +"] Already Add in Grid.");
+  	    			alert("Duplicate Item Not Allowed. \nItem ["+ stringify[k]['itemDesc'] +" With UOM "+ stringify[k]['UomDesc'] +"] Already Add in Grid at RowNo "+ stringify[k]['rowNo'] +"");
   	    		}
   				return false;
   			}
@@ -640,6 +610,8 @@ tbody tr:last-of-type td {
  	 		var xhr = new XMLHttpRequest();
  	 		//xhr.open("POST", "/EZOfficeInventory/InsertUpdateMrnData", true);
  	 		xhr.open("POST", "https://salepurchasecompany.co.in/InsertUpdateMrnData", true);
+         	$('#btnSave').prop('disabled', true);
+           	$('#btnSave').html('<i class="fas fa-spinner fa-spin"></i> Processing...');	 	 		
  	 		xhr.setRequestHeader("Content-Type", "application/json");
  	 		xhr.onreadystatechange = function () {
  	 			if (xhr.readyState === 4 && xhr.status === 200) {
@@ -661,6 +633,8 @@ tbody tr:last-of-type td {
  	 				}
  	 			}
  	 		};
+        	$('#btnSave i').removeClass('fas fa-spinner fa-spin');
+        	$('#btnSave').html('SAVE');	 	 		
  	 		xhr.send(JSON.stringify(mrnGridItemArray)); 
  		}
 
@@ -769,11 +743,11 @@ tbody tr:last-of-type td {
  	});
  	function calacuateNetMrnAmount() {
  		 var netMrnAmount = 0;
- 		$('#lblTotal').html('');
+ 		$('#txtNetTotalAmt').val('');
  		$("#reportDtltdata tr").each(function(){
  	 		netMrnAmount = netMrnAmount + parseFloat($(this).closest('tr').find("td:eq(13)").text());
  	 	});
- 	 	$('#lblTotal').html(netMrnAmount);
+ 	 	$('#txtNetTotalAmt').val(formatNumber(netMrnAmount));
  	}
     jQuery(document).ready(function($){
     	var viewBtn;
@@ -841,7 +815,7 @@ tbody tr:last-of-type td {
 			    	    			'<td>'+data[i].balanceQty.toFixed(2)+'</td>'+
 			    	    			'<td><input type="text" class="form-control" id="txtMrnQty" placeholder="Qty" value="'+ data[i].mrnQty +'"></td>'+
 			    	    			'<td><input type="text" class="form-control" id="txtDiscPct" placeholder="Discount%" value="'+ data[i].discountPct +'"></td>'+
-			    	    			'<td>'+data[i].mrnItemAmount+'</td>'+
+			    	    			'<td>'+data[i].mrnItemAmount+'</td>'+ 			    	    			
 			    	    			'<td>'+delBtn+'</td>'+
 			    	    		   +'</tr>'
 			   	    		); 
@@ -858,6 +832,12 @@ tbody tr:last-of-type td {
 			    }
 		});    	
     }
+	function allowNumericWithDecimal(event) {
+	    if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
+	            $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+	        event.preventDefault();
+	    }		
+	}    
 	function exitToHomePage() {
 		//location.href = "/EZOfficeInventory/mrn";
 		location.href = "https://salepurchasecompany.co.in/mrn";
@@ -866,6 +846,9 @@ tbody tr:last-of-type td {
 		//location.href = "/EZOfficeInventory/mrn";
 		location.href = "https://salepurchasecompany.co.in/AddNewMRN";
 	}   	
+  	function formatNumber(n) {
+  	  return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+ 	} 	
     </script>	    
 </body>
 </html>

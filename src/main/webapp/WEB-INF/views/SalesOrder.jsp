@@ -482,10 +482,11 @@
 	    		   		console.log(data);
 	    		   		if (data != null) {
 	    		   			if (parseFloat(data.recvdBillAmount) > 0) {
-	    		   				 disableAll();
 	    		   				 alert("Payment Against This Sales Order is Already Received,No Changes are allowed");
 	    		   				 $("#msgId").addClass("alert alert-success");
-	    				    	 $("#alertMsg").append("Payment Against This Sales Order is Already Received,No Changes are allowed"); 	    		   				
+	    				    	 $("#alertMsg").append("Payment Against This Sales Order is Already Received,No Changes are allowed"); 	
+	    				    	 $("#sotable").find("input,button,textarea,select").attr("disabled", "disabled");
+	    				    	 disableAll();
 	    		   			}
 	    		   		} 
 		   		   	},
@@ -1165,7 +1166,7 @@
 	}
   	function formatNumber(n) {
     	  return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-    	}  	
+    }  	
 	</script>
 </body>
 </html>
