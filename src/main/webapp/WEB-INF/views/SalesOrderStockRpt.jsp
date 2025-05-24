@@ -230,8 +230,6 @@
        todayHighlight: true,
        autoclose: true,
        showMeridian: true,
-       startDate: "-365d",
-       endDate: "+30d",
    }).on('changeDate', function (ev) {
        $(this).datepicker('hide');
    });     
@@ -324,12 +322,17 @@
 	   }
 	   
 	   if (validate() == true) {
-	       $('#btnShow').html(spinner);	
 		   $.ajax({
 	    		//url: '/EZOfficeInventory/search-SoStk-Rpt',
 	    		url: 'https://salepurchasecompany.co.in/search-SoStk-Rpt',
 	         	type: 'POST',
 	    		contentType: 'application/json',	
+	               cache: false,
+	               processData: false,
+	               beforeSend:function(){
+	             	  $('#btnShow').prop('disabled', true);
+	             	  $('#btnShow').html('<i class="fas fa-spinner fa-spin"></i> Processing...');            	   
+	               },	    		
 	    		   data: JSON.stringify(
 	    		   	{
 	    		   		"towerNo":towerId,
@@ -366,7 +369,8 @@
 	    		   			}
 	    		   			disableEnableControl();
 	    		   			createNewDataTable();
-	    		   			$('#btnShow').text("Show");
+	                    	$('#btnShow i').removeClass('fas fa-spinner fa-spin');
+	                    	$('#btnShow').html('Show');	    		   			
 	    		   		} else {
 	    		   			alert("No Data Found");
 	    		   			$('#btnShow').text("Show");
@@ -385,6 +389,7 @@
 		table = new DataTable('#sotable', {
 			"ordering" : true,
 			fixedHeader : true,
+			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Show all"]],
 			"pageLength" : 10
 		});
 	}   

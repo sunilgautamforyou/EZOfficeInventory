@@ -301,8 +301,6 @@
        todayHighlight: true,
        autoclose: true,
        showMeridian: true,
-       startDate: "-365d",
-       endDate: "+30d",
    }).on('changeDate', function (ev) {
        $(this).datepicker('hide');
    });     
@@ -371,7 +369,7 @@
 	   $('#lstSoNo').html('');
 	   $('#lstSoNo').append('<option value=0>Choose Sales Order</option>');
 	   $.ajax({
-	   	//	url: '/EZOfficeInventory/get-tower-list',
+	   		//url: '/EZOfficeInventory/get-tower-list',
 	   		url: 'https://salepurchasecompany.co.in/get-tower-list',
 	        	type: 'POST',
 	   		contentType: 'application/json',	

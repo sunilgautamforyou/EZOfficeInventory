@@ -167,7 +167,7 @@ min-width: 100px;
 <h1>Chaudhary Buildwell</h1>
 <h3>Stock Report ItemWise</h3>
 <div class="purchase-section-dtls">
-<div class="purchase-section-dtls-left">
+<%-- <div class="purchase-section-dtls-left">
 <table class="text-section" style="line-height: 23px; padding-left: 10px;">
 <tr>
 <td class="textclr">From Date</td>
@@ -182,7 +182,7 @@ To Date
 <td><h1>${stkItem.getToDate()}</h1></td>
 </tr>
 </table>
-</div>
+</div> --%>
 <div class="purchase-section-dtls-right" style="text-align: left;">
 <table class="text-section" style="line-height: 23px; text-align: left; float:right; padding-right: 20px;">
 

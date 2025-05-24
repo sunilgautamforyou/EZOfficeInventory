@@ -859,11 +859,11 @@ public class EZServiceImpl implements EZService {
 	public List<StockRptDto> stockItemReport(PrjSearch prjSrch) {
 		List<StockRptDto> stockItemReport = new ArrayList<>();
 		try {
-			Date dtFrom = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getFromDate());
-			Date dtToDate = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getToDate());
-			
-			prjSrch.setFromDate(new SimpleDateFormat("yy-MM-dd").format(dtFrom));
-			prjSrch.setToDate(new SimpleDateFormat("yy-MM-dd").format(dtToDate));
+//			Date dtFrom = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getFromDate());
+//			Date dtToDate = new SimpleDateFormat("dd-MMM-yy").parse(prjSrch.getToDate());
+//			
+//			prjSrch.setFromDate(new SimpleDateFormat("yy-MM-dd").format(dtFrom));
+//			prjSrch.setToDate(new SimpleDateFormat("yy-MM-dd").format(dtToDate));
 			stockItemReport = ezDaoObj.stockItemReport(prjSrch);
 		} catch (Exception ex) {
 			stockItemReport.get(0).setStrErrMessage(Utility.getStackTrace(ex));

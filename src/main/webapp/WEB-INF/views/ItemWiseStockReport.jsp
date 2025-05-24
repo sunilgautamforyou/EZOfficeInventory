@@ -127,7 +127,7 @@
          	 	 <div class="card">
          	 	 	<div class="card-body">
          	 	 		<div class="container">
-                           <div class="form-group row">
+<!--                            <div class="form-group row">
                            <label class="col-sm-4 col-md-1 col-form-label">From Date:</label>
                                <div class="col-sm-6 col-md-3 pl0 cal-position">
     	                            <input type="text" id="txtFromDate" class="form-control input-group date" placeholder="From Date">
@@ -138,7 +138,7 @@
 	                                 <input type="text" id="txtToDate" class="form-control input-group date" placeholder="To Date">
 		                                  <i class="fa fa-calendar"></i>                                     
                                   </div>
-                            </div>    
+                            </div>  -->   
 			         		<div id="msgId">
 					          		<h5 id="alertMsg"></h5>
 					          	</div> 
@@ -193,7 +193,7 @@
    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
    <script type="text/javascript">
-   $('.input-group.date').datepicker({
+/*    $('.input-group.date').datepicker({
        format: "dd-M-yy",
        todayHighlight: true,
        autoclose: true,
@@ -223,14 +223,13 @@
    		
    	$("#txtFromDate").val('01' + '-' + month + '-' + yyyy);
    	$("#txtToDate").val(today);
-   }
+   } */
    function getStkReportData() {
 	 var tabRowLen = 1;
 	 var data = JSON.stringify({
-		    "fromDate":$('#txtFromDate').val(),
-		    "toDate":$('#txtToDate').val()
+		    "fromDate":"",
+		    "toDate":""
 		});	   
-	 var spinner = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
 	   $.ajax({
                //url:"/EZOfficeInventory/getStockItemWiseReport",
                url:"https://salepurchasecompany.co.in/getStockItemWiseReport",
@@ -240,7 +239,12 @@
                cache: false,
                processData: false,
                beforeSend:function(){
-            	   $('#btnShow').html(spinner);
+   				if ( $.fn.DataTable.isDataTable('#example') ) {
+  				  $('#example').DataTable().clear().destroy();
+  				  $('#example tbody').empty();
+  				}          	   
+             	  $('#btnShow').prop('disabled', true);
+             	  $('#btnShow').html('<i class="fas fa-spinner fa-spin"></i> Processing...');            	   
                },
                success:function(data)
                {
@@ -266,10 +270,9 @@
               			tabRowLen++;
               		}
               		createNewDataTable();
-              		$('#btnShow').text("Show");
-              		$('#btnShow').attr('disabled', true);
-              		$('#txtFromDate').attr('disabled', true);
-              		$('#txtToDate').attr('disabled', true);
+                	$('#btnShow').prop('disabled', true);
+                	$('#btnShow i').removeClass('fas fa-spinner fa-spin');
+                	$('#btnShow').html('Show');              		
               		$('#btnPrint').show();
               	}
               }
@@ -285,12 +288,13 @@
  		return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
   }    
     function createNewDataTable() {
-		table = new DataTable('#stlTable', {
+ 		table = new DataTable('#stlTable', {
 			"ordering" : true,
 			fixedHeader : true,
 			"pageLength" : 10,
+			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Show all"]],
 			scrollX: true		
-		});
+		}); 		
 	}  	
 	function refreshData() {
 		//location.href = "/EZOfficeInventory/itmStkRpt";
