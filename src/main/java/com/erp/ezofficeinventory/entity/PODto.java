@@ -18,7 +18,7 @@ public class PODto {
 	private int createdById;
 	private String itemDesc;
 	private String uomDesc;
-	private int gstPct;
+	private double gstPct;
 	private String partyContactNo;
 	private String partyAddress;
 	private String categeoryName;
@@ -141,10 +141,10 @@ public class PODto {
 	
 	
 	
-	public int getGstPct() {
+	public double getGstPct() {
 		return gstPct;
 	}
-	public void setGstPct(int gstPct) {
+	public void setGstPct(double gstPct) {
 		this.gstPct = gstPct;
 	}
 	

@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="css/responsive.css">
     <!-- Custom stylesheet - for your changes-->
     <!-- Favicon-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="shortcut icon" href="img/favicon.ico">
 </head>
 
@@ -174,12 +175,19 @@
                                             <td></td>
                                             <td></td>
                                             <td class="border-left"><b>Total Amount</b></td>
-                                            <td class="border-left"> 
+<%--                                             <td class="border-left"> 
                                                 <span><b><label id="lblTotal"></label></b></span>
                                                 <i class="fa fa-rupee-sign"></i>
-                                              </td>
-                                            <td></td> 
-                                           
+                                              </td> --%>
+											<td style="text-align: center;" colspan="2">
+												<div class="input-group">
+													<div class="input-group-prepend">
+														<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>
+														<input type="text" class="form-control" id="txtNetTotalAmt" 
+														placeholder="Calculating Bill Amount....." disabled="disabled" style="width: 100%;color: white;background-color: black;font: bold;">
+													</div>
+												</div>
+											</td>                                               
                                         </tr>
                                        
                                       </tbody>
@@ -356,10 +364,25 @@
             		'<td>'+ tabRowLen +'</td>'+
             		'<td>'+ itemName +'</td>'+
             		'<td>'+ uomDesc +'</td>'+
-            		'<td>'+ gstNo +'</td>'+
+            		//'<td>'+ gstNo +'</td>'+
+            		'<td><input type="text" class="form-control" id="txtGst"  value="'+ gstNo +'" placeholder="Gst"></td>'+	
             		'<td><input type="text" class="form-control" id="txtQty"  placeholder="Qty"></td>'+
-            		'<td><input type="text" class="form-control" id="txtRate" value="'+ itemRate +'" placeholder="Rate"></td>'+
-            		'<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount"></td>'+
+            		//'<td><input type="text" class="form-control" id="txtRate" value="'+ itemRate +'" placeholder="Rate"></td>'+
+					'<td style="text-align: left;">'+
+					'<div class="input-group">'+
+					'<div class="input-group-prepend">'+
+					 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+					  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+					'id="txtRate" placeholder="Rate" value="'+ itemRate +'" style="width: 100%;">'+
+					'</div></div></td>'+            		
+            		//'<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount"></td>'+
+					'<td style="text-align: left;">'+
+					'<div class="input-group">'+
+					'<div class="input-group-prepend">'+
+					 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+					  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+					'id="txtAmt" placeholder="Amount"  disabled="disabled" style="width: 100%;">'+
+					'</div></div></td>'+            		
             		'<td>'+delBtn+'</td>'+
             		+'</tr>');
            // $('#txtAmt').attr('disabled', true);
@@ -382,7 +405,8 @@
     			     }
     			  });    		
     			  //alert(txtTotalAmount);
-    			  $("#lblTotal").html(txtTotalAmount);
+    			  //$("#lblTotal").html(txtTotalAmount);
+    		  $("#txtNetTotalAmt").val(formatNumber(txtTotalAmount));
     	}
   
     	$('#potable').on('keypress','#txtQty',function(event) {
@@ -397,6 +421,23 @@
     	        event.preventDefault();
     	    }
     	});    	
+    	$('#potable').on('keypress','#txtGst',function(event) {
+    	    if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
+    	            $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+    	        event.preventDefault();
+    	    }
+    	});     	
+      	$("#potable").on('keyup','#txtGst',function(){
+    		var qty= $(this).closest('tr').find('#txtQty').val();
+    		var rate= $(this).closest('tr').find('#txtRate').val();
+    		var gstPct = $(this).closest('tr').find('#txtGst').val();
+    		if (rate == 0) {
+    			rate = 1;
+    		}
+    		var poItemAmount = calculatePOItemAmt(parseFloat(qty),parseFloat(rate),parseFloat(gstPct));
+    		$(this).closest('tr').find('#txtAmt').val(poItemAmount.toFixed(2));
+    		calculateNetAmount();
+    	});     	
      	function calculatePOItemAmt(poQty,poRate,gstPct) {
      		var itemAmount = (poQty * poRate);
      		if (gstPct > 0) {
@@ -408,24 +449,24 @@
       	$("#potable").on('keyup','#txtQty',function(){
 			var qty= $(this).closest('tr').find('#txtQty').val();
 			var rate= $(this).closest('tr').find('#txtRate').val();
-			var gstPct = $(this).closest('tr').find("td:eq(5)").text();
+			var gstPct = $(this).closest('tr').find('#txtGst').val();
     		if (rate == 0) {
     			rate = 1;
     		}
     		var poItemAmount = calculatePOItemAmt(parseFloat(qty),parseFloat(rate),parseFloat(gstPct));
-    		$(this).closest('tr').find('#txtAmt').val(poItemAmount);
+    		$(this).closest('tr').find('#txtAmt').val(poItemAmount.toFixed(2));
     		
     		calculateNetAmount();
     	});
       	$("#potable").on('keyup','#txtRate',function(){
 			var qty= $(this).closest('tr').find('#txtQty').val();
 			var rate= $(this).closest('tr').find('#txtRate').val();
-			var gstPct = $(this).closest('tr').find("td:eq(5)").text();
+			var gstPct = $(this).closest('tr').find('#txtGst').val();
     		if (rate == 0) {
     			rate = 1;
     		}
     		var poItemAmount = calculatePOItemAmt(parseFloat(qty),parseFloat(rate),parseFloat(gstPct));
-    		$(this).closest('tr').find('#txtAmt').val(poItemAmount);
+    		$(this).closest('tr').find('#txtAmt').val(poItemAmount.toFixed(2));
     		calculateNetAmount();
     	});      	
 		function fillPartyData() {
@@ -531,7 +572,7 @@
 					      } else if (i == 8) {
 					    	  obj["poAmount"]=$(this).closest('tr').find('#txtAmt').val();
 					      } else if (i == 5) {
-					    	  obj["gstPct"]=$(this).html();
+					    	  obj["gstPct"]=$(this).closest('tr').find('#txtGst').val();
 					      }
 					      i++;
 					    })
@@ -582,6 +623,8 @@
 		jQuery(document).ready(function($){
 			$('#txtPoNumber').attr('disabled', true);
 			$('#btnPrint').hide();
+		 	$('#txtPoDate').attr('readonly', true);
+		 	$('#txtPoDate').addClass('input-disabled');			
 			if ("${sMode}" == "new") {
 				fillPartyData();
 				setCurrentDate();
@@ -646,10 +689,25 @@
 			            		'<td>'+ tabRowLen +'</td>'+
 			            		'<td>'+ data[i].itemDesc +'</td>'+
 			            		'<td>'+ data[i].uomDesc +'</td>'+
-			            		'<td>'+ data[i].gstPct +'</td>'+
+			            		//'<td>'+ data[i].gstPct +'</td>'+
+			            		'<td><input type="text" class="form-control" id="txtGst" onkeypress="return allowNumericWithDecimal(event)" value="'+ data[i].gstPct +'" placeholder="Gst"></td>'+	
 			            		'<td><input type="text" class="form-control" id="txtQty" placeholder="Qty" value="'+ data[i].poQty +'"></td>'+
-			            		'<td><input type="text" class="form-control" id="txtRate" placeholder="Rate" value="'+ data[i].poRate +'"></td>'+
-			            		'<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount" value="'+ data[i].poAmount +'"></td>'+
+			            		//'<td><input type="text" class="form-control" id="txtRate" placeholder="Rate" value="'+ data[i].poRate +'"></td>'+
+								'<td style="text-align: left;">'+
+								'<div class="input-group">'+
+								'<div class="input-group-prepend">'+
+								 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+								  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+								'id="txtRate" placeholder="Rate" value="'+ data[i].poRate +'" style="width: 100%;">'+
+								'</div></div></td>'+  			            		
+			            		//'<td><input type="text" class="form-control" id="txtAmt" disabled="disabled" placeholder="Amount" value="'+ data[i].poAmount +'"></td>'+
+								'<td style="text-align: left;">'+
+								'<div class="input-group">'+
+								'<div class="input-group-prepend">'+
+								 '<span class="input-group-text"><i class="fa fa-rupee-sign"></i></span>'+
+								  '<input type="text" class="form-control" onkeypress="return allowNumericWithDecimal(event)"'+
+								'id="txtAmt" placeholder="Amount"  disabled="disabled" value="'+ data[i].poAmount +'" style="width: 100%;">'+
+								'</div></div></td>'+  				            		
 			            		'<td>'+delBtn+'</td>'+
 			            		+'</tr>');
 				        }
@@ -683,6 +741,15 @@
 			if (window.focus) {newwindow.focus()}
 			return false;
 			}		
+		function allowNumericWithDecimal(event) {
+		    if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
+		            $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+		        event.preventDefault();
+		    }		
+		}	
+	  	function formatNumber(n) {
+	    	  return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+	    }  		
         </script>
 </body>
 </html>
